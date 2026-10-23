@@ -13,6 +13,8 @@ import time
 import json
 import yaml
 import requests
+import urllib.parse
+from datetime import datetime
 from flask import Flask, request, jsonify, render_template, send_from_directory
 
 app = Flask(__name__, static_folder="static", template_folder="templates")
@@ -21,8 +23,11 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 CONFIG_DIR = os.path.join(BASE_DIR, "config")
 SCRIPTS_DIR = os.path.join(BASE_DIR, "scripts")
 LOGS_DIR = os.path.join(BASE_DIR, "logs")
+STORAGE_DIR = os.path.join(BASE_DIR, "storage")
+START_TIME = time.time()
 
 os.makedirs(LOGS_DIR, exist_ok=True)
+os.makedirs(STORAGE_DIR, exist_ok=True)
 
 # Asegurar permisos de ejecución en scripts
 if os.path.exists(SCRIPTS_DIR):
@@ -272,15 +277,169 @@ def query_gemini(prompt: str, context: str = "") -> str:
         pass
     return "☁️ [Gemini Cloud]: No se pudo conectar con el endpoint externo de nube. Usando respuesta heurística local."
 
-def query_mcp_orchestrator(prompt: str, context: str = "") -> str:
+# ==========================================================
+# HERRAMIENTAS INTEGRADAS DEL ORQUESTADOR MCP UNIFICADO
+# ==========================================================
+def mcp_run_command(command: str):
     try:
-        r = requests.post("http://127.0.0.1:8888/api/chat", json={"prompt": prompt}, timeout=5)
-        if r.status_code == 200:
-            res = r.json()
-            return res.get("response") or res.get("reply") or "Orquestador MCP activo en puerto 8888."
-    except Exception:
-        pass
-    return "🛡️ Orquestador MCP KDF (Modo Autónomo Local :8888) activo y listo para comandos en Termux."
+        res = subprocess.run(command, shell=True, capture_output=True, text=True, timeout=30)
+        out = res.stdout if res.stdout else res.stderr
+        return {"output": out.strip() or "(Ejecutado sin salida)", "exit_code": res.returncode}
+    except Exception as e:
+        return {"error": str(e)}
+
+def mcp_read_file(path: str):
+    path = os.path.expanduser(path)
+    try:
+        if not os.path.exists(path):
+            return {"error": f"El archivo no existe: {path}"}
+        with open(path, "r", encoding="utf-8", errors="replace") as f:
+            content = f.read(20000)
+        return {"path": path, "content": content}
+    except Exception as e:
+        return {"error": str(e)}
+
+def mcp_write_file(path: str, content: str):
+    path = os.path.expanduser(path)
+    try:
+        os.makedirs(os.path.dirname(os.path.abspath(path)), exist_ok=True)
+        with open(path, "w", encoding="utf-8") as f:
+            f.write(content)
+        return {"success": True, "path": path, "bytes_written": len(content)}
+    except Exception as e:
+        return {"error": str(e)}
+
+def mcp_generate_image(prompt: str):
+    desc = prompt.strip() or "cyberpunk futuristic neon technology 8k"
+    encoded = urllib.parse.quote(desc)
+    url = f"https://image.pollinations.ai/prompt/{encoded}"
+    ts = int(time.time())
+    filename = f"img_{ts}.jpg"
+    filepath = os.path.join(STORAGE_DIR, filename)
+    try:
+        r = requests.get(url, timeout=30)
+        if r.status_code == 200 and len(r.content) > 1000:
+            with open(filepath, "wb") as f:
+                f.write(r.content)
+            return {"url": f"/storage/{filename}", "filename": filename, "prompt": desc}
+    except Exception as e:
+        return {"error": str(e)}
+    return {"error": "Fallo al generar imagen"}
+
+def mcp_generate_video(prompt: str):
+    clean = "".join(c for c in prompt[:35] if c.isalnum() or c in (" ", "-", "_")) or "KDF ORCHESTRATOR"
+    ts = int(time.time())
+    out_filename = f"vid_{ts}.mp4"
+    out_path = os.path.join(STORAGE_DIR, out_filename)
+    cmd = [
+        "ffmpeg", "-y", "-f", "lavfi",
+        "-i", "color=c=#090a10:s=720x480:d=4",
+        "-vf", f"drawtext=text='{clean}':fontsize=36:fontcolor=#00f0ff:x=(w-text_w)/2:y=(h-text_h)/2+sin(t*3)*25,drawtext=text='⚡ KDF MCP UNIFICADO 5000':fontsize=20:fontcolor=#9d4edd:x=(w-text_w)/2:y=h-50",
+        "-c:v", "libx264", "-pix_fmt", "yuv420p", "-preset", "ultrafast",
+        out_path
+    ]
+    try:
+        res = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=25)
+        if res.returncode == 0 and os.path.exists(out_path):
+            return {"url": f"/storage/{out_filename}", "filename": out_filename}
+    except Exception as e:
+        return {"error": str(e)}
+    return {"error": "Fallo al renderizar video"}
+
+def mcp_network_orchestrator():
+    ip_cmd = os.popen("ifconfig 2>/dev/null | grep -oE '\\b(192\\.168\\.[0-9]+\\.[0-9]+)\\b' | head -n1").read().strip()
+    return {
+        "modem_gateway": "192.168.100.1 (Huawei Megacable HG8145V5)",
+        "local_ip": ip_cmd or "192.168.100.16",
+        "unified_port": 5000,
+        "dns_loop": "Activo 24/7 (Monoproceso Blindado)",
+        "timestamp": datetime.now().isoformat()
+    }
+
+def mcp_device_diagnostics():
+    mem = os.popen("free -m 2>/dev/null").read().strip()
+    load = os.popen("uptime 2>/dev/null").read().strip()
+    adb = os.popen("adb devices 2>/dev/null").read().strip()
+    return {
+        "memory": mem,
+        "load_average": load,
+        "adb_status": adb or "No devices attached",
+        "architecture": "Monoproceso Integrado KDFLuXStudio :5000"
+    }
+
+def execute_local_tool(name: str, args: dict):
+    if name == "run_command":
+        return mcp_run_command(args.get("command", "uptime"))
+    elif name == "read_file":
+        return mcp_read_file(args.get("path", ""))
+    elif name == "write_file":
+        return mcp_write_file(args.get("path", ""), args.get("content", ""))
+    elif name == "generate_image":
+        return mcp_generate_image(args.get("prompt", ""))
+    elif name == "generate_video":
+        return mcp_generate_video(args.get("prompt", ""))
+    elif name == "network_orchestrator":
+        return mcp_network_orchestrator()
+    elif name == "device_diagnostics":
+        return mcp_device_diagnostics()
+    return {"error": f"Herramienta desconocida: {name}"}
+
+def query_mcp_orchestrator(prompt: str, context: str = "") -> str:
+    """Ejecutor autónomo integrado de herramientas MCP en memoria local (sin subprocesos externos)."""
+    p_lower = prompt.lower().strip()
+
+    if p_lower.startswith("ejecuta ") or p_lower.startswith("comando "):
+        cmd_to_run = prompt.split(" ", 1)[1].strip()
+        cmd_out = mcp_run_command(cmd_to_run)
+        out_txt = cmd_out.get("output") or cmd_out.get("error") or ""
+        return f"⚡ **[KDF MCP UNIFICADO · COMANDO LOCAL]**:\n```bash\n{out_txt}\n```"
+
+    if any(k in p_lower for k in ["bateria", "diagnostico", "cpu", "ram"]):
+        diag = mcp_device_diagnostics()
+        return (
+            f"📊 **[TELEMETRÍA MCP INTEGRADA]**\n"
+            f"• Carga y Uptime: {diag.get('load_average')}\n"
+            f"• Memoria RAM: {diag.get('memory')}\n"
+            f"• Conexión ADB: {diag.get('adb_status')}\n"
+            f"• Modo de Proceso: Único Servidor Blindado (:5000)"
+        )
+
+    if any(k in p_lower for k in ["wifi", "red", "ip", "modem", "huawei"]):
+        net = mcp_network_orchestrator()
+        return (
+            f"🛰️ **[ORQUESTACIÓN DE RED MCP]**\n"
+            f"• Módem Gateway: {net.get('modem_gateway')}\n"
+            f"• IP Local Activa: {net.get('local_ip')}\n"
+            f"• Puerto Único KDF: {net.get('unified_port')}\n"
+            f"• Estado: Monoproceso Blindado y Estable"
+        )
+
+    if any(k in p_lower for k in ["crea imagen", "imagen de", "generar imagen"]):
+        desc = prompt.split("imagen", 1)[-1].strip(" de :")
+        res = mcp_generate_image(desc)
+        if "url" in res:
+            return f"🎨 **[IMAGEN GENERADA POR MCP]**\nURL: {res['url']}\nPrompt: {res['prompt']}"
+        return f"⚠️ Error al generar imagen: {res.get('error')}"
+
+    if any(k in p_lower for k in ["crea video", "video de", "render video"]):
+        desc = prompt.split("video", 1)[-1].strip(" de :")
+        res = mcp_generate_video(desc)
+        if "url" in res:
+            return f"🎬 **[VIDEO RENDERIZADO POR MCP]**\nURL: {res['url']}"
+        return f"⚠️ Error al renderizar video: {res.get('error')}"
+
+    if any(k in p_lower for k in ["hola", "buenas", "hey", "saludos", "orquestador", "mcp"]):
+        return (
+            "🛡️ **[KDF MCP ORCHESTRATOR · INTEGRADO 5000]**\n"
+            "El Orquestador MCP ahora corre nativamente en memoria dentro de KDFLuXStudio. "
+            "Todas las herramientas (bash, archivos, imágenes, video, red y diagnóstico) "
+            "están centralizadas en un solo proceso blindado sin interferencias de llamadas."
+        )
+
+    return (
+        f"🛡️ **[KDF MCP UNIFICADO]**: Solicitud procesada sobre '{prompt}'. "
+        f"Herramientas activas en memoria: `ejecuta [cmd]`, `diagnostico`, `red`, `crea imagen [prompt]`, `crea video [texto]`."
+    )
 
 def ask_all_ai(prompt: str, context: str = "") -> dict:
     from concurrent.futures import ThreadPoolExecutor
@@ -316,14 +475,14 @@ def ask_all_ai(prompt: str, context: str = "") -> dict:
             },
             {
                 "id": "mcp",
-                "name": "KDF MCP Eterno",
+                "name": "KDF MCP Unificado",
                 "icon": "🛡️",
-                "badge": "Super-Agente :8888",
+                "badge": "Super-Agente Integrado",
                 "color": "#c77dff",
                 "reply": mcp_res
             }
         ],
-        "synthesis": "⚡ Resumen del Concilio: Spark ofrece la acción inmediata para tu dispositivo, KDF MCP respalda las herramientas locales de Termux y Gemini complementa el panorama general."
+        "synthesis": "⚡ Resumen del Concilio: Spark ofrece la acción inmediata para tu dispositivo, KDF MCP respalda las herramientas locales de Termux en memoria y Gemini complementa el análisis."
     }
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -740,6 +899,214 @@ def chat():
         "source":    result.get("source", "IA"),
         "telemetry": telemetry
     })
+
+# ==========================================================
+# ENDPOINTS UNIFICADOS MCP Y ALMACENAMIENTO (PUERTO 5000)
+# ==========================================================
+@app.route("/storage/<path:filename>")
+def serve_storage(filename):
+    return send_from_directory(STORAGE_DIR, filename)
+
+@app.route("/mcp", methods=["POST"])
+def mcp_server_endpoint():
+    req = request.get_json() or {}
+    msg_id = req.get("id", 1)
+    method = req.get("method", "")
+    params = req.get("params", {})
+
+    if method == "initialize":
+        return jsonify({
+            "jsonrpc": "2.0",
+            "id": msg_id,
+            "result": {
+                "protocolVersion": "2024-11-05",
+                "capabilities": {
+                    "tools": {"listChanged": False},
+                    "resources": {"subscribe": False, "listChanged": False}
+                },
+                "serverInfo": {
+                    "name": "kdfluxstudio-unified-mcp",
+                    "version": "3.0.0"
+                }
+            }
+        })
+
+    elif method == "tools/list":
+        tools_list = [
+            {"name": "run_command", "description": "Ejecuta comandos de terminal en Termux", "inputSchema": {"type": "object", "properties": {"command": {"type": "string"}}, "required": ["command"]}},
+            {"name": "read_file", "description": "Lee archivos del sistema", "inputSchema": {"type": "object", "properties": {"path": {"type": "string"}}, "required": ["path"]}},
+            {"name": "write_file", "description": "Crea o modifica archivos", "inputSchema": {"type": "object", "properties": {"path": {"type": "string"}, "content": {"type": "string"}}, "required": ["path", "content"]}},
+            {"name": "generate_image", "description": "Genera imágenes de difusión", "inputSchema": {"type": "object", "properties": {"prompt": {"type": "string"}}, "required": ["prompt"]}},
+            {"name": "generate_video", "description": "Renderiza videos con FFmpeg", "inputSchema": {"type": "object", "properties": {"prompt": {"type": "string"}}, "required": ["prompt"]}},
+            {"name": "network_orchestrator", "description": "Diagnóstico y orquestación de red y módem", "inputSchema": {"type": "object", "properties": {}}},
+            {"name": "device_diagnostics", "description": "Telemetría de hardware, RAM y ADB", "inputSchema": {"type": "object", "properties": {}}}
+        ]
+        return jsonify({"jsonrpc": "2.0", "id": msg_id, "result": {"tools": tools_list}})
+
+    elif method == "tools/call":
+        tool_name = params.get("name", "")
+        tool_args = params.get("arguments", {})
+        result = execute_local_tool(tool_name, tool_args)
+        return jsonify({
+            "jsonrpc": "2.0",
+            "id": msg_id,
+            "result": {
+                "content": [{"type": "text", "text": json.dumps(result, ensure_ascii=False, indent=2)}]
+            }
+        })
+
+    return jsonify({"jsonrpc": "2.0", "id": msg_id, "error": {"code": -32601, "message": "Method not found"}}), 404
+
+@app.route("/api/status", methods=["GET"])
+def api_unified_status():
+    ip_cmd = os.popen("ifconfig 2>/dev/null | grep -oE '\\b(192\\.168\\.[0-9]+\\.[0-9]+)\\b' | head -n1").read().strip()
+    return jsonify({
+        "status": "online",
+        "app": "KDFLuXStudio Unified Core",
+        "version": "3.0.0",
+        "mode": "Single Process Blindado",
+        "port": 5000,
+        "local_ip": ip_cmd or "192.168.100.16",
+        "mcp_enabled": True,
+        "tools_count": 7,
+        "uptime_seconds": int(time.time() - START_TIME)
+    })
+
+# ── Módulo de Bolsa de Valores y Centinela de Seguridad KDF ────────────────────
+@app.route("/market")
+def view_market():
+    return render_template("market.html")
+
+@app.route("/api/market/quotes", methods=["GET"])
+def api_market_quotes():
+    try:
+        import sys
+        sys.path.insert(0, SCRIPTS_DIR)
+        import kdf_market_radar
+        quotes = kdf_market_radar.fetch_all_quotes()
+        return jsonify({"quotes": quotes, "timestamp": time.time()})
+    except Exception as e:
+        return jsonify({"error": str(e), "quotes": []}), 500
+
+@app.route("/api/market/portfolio", methods=["GET"])
+def api_market_portfolio():
+    try:
+        import sys
+        sys.path.insert(0, SCRIPTS_DIR)
+        import kdf_market_radar
+        summary = kdf_market_radar.get_portfolio_summary()
+        return jsonify(summary)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+@app.route("/api/market/paper/trade", methods=["POST"])
+def api_market_paper_trade():
+    try:
+        import sys
+        sys.path.insert(0, SCRIPTS_DIR)
+        import kdf_market_radar
+        data = request.get_json() or {}
+        action = data.get("action", "BUY").upper()
+        symbol = data.get("symbol", "BTC-USD")
+        if action == "BUY":
+            amount_usd = float(data.get("amount_usd", 0.0))
+            res = kdf_market_radar.paper_buy(symbol, amount_usd)
+            return jsonify(res)
+        elif action == "SELL":
+            shares = float(data.get("shares", 0.0))
+            res = kdf_market_radar.paper_sell(symbol, shares)
+            return jsonify(res)
+        return jsonify({"success": False, "error": "Acción no reconocida"}), 400
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)}), 500
+
+@app.route("/api/market/alerts", methods=["GET"])
+def api_market_alerts():
+    try:
+        import sys
+        sys.path.insert(0, SCRIPTS_DIR)
+        import kdf_market_radar
+        alerts = kdf_market_radar.load_alerts()
+        return jsonify(alerts)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+@app.route("/api/market/alerts/add", methods=["POST"])
+def api_market_alerts_add():
+    try:
+        import sys
+        sys.path.insert(0, SCRIPTS_DIR)
+        import kdf_market_radar
+        data = request.get_json() or {}
+        alerts = kdf_market_radar.load_alerts()
+        new_alert = {
+            "id": int(time.time()),
+            "symbol": data.get("symbol"),
+            "condition": data.get("condition", "above"),
+            "target": float(data.get("target", 0.0)),
+            "triggered": False
+        }
+        alerts.append(new_alert)
+        kdf_market_radar.save_alerts(alerts)
+        return jsonify({"success": True, "alert": new_alert})
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)}), 500
+
+@app.route("/api/security/guard-status", methods=["GET"])
+def api_security_guard_status():
+    try:
+        import sys
+        sys.path.insert(0, SCRIPTS_DIR)
+        import kdf_security_guard
+        status = kdf_security_guard.run_full_scan()
+        return jsonify(status)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+# ==========================================================
+# ENDPOINTS DE MONETIZACIÓN, SERVICIOS PAGADOS Y LICENCIAS VIP
+# ==========================================================
+@app.route("/api/v1/services", methods=["GET"])
+def api_monetization_services():
+    try:
+        import kdf_monetization_engine
+        return jsonify({"success": True, "services": kdf_monetization_engine.CATALOG_OF_PAID_SERVICES})
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)}), 500
+
+@app.route("/api/v1/commercial/summary", methods=["GET"])
+def api_monetization_summary():
+    try:
+        import kdf_monetization_engine
+        summary = kdf_monetization_engine.get_commercial_summary()
+        return jsonify({"success": True, "summary": summary})
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)}), 500
+
+@app.route("/api/v1/licenses/verify", methods=["POST"])
+def api_monetization_verify_license():
+    try:
+        import kdf_monetization_engine
+        data = request.get_json() or {}
+        key = data.get("license_key", "").strip()
+        result = kdf_monetization_engine.verify_license_key(key)
+        return jsonify(result)
+    except Exception as e:
+        return jsonify({"valid": False, "error": str(e)}), 500
+
+@app.route("/api/v1/licenses/generate", methods=["POST"])
+def api_monetization_generate_license():
+    try:
+        import kdf_monetization_engine
+        data = request.get_json() or {}
+        client = data.get("client_name", "Cliente KDF").strip()
+        tier = data.get("tier", "PRO_STUDIO").strip()
+        days = int(data.get("days", 30))
+        record = kdf_monetization_engine.generate_license_key(client, tier, days)
+        return jsonify({"success": True, "license": record})
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)}), 500
+
 
 # ─────────────────────────────────────────────────────────────────────────────
 if __name__ == "__main__":

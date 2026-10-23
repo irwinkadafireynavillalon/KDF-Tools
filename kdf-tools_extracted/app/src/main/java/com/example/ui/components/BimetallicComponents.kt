@@ -27,6 +27,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.minimumInteractiveComponentSize
@@ -310,6 +311,90 @@ fun BimetallicCeramicCard(
                 .fillMaxWidth()
                 .padding(contentPadding),
             content = content
+        )
+    }
+}
+
+/**
+ * Superficie de tarjeta bimetálica KDF-Tools
+ */
+@Composable
+fun BimetallicCardSurface(
+    modifier: Modifier = Modifier,
+    isObsidianMode: Boolean = true,
+    accentMewtwo: Boolean = false,
+    contentPadding: PaddingValues = PaddingValues(0.dp),
+    content: @Composable ColumnScope.() -> Unit
+) {
+    BimetallicCeramicCard(
+        modifier = modifier,
+        isObsidianMode = isObsidianMode,
+        accentMewtwo = accentMewtwo,
+        contentPadding = contentPadding,
+        content = content
+    )
+}
+
+/**
+ * Botón con icono y acabado bimetálico
+ */
+@Composable
+fun BimetallicIconButton(
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    icon: ImageVector,
+    contentDescription: String? = null,
+    isObsidianMode: Boolean = true
+) {
+    IconButton(
+        onClick = onClick,
+        modifier = modifier
+            .background(
+                if (isObsidianMode) Color(0x334A90E2) else Color(0x22D4AF37),
+                CircleShape
+            )
+            .border(
+                1.dp,
+                if (isObsidianMode) Color(0xFF4A90E2).copy(alpha = 0.6f) else ImperialGoldPrimary.copy(alpha = 0.6f),
+                CircleShape
+            )
+    ) {
+        Icon(
+            imageVector = icon,
+            contentDescription = contentDescription,
+            tint = if (isObsidianMode) LiquidSilverLight else MewtwoObsidianBlack
+        )
+    }
+}
+
+/**
+ * Pill / Chip con acabado metálico
+ */
+@Composable
+fun MetallicChipPill(
+    label: String,
+    modifier: Modifier = Modifier,
+    isSelected: Boolean = false,
+    isObsidianMode: Boolean = true
+) {
+    Box(
+        modifier = modifier
+            .background(
+                if (isSelected) GoldMetallicBrush else if (isObsidianMode) Brush.verticalGradient(listOf(Color(0xFF282C37), Color(0xFF1B1D25))) else Brush.verticalGradient(listOf(Color(0xFFE2E4E8), Color(0xFFCFD2D8))),
+                RoundedCornerShape(12.dp)
+            )
+            .border(
+                0.5.dp,
+                if (isSelected) HighGlossGoldHighlight else PolishedChrome.copy(alpha = 0.4f),
+                RoundedCornerShape(12.dp)
+            )
+            .padding(horizontal = 8.dp, vertical = 3.dp)
+    ) {
+        Text(
+            text = label,
+            color = if (isSelected) MewtwoObsidianBlack else if (isObsidianMode) LiquidSilverLight else Color(0xFF1B1D25),
+            fontSize = 11.sp,
+            fontWeight = FontWeight.Bold
         )
     }
 }

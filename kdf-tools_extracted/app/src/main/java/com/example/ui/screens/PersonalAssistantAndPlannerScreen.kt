@@ -51,6 +51,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -371,7 +372,7 @@ fun PersonalAssistantAndPlannerScreen(
                             modifier = Modifier
                                 .clip(RoundedCornerShape(8.dp))
                                 .background(
-                                    if (isCompleted) MewtwoRoyalIndigo.copy(alpha = 0.5f) else GoldMetallicBrush
+                                    if (isCompleted) SolidColor(MewtwoRoyalIndigo.copy(alpha = 0.5f)) else GoldMetallicBrush
                                 )
                                 .clickable(enabled = !isCompleted && !isRunning) {
                                     isExecutingStepId = step.id

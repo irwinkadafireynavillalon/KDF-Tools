@@ -43,8 +43,14 @@ jobs:
 
       - name: Inject Google AI Studio Secret
         run: |
-          echo "GEMINI_API_KEY=${{ secrets.GEMINI_API_KEY }}" > kdf-tools_extracted/.env
-          echo "GEMINI_API_KEY=${{ secrets.GEMINI_API_KEY }}" > .env
+          API_KEY="${{ secrets.GEMINI_API_KEY }}"
+          if [ -z "$API_KEY" ]; then
+            API_KEY="AI_STUDIO_KEY_PLACEHOLDER"
+          fi
+          echo "GEMINI_API_KEY=$API_KEY" > kdf-tools_extracted/.env
+          echo "GEMINI_API_KEY=$API_KEY" > .env
+          echo "GEMINI_API_KEY=$API_KEY" > kdf-tools_extracted/.env.example
+          echo "GEMINI_API_KEY=$API_KEY" > .env.example
 
       - name: Validate Python Suite Syntax
         run: |

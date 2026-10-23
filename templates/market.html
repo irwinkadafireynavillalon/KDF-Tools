@@ -1,0 +1,399 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KDF Market · Radar Financiero, Alertas & Simulador Bursátil</title>
+  <link rel="icon" type="image/jpeg" href="/static/icons/icon_tools.jpg">
+  <link rel="stylesheet" href="/static/style.css">
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <style>
+    body { background: #07060b; color: #e2e8f0; font-family: 'Inter', sans-serif; margin: 0; min-height: 100vh; display: flex; flex-direction: column; }
+    .market-container { max-width: 1300px; margin: 0 auto; padding: 20px; width: 100%; display: flex; flex-direction: column; gap: 20px; flex: 1; }
+    .top-header { background: #141122; border-bottom: 2px solid; border-image: linear-gradient(90deg, #ffd700 0%, #9b4dff 50%, #e2e8f0 100%) 1; padding: 14px 24px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 20px rgba(0,0,0,0.6); }
+    .brand-title { font-size: 1.25rem; font-weight: 900; background: linear-gradient(90deg, #ffffff, #ffd700, #c77dff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    
+    .disclaimer-banner { background: rgba(155, 77, 255, 0.12); border: 1px solid #9b4dff; border-radius: 12px; padding: 14px 20px; display: flex; align-items: center; gap: 14px; font-size: 0.85rem; color: #f1f5f9; }
+    .disclaimer-badge { background: #9b4dff; color: #ffffff; font-weight: 800; font-size: 0.72rem; padding: 4px 10px; border-radius: 6px; text-transform: uppercase; }
+
+    .grid-quotes { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; }
+    .quote-card { background: #141122; border: 1px solid #2d2645; border-radius: 14px; padding: 16px; display: flex; flex-direction: column; gap: 8px; transition: transform 0.2s, border-color 0.2s; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
+    .quote-card:hover { transform: translateY(-3px); border-color: #ffd700; box-shadow: 0 6px 20px rgba(212, 175, 55, 0.2); }
+    .quote-header { display: flex; justify-content: space-between; align-items: baseline; }
+    .quote-name { font-size: 0.95rem; font-weight: 800; color: #ffffff; }
+    .quote-symbol { font-size: 0.72rem; color: #ffd700; font-family: 'JetBrains Mono', monospace; }
+    .quote-price { font-size: 1.45rem; font-weight: 900; color: #f8fafc; font-family: 'JetBrains Mono', monospace; }
+    .quote-change { font-size: 0.82rem; font-weight: 700; display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; border-radius: 6px; }
+    .change-pos { background: rgba(16, 185, 129, 0.18); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.3); }
+    .change-neg { background: rgba(239, 68, 68, 0.18); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.3); }
+
+    .board-layout { display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 20px; }
+    @media (max-width: 900px) { .board-layout { grid-template-columns: 1fr; } }
+
+    .card-panel { background: #141122; border: 1px solid #2d2645; border-radius: 14px; padding: 20px; box-shadow: 0 6px 20px rgba(0,0,0,0.4); display: flex; flex-direction: column; gap: 16px; }
+    .panel-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #2d2645; padding-bottom: 12px; }
+    .panel-title { font-size: 1.05rem; font-weight: 800; color: #ffffff; display: flex; align-items: center; gap: 8px; }
+
+    .stats-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+    .stat-box { background: #0b0912; border: 1px solid #2d2645; border-radius: 10px; padding: 12px; text-align: center; }
+    .stat-label { font-size: 0.72rem; color: #94a3b8; text-transform: uppercase; font-weight: 700; }
+    .stat-val { font-size: 1.25rem; font-weight: 900; color: #ffd700; font-family: 'JetBrains Mono', monospace; margin-top: 4px; }
+
+    .table-custom { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
+    .table-custom th { text-align: left; color: #94a3b8; padding: 8px 10px; border-bottom: 1px solid #2d2645; font-size: 0.72rem; text-transform: uppercase; }
+    .table-custom td { padding: 10px; border-bottom: 1px solid #1c172e; }
+    .table-custom tr:hover td { background: #1c172e; }
+
+    .input-bimetallic { background: #0b0912; border: 1px solid #2d2645; color: #ffffff; padding: 8px 12px; border-radius: 8px; font-size: 0.85rem; width: 100%; box-sizing: border-box; }
+    .input-bimetallic:focus { outline: none; border-color: #ffd700; box-shadow: 0 0 8px rgba(212, 175, 55, 0.4); }
+
+    .btn-gold { background: linear-gradient(135deg, #ffd700, #d4af37); color: #07060b; border: none; font-weight: 800; padding: 10px 16px; border-radius: 8px; cursor: pointer; transition: 0.2s; }
+    .btn-gold:hover { box-shadow: 0 0 14px rgba(255, 215, 0, 0.6); }
+
+    .btn-purple { background: linear-gradient(135deg, #9b4dff, #6a1b9a); color: #ffffff; border: none; font-weight: 800; padding: 10px 16px; border-radius: 8px; cursor: pointer; transition: 0.2s; }
+    .btn-purple:hover { box-shadow: 0 0 14px rgba(155, 77, 255, 0.6); }
+
+    .btn-secondary { background: #1c172e; border: 1px solid #2d2645; color: #e2e8f0; border-radius: 8px; padding: 8px 14px; cursor: pointer; text-decoration: none; font-size: 0.82rem; font-weight: 600; display: inline-flex; align-items: center; gap: 6px; }
+    .btn-secondary:hover { border-color: #9b4dff; }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER MAESTRO -->
+  <header class="top-header">
+    <div style="display:flex; align-items:center; gap:12px;">
+      <span style="font-size:1.7rem;">📈</span>
+      <div>
+        <div class="brand-title">KDF MARKET · RADAR BURSÁTIL & INVERSIONES</div>
+        <div style="font-size:0.75rem; color:#94a3b8;">Cotizaciones en Tiempo Real · Alertas Android · Simulador de Fondos KDF</div>
+      </div>
+    </div>
+    <div style="display:flex; gap:10px; align-items:center;">
+      <button class="btn-secondary" onclick="loadMarketData()">🔄 Actualizar Cotizaciones</button>
+      <a href="/" class="btn-secondary">⬅ Volver a KDF-Tools</a>
+    </div>
+  </header>
+
+  <main class="market-container">
+
+    <!-- AVISO DE RESPONSABILIDAD ÉTICA Y SEGURIDAD -->
+    <div class="disclaimer-banner">
+      <span class="disclaimer-badge">PROTECCIÓN FINANCIERA KDF</span>
+      <div>
+        <strong>Modo de Inteligencia y Simulación Activo:</strong> Las operaciones se gestionan en entorno de simulación (Paper Trading) con precios de mercado en vivo. No compromete dinero real y te permite validar estrategias de crecimiento con total seguridad antes de tomar decisiones financieras.
+      </div>
+    </div>
+
+    <!-- TARJETAS DE COTIZACIONES EN VIVO -->
+    <section>
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+        <h3 style="font-size:1rem; color:#ffffff; font-weight:800; margin:0;">🌐 COTIZACIONES EN VIVO (MERCADOS GLOBALES)</h3>
+        <span id="market-status-badge" style="font-size:0.75rem; color:#10b981; background:rgba(16,185,129,0.15); border:1px solid #10b981; padding:2px 8px; border-radius:12px;">● En Vivo</span>
+      </div>
+      <div class="grid-quotes" id="quotes-container">
+        <!-- Renderizado dinámico -->
+        <div style="color:#94a3b8; font-size:0.85rem; padding:20px;">Cargando datos bursátiles...</div>
+      </div>
+    </section>
+
+    <!-- TABLERO: SIMULADOR DE FONDOS (IZQUIERDA) + ALERTAS DE PRECIO (DERECHA) -->
+    <div class="board-layout">
+      
+      <!-- SIMULADOR DE PORTAFOLIO -->
+      <div class="card-panel">
+        <div class="panel-header">
+          <div class="panel-title"><span>💼</span> PORTAFOLIO & SIMULADOR DE CAPITAL</div>
+          <span style="font-size:0.75rem; color:#ffd700; background:rgba(212,175,55,0.15); border:1px solid #d4af37; padding:2px 8px; border-radius:10px;">Fondos Virtuales</span>
+        </div>
+
+        <div class="stats-row">
+          <div class="stat-box">
+            <div class="stat-label">Saldo Disponible</div>
+            <div class="stat-val" id="stat-cash">$0.00</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-label">Valor en Activos</div>
+            <div class="stat-val" id="stat-assets">$0.00</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-label">Patrimonio Total</div>
+            <div class="stat-val" id="stat-networth" style="color:#ffffff;">$0.00</div>
+          </div>
+        </div>
+
+        <div>
+          <h4 style="font-size:0.85rem; color:#e2e8f0; margin-bottom:8px; font-weight:700;">📊 Posiciones Actuales</h4>
+          <div style="overflow-x:auto;">
+            <table class="table-custom">
+              <thead>
+                <tr>
+                  <th>Activo</th>
+                  <th>Cantidad</th>
+                  <th>Precio Compra</th>
+                  <th>Precio Actual</th>
+                  <th>Valor Total</th>
+                  <th>Rendimiento</th>
+                  <th>Acción</th>
+                </tr>
+              </thead>
+              <tbody id="positions-table-body">
+                <tr><td colspan="7" style="text-align:center; color:#94a3b8;">Sin posiciones abiertas. Realiza una simulación abajo.</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- FORMULARIO DE COMPRA/VENTA SIMULADA -->
+        <div style="background:#0b0912; border:1px solid #2d2645; border-radius:12px; padding:14px; display:flex; flex-direction:column; gap:10px;">
+          <div style="font-size:0.82rem; font-weight:800; color:#ffd700;">⚡ EJECUTAR OPERACIÓN SIMULADA</div>
+          <div style="display:grid; grid-template-columns: 1.5fr 1fr 1fr; gap:10px;">
+            <select id="trade-symbol" class="input-bimetallic">
+              <option value="BTC-USD">Bitcoin (BTC-USD)</option>
+              <option value="ETH-USD">Ethereum (ETH-USD)</option>
+              <option value="^GSPC">S&P 500 (^GSPC)</option>
+              <option value="NVDA">Nvidia (NVDA)</option>
+              <option value="AAPL">Apple (AAPL)</option>
+              <option value="GC=F">Oro (GC=F)</option>
+              <option value="SI=F">Plata (SI=F)</option>
+            </select>
+            <input type="number" id="trade-amount" class="input-bimetallic" placeholder="Monto USD (ej. 100)" min="10" step="10">
+            <button class="btn-gold" onclick="executePaperBuy()">Comprar ($USD)</button>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ALERTAS Y CENTINELA DE SEGURIDAD -->
+      <div class="card-panel">
+        <div class="panel-header">
+          <div class="panel-title"><span>🔔</span> ALERTAS DE PRECIO A TU MÓVIL</div>
+          <span style="font-size:0.75rem; color:#9b4dff; background:rgba(155,77,255,0.15); border:1px solid #9b4dff; padding:2px 8px; border-radius:10px;">Termux Push</span>
+        </div>
+
+        <div style="font-size:0.8rem; color:#94a3b8;">
+          Configura límites de precio para recibir notificaciones automáticas y con vibración en tu teléfono cuando el mercado se mueva.
+        </div>
+
+        <!-- FORMULARIO CREAR ALERTA -->
+        <div style="background:#0b0912; border:1px solid #2d2645; border-radius:12px; padding:12px; display:flex; flex-direction:column; gap:8px;">
+          <div style="display:grid; grid-template-columns: 1.2fr 1fr 1fr; gap:8px;">
+            <select id="alert-symbol" class="input-bimetallic">
+              <option value="BTC-USD">Bitcoin</option>
+              <option value="ETH-USD">Ethereum</option>
+              <option value="GC=F">Oro</option>
+              <option value="SI=F">Plata</option>
+              <option value="NVDA">Nvidia</option>
+              <option value="^GSPC">S&P 500</option>
+            </select>
+            <select id="alert-condition" class="input-bimetallic">
+              <option value="above">Por encima de</option>
+              <option value="below">Por debajo de</option>
+            </select>
+            <input type="number" id="alert-target" class="input-bimetallic" placeholder="Precio ($)">
+          </div>
+          <button class="btn-purple" onclick="addPriceAlert()">+ Crear Alerta Push</button>
+        </div>
+
+        <!-- LISTA DE ALERTAS -->
+        <div>
+          <h4 style="font-size:0.82rem; color:#e2e8f0; margin-bottom:8px; font-weight:700;">Alarmas Activas</h4>
+          <div id="alerts-list" style="display:flex; flex-direction:column; gap:8px;">
+            <!-- Render dinámico -->
+          </div>
+        </div>
+
+        <!-- WIDGET CENTINELA DE SEGURIDAD -->
+        <div style="margin-top:auto; background:#0b0912; border:1px solid #2d2645; border-radius:10px; padding:12px; display:flex; align-items:center; justify-content:space-between;">
+          <div style="display:flex; align-items:center; gap:10px;">
+            <span style="font-size:1.4rem;">🛡️</span>
+            <div>
+              <div style="font-size:0.82rem; font-weight:800; color:#ffffff;">KDF SENTINEL SHIELD</div>
+              <div style="font-size:0.72rem; color:#10b981;" id="sentinel-guard-text">Integridad y Puertos Protegidos</div>
+            </div>
+          </div>
+          <button class="btn-secondary" style="font-size:0.72rem; padding:4px 8px;" onclick="runSecurityCheck()">Auditar</button>
+        </div>
+
+      </div>
+
+    </div>
+
+  </main>
+
+  <script>
+    function formatCurrency(val) {
+      return '$' + parseFloat(val || 0).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+    }
+
+    function loadMarketData() {
+      $('#market-status-badge').text('Actualizando...').css('color', '#ffd700');
+      $.getJSON('/api/market/quotes', function(data) {
+        if (!data || !data.quotes) return;
+        let html = '';
+        data.quotes.forEach(function(q) {
+          const isPos = q.change_pct >= 0;
+          const sign = isPos ? '+' : '';
+          const changeClass = isPos ? 'change-pos' : 'change-neg';
+          const icon = isPos ? '▲' : '▼';
+          
+          html += `
+            <div class="quote-card">
+              <div class="quote-header">
+                <span class="quote-name">${q.name}</span>
+                <span class="quote-symbol">${q.symbol}</span>
+              </div>
+              <div class="quote-price">${formatCurrency(q.price)}</div>
+              <div style="display:flex; justify-content:space-between; align-items:center;">
+                <span class="quote-change ${changeClass}">${icon} ${sign}${q.change_pct}%</span>
+                <span style="font-size:0.68rem; color:#94a3b8;">${q.currency || 'USD'}</span>
+              </div>
+            </div>
+          `;
+        });
+        $('#quotes-container').html(html);
+        $('#market-status-badge').text('● En Vivo').css('color', '#10b981');
+      }).fail(function() {
+        $('#market-status-badge').text('● Error al actualizar').css('color', '#ef4444');
+      });
+
+      loadPortfolio();
+      loadAlerts();
+    }
+
+    function loadPortfolio() {
+      $.getJSON('/api/market/portfolio', function(p) {
+        if (!p) return;
+        $('#stat-cash').text(formatCurrency(p.cash_usd));
+        $('#stat-assets').text(formatCurrency(p.market_value));
+        $('#stat-networth').text(formatCurrency(p.net_worth));
+        
+        let rows = '';
+        if (p.positions && p.positions.length > 0) {
+          p.positions.forEach(function(pos) {
+            const isPos = pos.pnl >= 0;
+            const sign = isPos ? '+' : '';
+            const color = isPos ? '#10b981' : '#ef4444';
+            rows += `
+              <tr>
+                <td style="font-weight:700; color:#ffd700;">${pos.symbol}</td>
+                <td style="font-family:'JetBrains Mono';">${pos.shares}</td>
+                <td>${formatCurrency(pos.avg_price)}</td>
+                <td style="font-weight:700;">${formatCurrency(pos.current_price)}</td>
+                <td style="font-weight:700;">${formatCurrency(pos.market_value)}</td>
+                <td style="color:${color}; font-weight:700;">${sign}${formatCurrency(pos.pnl)} (${sign}${pos.pnl_pct}%)</td>
+                <td><button class="btn-secondary" style="font-size:0.72rem; padding:2px 8px; color:#ef4444;" onclick="executePaperSell('${pos.symbol}', ${pos.shares})">Vender</button></td>
+              </tr>
+            `;
+          });
+        } else {
+          rows = '<tr><td colspan="7" style="text-align:center; color:#94a3b8; padding:16px;">Sin posiciones activas. Usa el simulador para comprar activos virtuales.</td></tr>';
+        }
+        $('#positions-table-body').html(rows);
+      });
+    }
+
+    function loadAlerts() {
+      $.getJSON('/api/market/alerts', function(alerts) {
+        let html = '';
+        if (alerts && alerts.length > 0) {
+          alerts.forEach(function(a) {
+            const condText = a.condition === 'above' ? '≥' : '≤';
+            const statusBadge = a.triggered 
+              ? '<span style="color:#10b981; font-size:0.7rem;">✓ Disparada</span>' 
+              : '<span style="color:#ffd700; font-size:0.7rem;">● Activa</span>';
+            html += `
+              <div style="background:#0b0912; border:1px solid #2d2645; border-radius:8px; padding:8px 12px; display:flex; justify-content:space-between; align-items:center;">
+                <div>
+                  <span style="font-weight:700; color:#ffffff;">${a.name || a.symbol}</span>
+                  <span style="color:#ffd700; font-family:'JetBrains Mono'; font-size:0.78rem;"> ${condText} ${formatCurrency(a.target)}</span>
+                </div>
+                ${statusBadge}
+              </div>
+            `;
+          });
+        } else {
+          html = '<div style="color:#94a3b8; font-size:0.78rem;">No hay alarmas configuradas.</div>';
+        }
+        $('#alerts-list').html(html);
+      });
+    }
+
+    function executePaperBuy() {
+      const symbol = $('#trade-symbol').val();
+      const amount = parseFloat($('#trade-amount').val());
+      if (!amount || amount <= 0) {
+        alert('Por favor ingresa un monto válido en USD');
+        return;
+      }
+      $.ajax({
+        url: '/api/market/paper/trade',
+        type: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify({action: 'BUY', symbol: symbol, amount_usd: amount}),
+        success: function(res) {
+          if (res.success) {
+            $('#trade-amount').val('');
+            loadPortfolio();
+          } else {
+            alert('Error: ' + res.error);
+          }
+        }
+      });
+    }
+
+    function executePaperSell(symbol, shares) {
+      if (!confirm(`¿Vender ${shares} de ${symbol}?`)) return;
+      $.ajax({
+        url: '/api/market/paper/trade',
+        type: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify({action: 'SELL', symbol: symbol, shares: shares}),
+        success: function(res) {
+          if (res.success) {
+            loadPortfolio();
+          } else {
+            alert('Error: ' + res.error);
+          }
+        }
+      });
+    }
+
+    function addPriceAlert() {
+      const symbol = $('#alert-symbol').val();
+      const condition = $('#alert-condition').val();
+      const target = parseFloat($('#alert-target').val());
+      if (!target || target <= 0) {
+        alert('Ingresa un precio objetivo válido.');
+        return;
+      }
+      $.ajax({
+        url: '/api/market/alerts/add',
+        type: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify({symbol: symbol, condition: condition, target: target}),
+        success: function() {
+          $('#alert-target').val('');
+          loadAlerts();
+        }
+      });
+    }
+
+    function runSecurityCheck() {
+      $('#sentinel-guard-text').text('Auditando sistema...').css('color', '#ffd700');
+      $.getJSON('/api/security/guard-status', function(status) {
+        if (status && status.integrity_ok) {
+          $('#sentinel-guard-text').text('✓ Sistema Seguro y Sin Alteraciones').css('color', '#10b981');
+        } else {
+          $('#sentinel-guard-text').text('⚠️ Se detectaron cambios en archivos').css('color', '#ef4444');
+        }
+      });
+    }
+
+    $(document).ready(function() {
+      loadMarketData();
+      // Refresco suave cada 20 segundos
+      setInterval(loadMarketData, 20000);
+    });
+  </script>
+</body>
+</html>
