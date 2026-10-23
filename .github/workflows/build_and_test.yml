@@ -1,0 +1,43 @@
+name: KDF-Tools CI/CD & Build Pipeline
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build-and-test:
+    name: Build Android App & Run Diagnostics
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Inject Google AI Studio Secret
+        run: |
+          echo "GEMINI_API_KEY=${{ secrets.GEMINI_API_KEY }}" > kdf-tools_extracted/.env
+          echo "GEMINI_API_KEY=${{ secrets.GEMINI_API_KEY }}" > .env
+
+      - name: Validate Python Suite Syntax
+        run: |
+          python3 -m py_compile app.py kdf_optimizer_core.py kdf_security_core.py kdf_url_sanitizer.py
+          echo "✓ Python core syntax verified"
+
+      - name: Validate StressLab Scripts
+        run: |
+          python3 -m py_compile stress_lab/harness_cli/kdf_stress_runner.py
+          echo "✓ KDF-StressLab runner verified"
