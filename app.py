@@ -248,12 +248,15 @@ def get_real_device_telemetry() -> dict:
         telemetry["bootloader_unlocked"] = True
 
     # 2. USB
-    usb_out = run_cmd(["termux-usb", "-l"])
-    if usb_out.startswith("["):
-        try:
-            telemetry["usb_devices"] = json.loads(usb_out)
-        except Exception:
-            telemetry["usb_devices"] = [usb_out]
+    sys_usb = run_cmd(["ls", "/sys/bus/usb/devices/"], timeout=1)
+    if sys_usb and not any(err in sys_usb.lower() for err in ["permission", "cannot", "error", "denied"]) and len(sys_usb.strip()) > 0:
+        telemetry["usb_devices"] = sys_usb.split()
+    else:
+        lsusb_out = run_cmd(["lsusb"], timeout=1)
+        if lsusb_out and not any(err in lsusb_out.lower() for err in ["permission", "cannot", "error", "denied", "unable", "libusb"]) and len(lsusb_out.strip()) > 0:
+            telemetry["usb_devices"] = [l.strip() for l in lsusb_out.splitlines() if l.strip()]
+        else:
+            telemetry["usb_devices"] = []
 
     # 3. ADB
     adb_out = run_cmd(["adb", "devices"])
@@ -421,6 +424,14 @@ def execute_operation():
         cmd = ["bash", script_path]
         output = run_cmd(cmd)
         return jsonify({"status": "ok", "output": output})
+    elif op_id == "install_apk":
+        script_path = os.path.join(SCRIPTS_DIR, "install_apk.sh")
+        apk_target = data.get("apk_url", "") or data.get("apk_path", "")
+        cmd = ["bash", script_path]
+        if apk_target:
+            cmd.append(apk_target)
+        output = run_cmd(cmd)
+        return jsonify({"status": "ok", "output": output})
     elif op_id == "fastboot_info":
         cmd = ["fastboot", "getvar", "all"]
         output = run_cmd(cmd)
@@ -541,4 +552,4 @@ if __name__ == "__main__":
     print(f"  IA Local    : {'✓ ACTIVA (' + LOCAL_LLM_BASE + ')' if local_alive else '✗ Inactiva (:4250)'}")
     print(f"{'='*64}\n")
 
-    app.run(host="127.0.0.1", port=port, debug=False)
+    app.run(host="0.0.0.0", port=port, debug=False)

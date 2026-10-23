@@ -4,9 +4,155 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>KDF-Tools · Suite Universal de Reparación, Firmware & Diagnóstico</title>
-  <link rel="icon" type="image/png" href="/static/img_kdf_logo.png">
+  <link rel="icon" type="image/jpeg" href="/static/icons/icon_tools.jpg">
   <link rel="stylesheet" href="/static/style.css">
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <style>
+    /* =========================================================================
+       ATAJO MAESTRO KDFLUXSTUDIO (CONMUTADOR DE VISTAS)
+       ========================================================================= */
+    .kdf-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 24px;
+      background: rgba(9, 10, 18, 0.98);
+      border-bottom: 2px solid;
+      border-image: linear-gradient(90deg, #ffd700 0%, #9b4dff 50%, #e0e2ec 100%) 1;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .header-shortcut-center {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .btn-master-shortcut {
+      background: linear-gradient(135deg, rgba(212, 175, 55, 0.25), rgba(155, 77, 255, 0.3));
+      border: 1.5px solid #ffd700;
+      color: #ffffff;
+      padding: 8px 20px;
+      border-radius: 30px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 700;
+      font-size: 0.9rem;
+      transition: all 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
+      box-shadow: 0 0 15px rgba(212, 175, 55, 0.3);
+    }
+    .btn-master-shortcut:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 0 25px rgba(155, 77, 255, 0.6), 0 0 15px rgba(255, 215, 0, 0.5);
+      border-color: #c77dff;
+    }
+    .btn-master-shortcut.mode-studio {
+      background: linear-gradient(135deg, rgba(155, 77, 255, 0.4), rgba(0, 229, 255, 0.3));
+      border-color: #9b4dff;
+      box-shadow: 0 0 20px rgba(155, 77, 255, 0.5);
+    }
+    .key-badge {
+      background: rgba(0, 0, 0, 0.75);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      color: #ffd700;
+      font-size: 0.72rem;
+      font-weight: 800;
+      padding: 2px 7px;
+      border-radius: 6px;
+      letter-spacing: 0.5px;
+    }
+    /* VISTA UNIFICADA KDF STUDIO */
+    #view-kdf-studio {
+      max-width: 1400px;
+      margin: 20px auto;
+      padding: 0 20px;
+      width: 100%;
+      box-sizing: border-box;
+    }
+    .kdf-app-phone-container {
+      width: 100% !important;
+      max-width: 100% !important;
+      height: auto !important;
+      background: #141122 !important;
+      border: 1.5px solid #2d2645 !important;
+      border-radius: 18px !important;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.85) !important;
+      overflow: hidden !important;
+    }
+    .studio-app-topbar {
+      background: rgba(9, 10, 18, 0.98) !important;
+      border-bottom: 2px solid !important;
+      border-image: linear-gradient(90deg, #ffd700 0%, #9b4dff 50%, #e0e2ec 100%) 1 !important;
+      padding: 16px 24px !important;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .studio-app-tabs-bar {
+      background: #0e0b18 !important;
+      padding: 12px 20px !important;
+      border-bottom: 1px solid rgba(155, 77, 255, 0.2) !important;
+      display: flex;
+      gap: 10px;
+      overflow-x: auto;
+    }
+
+    /* ECOSISTEMA SUITE KDF LUX GRID */
+    .kdf-suite-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+      gap: 14px;
+      margin-top: 12px;
+    }
+    .kdf-suite-app-item {
+      background: rgba(14, 16, 26, 0.9);
+      border: 1px solid rgba(155, 77, 255, 0.28);
+      border-radius: 16px;
+      padding: 14px 10px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
+      text-decoration: none;
+      color: #fff;
+    }
+    .kdf-suite-app-item:hover {
+      transform: translateY(-4px);
+      border-color: #ffd700;
+      box-shadow: 0 10px 25px rgba(155, 77, 255, 0.45), 0 0 15px rgba(255, 215, 0, 0.35);
+      background: rgba(26, 22, 48, 0.95);
+    }
+    .kdf-suite-app-icon {
+      width: 62px;
+      height: 62px;
+      border-radius: 16px;
+      object-fit: cover;
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.7);
+      border: 1.5px solid rgba(255, 215, 0, 0.6);
+      margin-bottom: 8px;
+      transition: transform 0.25s ease;
+    }
+    .kdf-suite-app-item:hover .kdf-suite-app-icon {
+      transform: scale(1.08);
+      border-color: #c77dff;
+    }
+    .kdf-suite-app-name {
+      font-size: 0.82rem;
+      font-weight: 800;
+      color: #ffd700;
+      line-height: 1.2;
+    }
+    .kdf-suite-app-desc {
+      font-size: 0.68rem;
+      color: #9da3b4;
+      margin-top: 4px;
+      line-height: 1.25;
+    }
+  </style>
 </head>
 <body>
 
@@ -16,16 +162,23 @@
   <header class="kdf-header">
     <div class="logo-box">
       <div class="logo-img-wrapper">
-        <img src="/static/img_kdf_logo.png" alt="KDF-Tools Mewtwo Logo" class="logo-img" onerror="this.src='/static/kdf_tools_logo.png'">
+        <img id="main-header-logo" src="/static/icons/icon_tools.jpg" alt="KDF-Tools Mewtwo Logo" class="logo-img" onerror="this.src='/static/kdf_tools_logo.png'">
       </div>
       <div class="title-group">
-        <h1>KDFLuXStudio</h1>
+        <h1 id="header-main-title">KDFLuXStudio</h1>
         <p class="subtitle">
-          <span>KDF-Tools + KDF Studio App · Arquitectura Bimetálica</span>
+          <span id="header-mode-tag">KDF-Tools · Suite de Reparación & Flasheo</span>
           <span class="brand-pill">⚡ Spark</span>
           <span class="brand-pill">☁️ Gemini 3.8 Flash</span>
         </p>
       </div>
+    </div>
+    <div class="header-shortcut-center">
+      <button type="button" id="btn-master-shortcut" class="btn-master-shortcut" onclick="toggleKdfLuXStudio()" title="Alternar entre KDF Tools y KDF Studio (Tecla S)">
+        <span id="btn-master-icon">📱</span>
+        <span id="btn-master-text">Ir a KDF Studio</span>
+        <span class="key-badge">Tecla S</span>
+      </button>
     </div>
     <div class="header-status">
       <span class="telemetry-badge" id="telemetry-badge">
@@ -35,17 +188,20 @@
   </header>
 
   <!-- ==============================================================================
-       BARRA DE NAVEGACIÓN RÁPIDA (ACCESO DIRECTO A ASESORÍA & HERRAMIENTAS)
+       VISTA 1: KDF-TOOLS (FLASHEO, REPARACIÓN, TERMINAL & ASESOR)
        ============================================================================== -->
-  <nav class="kdf-top-nav">
-    <button type="button" class="nav-tab nav-tab-lux-studio" onclick="openKdfLuXStudioModal()">
-      📱 KDF Studio App (Web Edition)
-    </button>
-    <a href="#section-chat" class="nav-tab nav-tab-highlight">💬 Asesor & Chat IA</a>
-    <a href="#section-maintenance" class="nav-tab">🛠️ Mantenimiento</a>
-    <a href="#section-operations" class="nav-tab">📦 Flasheo & Operaciones</a>
-    <a href="#section-terminal" class="nav-tab">💻 Consola en Vivo</a>
-  </nav>
+  <div id="view-kdf-tools">
+
+    <!-- BARRA DE NAVEGACIÓN RÁPIDA (ACCESO DIRECTO A ASESORÍA & HERRAMIENTAS) -->
+    <nav class="kdf-top-nav">
+      <button type="button" class="nav-tab nav-tab-lux-studio" onclick="toggleKdfLuXStudio()" title="Abrir interfaz KDF Studio App">
+        📱 KDF Studio App (Web Edition)
+      </button>
+      <a href="#section-chat" class="nav-tab nav-tab-highlight">💬 Asesor & Chat IA</a>
+      <a href="#section-maintenance" class="nav-tab">🛠️ Mantenimiento</a>
+      <a href="#section-operations" class="nav-tab">📦 Flasheo & Operaciones</a>
+      <a href="#section-terminal" class="nav-tab">💻 Consola en Vivo</a>
+    </nav>
 
   <!-- ==============================================================================
        CONTENEDOR PRINCIPAL
@@ -87,8 +243,8 @@
            ============================================================================== -->
       <div class="card panel-card diagnostic-chat-card" id="section-chat" style="border: 2px solid var(--mewtwo-purple); box-shadow: 0 0 20px rgba(155, 77, 255, 0.25);">
         <div class="panel-header">
-          <div style="display: flex; align-items: center; gap: 10px;">
-            <span style="font-size: 1.5rem;">💬</span>
+          <div style="display: flex; align-items: center; gap: 12px;">
+            <img src="/static/icons/icon_message.jpg" alt="KDF Message AI" style="width: 42px; height: 42px; border-radius: 12px; border: 1.5px solid #ffd700; box-shadow: 0 0 14px rgba(155, 77, 255, 0.45); object-fit: cover;">
             <div>
               <h2>ASESOR TÉCNICO & CHAT DE INSTRUCCIONES IA</h2>
               <span class="section-desc" style="margin: 0; font-size: 0.8rem; color: #cbd5e1;">Tu copiloto técnico para diagnósticos, asesoría paso a paso e instrucciones personalizadas</span>
@@ -239,6 +395,8 @@
   <button id="btn-floating-chat" class="floating-chat-btn" onclick="document.getElementById('section-chat').scrollIntoView({behavior: 'smooth'}); document.getElementById('chat-input').focus();">
     💬 Asesor IA
   </button>
+
+  </div> <!-- /#view-kdf-tools -->
 
   <!-- ==============================================================================
        VENTANA MODAL REUTILIZADA PARA CONFIGURACIÓN DE OPERACIONES
@@ -870,33 +1028,77 @@
     $('#btn-send-chat').on('click', sendChat);
     $('#chat-input').on('keypress', function(e) { if (e.which === 13) sendChat(); });
 
-    // Cierre modal con Escape o click fuera
+    // Cierre de modal de operaciones con Escape o click fuera
     $(window).on('click', function(e) {
       if ($(e.target).is('#op-modal')) {
         closeModal();
-      }
-      if ($(e.target).is('#kdf-studio-app-modal')) {
-        closeKdfLuXStudioModal();
       }
     });
     $(document).on('keydown', function(e) {
       if (e.key === 'Escape') {
         closeModal();
-        closeKdfLuXStudioModal();
       }
     });
 
     // =========================================================================
-    // CONTROLADOR KDFLUXSTUDIO (APK WEBAPP VERSION)
+    // CONTROLADOR MAESTRO KDFLUXSTUDIO (CONMUTADOR DE VISTAS TOOLS <-> STUDIO)
     // =========================================================================
-    function openKdfLuXStudioModal() {
-      $('#kdf-studio-app-modal').css('display', 'flex');
-      refreshStudioAppTelemetry();
+    let currentKdfMode = 'tools'; // 'tools' o 'studio'
+
+    function toggleKdfLuXStudio() {
+      if (currentKdfMode === 'tools') {
+        switchToStudio();
+      } else {
+        switchToTools();
+      }
     }
 
-    function closeKdfLuXStudioModal() {
-      $('#kdf-studio-app-modal').hide();
+    function switchToStudio() {
+      currentKdfMode = 'studio';
+      $('#view-kdf-tools').fadeOut(150, function() {
+        $('#view-kdf-studio').fadeIn(200);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        refreshStudioAppTelemetry();
+      });
+
+      // Actualizar estilo del atajo maestro y logo
+      $('#btn-master-shortcut').addClass('mode-studio');
+      $('#btn-master-icon').text('🛠️');
+      $('#btn-master-text').text('Volver a KDF Tools');
+      $('#header-mode-tag').text('KDF Studio App · Centro de Control & Multímetro');
+      $('#main-header-logo').attr('src', '/static/icons/icon_lux_studio.jpg');
     }
+
+    function switchToTools() {
+      currentKdfMode = 'tools';
+      $('#view-kdf-studio').fadeOut(150, function() {
+        $('#view-kdf-tools').fadeIn(200);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+
+      // Actualizar estilo del atajo maestro y logo
+      $('#btn-master-shortcut').removeClass('mode-studio');
+      $('#btn-master-icon').text('📱');
+      $('#btn-master-text').text('Ir a KDF Studio');
+      $('#header-mode-tag').text('KDF-Tools · Suite de Reparación & Flasheo');
+      $('#main-header-logo').attr('src', '/static/icons/icon_tools.jpg');
+    }
+
+    // Atajos de compatibilidad
+    function openKdfLuXStudioModal() { switchToStudio(); }
+    function closeKdfLuXStudioModal() { switchToTools(); }
+
+    // Atajo de teclado global: Tecla 'S' / 's' alterna entre Tools y Studio
+    $(document).on('keydown', function(e) {
+      const activeTag = document.activeElement ? document.activeElement.tagName.toLowerCase() : '';
+      if (activeTag === 'input' || activeTag === 'textarea' || activeTag === 'select') {
+        return; // No interferir cuando el usuario escribe en un campo de texto
+      }
+      if (e.key === 's' || e.key === 'S') {
+        e.preventDefault();
+        toggleKdfLuXStudio();
+      }
+    });
 
     function switchStudioTab(tabId, el) {
       $('.studio-tab-btn').removeClass('active');
@@ -980,15 +1182,15 @@
   </script>
 
   <!-- ==============================================================================
-       MODAL KDFLUXSTUDIO · APK WEBAPP EDITION
+       VISTA 2: KDF STUDIO APP (APK WEBAPP EDITION INTEGRADA)
        ============================================================================== -->
-  <div id="kdf-studio-app-modal" class="kdf-app-modal-overlay">
+  <div id="view-kdf-studio" style="display: none;">
     <div class="kdf-app-phone-container">
       
       <!-- Topbar estilo Aplicación Android -->
       <div class="studio-app-topbar">
         <div class="studio-app-title-group">
-          <img src="/static/img_kdf_logo.png" alt="KDF-Studio Logo" onerror="this.src='/static/kdf_tools_logo.png'">
+          <img id="studio-topbar-logo" src="/static/icons/icon_lux_studio.jpg" alt="KDF-Studio Logo" style="width: 46px; height: 46px; border-radius: 12px; border: 1.5px solid #ffd700; box-shadow: 0 0 12px rgba(212,175,55,0.45); object-fit: cover;" onerror="this.src='/static/kdf_tools_logo.png'">
           <div>
             <h2>KDF Studio App · Web Edition</h2>
             <span>Arquitectura Bimetálica KDF-LuX · Puerto 5000</span>
@@ -996,7 +1198,7 @@
         </div>
         <div style="display:flex; align-items:center; gap:10px;">
           <button type="button" class="studio-act-btn" onclick="refreshStudioAppTelemetry()">🔄 Actualizar</button>
-          <button type="button" class="studio-app-close-btn" onclick="closeKdfLuXStudioModal()">✕</button>
+          <button type="button" class="studio-act-btn" onclick="toggleKdfLuXStudio()" style="background:rgba(212,175,55,0.25); border-color:#ffd700;" title="Regresar a KDF Tools (Tecla S)">🛠️ Volver a Tools (S)</button>
         </div>
       </div>
 
@@ -1047,9 +1249,73 @@
             </div>
           </div>
 
-          <div class="studio-card" style="margin-bottom:16px;">
+          <!-- ECOSISTEMA DE APLICACIONES KDFLUXSTUDIO (7 APPS CON ICONOS OFICIALES) -->
+          <div class="studio-card" style="margin-bottom:16px; border-color: rgba(212, 175, 55, 0.45);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+              <h3 style="margin: 0; color: #ffd700; display: flex; align-items: center; gap: 8px;">
+                <img src="/static/icons/icon_launcher.jpg" alt="Launcher" style="width: 24px; height: 24px; border-radius: 6px; object-fit: cover;">
+                Ecosistema de Aplicaciones KDFLuXStudio
+              </h3>
+              <span class="m-badge m-badge-gold">Suite Bimetálica · 7 Apps</span>
+            </div>
+            <p style="font-size:0.8rem; color:#9da3b4; margin-bottom:12px;">Acceso directo al ecosistema completo con los iconos oficiales del sistema:</p>
+            
+            <div class="kdf-suite-grid">
+              <!-- App 1: KDF Tools -->
+              <div class="kdf-suite-app-item" onclick="switchToTools()" title="Ir a la suite KDF Tools de reparación">
+                <img src="/static/icons/icon_tools.jpg" class="kdf-suite-app-icon" alt="KDF Tools">
+                <div class="kdf-suite-app-name">KDF Tools</div>
+                <div class="kdf-suite-app-desc">Flasheo & ADB</div>
+              </div>
+
+              <!-- App 2: KDF LuX Studio -->
+              <div class="kdf-suite-app-item" onclick="switchStudioTab('studio-screen-dashboard', $('.studio-tab-btn')[0])" title="Panel principal de KDF Studio" style="border-color:#ffd700; background:rgba(212,175,55,0.12);">
+                <img src="/static/icons/icon_lux_studio.jpg" class="kdf-suite-app-icon" alt="KDF LuX Studio">
+                <div class="kdf-suite-app-name">LuX Studio</div>
+                <div class="kdf-suite-app-desc">Centro Control</div>
+              </div>
+
+              <!-- App 3: KDF Security -->
+              <div class="kdf-suite-app-item" onclick="switchToTools(); setTimeout(function(){ document.getElementById('section-maintenance').scrollIntoView({behavior:'smooth'}); }, 300);" title="Bypass PayJoy, Bootloader y Knox Guard">
+                <img src="/static/icons/icon_security.jpg" class="kdf-suite-app-icon" alt="KDF Security">
+                <div class="kdf-suite-app-name">KDF Security</div>
+                <div class="kdf-suite-app-desc">PayJoy / Knox</div>
+              </div>
+
+              <!-- App 4: KDF Phone -->
+              <div class="kdf-suite-app-item" onclick="window.location.href='/call'" title="Llamada de voz continua con Gemini Live">
+                <img src="/static/icons/icon_phone.jpg" class="kdf-suite-app-icon" alt="KDF Phone">
+                <div class="kdf-suite-app-name">KDF Phone</div>
+                <div class="kdf-suite-app-desc">Voz Live Gemini</div>
+              </div>
+
+              <!-- App 5: KDF Message -->
+              <div class="kdf-suite-app-item" onclick="switchStudioTab('studio-screen-chatbot', $('.studio-tab-btn')[3])" title="Chatbot IA con Spark Core y Gemini">
+                <img src="/static/icons/icon_message.jpg" class="kdf-suite-app-icon" alt="KDF Message">
+                <div class="kdf-suite-app-name">KDF Message</div>
+                <div class="kdf-suite-app-desc">Chatbot IA</div>
+              </div>
+
+              <!-- App 6: KDF Browser -->
+              <div class="kdf-suite-app-item" onclick="window.open('/', '_blank')" title="Abrir portal web KDFLuXStudio">
+                <img src="/static/icons/icon_browser.jpg" class="kdf-suite-app-icon" alt="KDF Browser">
+                <div class="kdf-suite-app-name">KDF Browser</div>
+                <div class="kdf-suite-app-desc">Portal Web</div>
+              </div>
+
+              <!-- App 7: KDF Launcher -->
+              <div class="kdf-suite-app-item" onclick="switchStudioTab('studio-screen-diagnostic', $('.studio-tab-btn')[1])" title="Diagnóstico y selector de hardware">
+                <img src="/static/icons/icon_launcher.jpg" class="kdf-suite-app-icon" alt="KDF Launcher">
+                <div class="kdf-suite-app-name">KDF Launcher</div>
+                <div class="kdf-suite-app-desc">Diagnóstico HW</div>
+              </div>
+            </div>
+          </div>
             <h3>⚡ Acciones Rápidas del Sistema (KDF Studio Core)</h3>
             <div class="studio-btn-row">
+              <button type="button" class="studio-act-btn" onclick="executeStudioAppScript('install_apk')" style="border-color:#3ddc84; color:#3ddc84; box-shadow:0 0 10px rgba(61,220,132,0.3);">
+                📥 Instalar KDF APK
+              </button>
               <button type="button" class="studio-act-btn" onclick="executeStudioAppScript('clean_memory')">
                 🧹 Limpiar Caché y RAM
               </button>

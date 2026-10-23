@@ -7,9 +7,12 @@ on:
     branches: [ main ]
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   build-and-test:
-    name: Build Android App & Run Diagnostics
+    name: Build Android APK & Run Diagnostics
     runs-on: ubuntu-latest
 
     steps:
@@ -21,6 +24,17 @@ jobs:
         with:
           java-version: '17'
           distribution: 'temurin'
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v4
+        with:
+          packages: 'platform-tools platforms;android-36 build-tools;36.0.0'
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '9.3.1'
+          cache-read-only: false
 
       - name: Set up Python 3.11
         uses: actions/setup-python@v5
@@ -41,3 +55,41 @@ jobs:
         run: |
           python3 -m py_compile stress_lab/harness_cli/kdf_stress_runner.py
           echo "✓ KDF-StressLab runner verified"
+
+      - name: Build Android APK (Debug)
+        working-directory: kdf-tools_extracted
+        run: |
+          gradle assembleDebug --no-daemon --stacktrace
+
+      - name: Package & Prepare APK
+        run: |
+          mkdir -p dist_apk
+          find kdf-tools_extracted/app/build/outputs/apk/ -name "*.apk" -exec cp {} dist_apk/KDF-Tools-LuX.apk \;
+          ls -la dist_apk/
+
+      - name: Upload APK Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: KDF-Tools-APK
+          path: dist_apk/KDF-Tools-LuX.apk
+          retention-days: 30
+
+      - name: Publish GitHub Release with APK
+        if: github.ref == 'refs/heads/main'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v2.5.0-LuX
+          name: "⚡ KDF-Tools v2.5.0-LuX (Android APK)"
+          draft: false
+          prerelease: false
+          body: |
+            ### ⚡ KDF-Tools Universal Suite · Android APK
+            Compilado automáticamente desde el ecosistema Google AI Studio.
+            
+            #### 📥 Instalación:
+            1. Descarga el archivo adjunto `KDF-Tools-LuX.apk` a tu teléfono Android.
+            2. Abre el archivo descargado para instalarlo.
+            3. Si el sistema lo solicita, autoriza "Instalar aplicaciones de fuentes desconocidas".
+          files: dist_apk/KDF-Tools-LuX.apk
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
