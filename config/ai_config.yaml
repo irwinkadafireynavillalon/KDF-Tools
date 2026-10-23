@@ -1,0 +1,66 @@
+# ============================================================
+# KDF-Tools · config/ai_config.yaml
+# Configuración centralizada del motor de IA local y cloud
+# ============================================================
+
+# ── Servidor IA Local (KDF-STUDIO / llama.cpp en :4250) ─────
+local_llm:
+  enabled: true
+  host: "127.0.0.1"
+  port: 4250
+  base_url: "http://127.0.0.1:4250"
+
+  # Endpoints OpenAI-compatibles expuestos por KDF-STUDIO
+  endpoints:
+    chat:        "/v1/chat/completions"
+    completions: "/v1/chat/completions"
+    models:      "/v1/models"
+    health:      "/health"
+    status:      "/status"
+
+  # Parámetros de generación optimizados para Gemma 2B
+  generation:
+    temperature: 0.45
+    top_p: 0.92
+    top_k: 40
+    max_tokens: 1024
+    repeat_penalty: 1.1
+    stop: ["</s>", "<|eot_id|>", "<end_of_turn>", "Human:", "Usuario:"]
+
+  timeout_seconds: 30
+
+# ── Modelos disponibles en el dispositivo ────────────────────
+models:
+  - id: ia_lux_gemma2b
+    name: "IA-LuX · Google Gemma 2 2B Instruct (1.6 GB)"
+    path: "/data/data/com.termux/files/home/.kdf-studio/models/gemma-2-2b-it-Q4_K_M.gguf"
+    alias: "IA-LuX"
+    ctx_size: 2048
+    threads: 4
+    gpu_layers: 0
+    recommended_for: ["diagnóstico local", "comandos ADB/Fastboot", "flasheo", "reparación"]
+    priority: 1
+
+# ── Google Gemini Cloud (fallback cloud) ─────────────────────
+gemini:
+  enabled: true
+  model: "gemini-2.0-flash"
+  temperature: 0.35
+  top_p: 0.90
+  max_output_tokens: 2048
+  timeout_seconds: 15
+
+# ── Orden de prioridad (fallback chain) ──────────────────────
+fallback_chain:
+  - local_llm
+  - gemini
+  - offline
+
+# ── System prompt base del asistente KDF-Tools ───────────────
+system_prompt: |
+  Eres KDF-Tools AI, el asistente técnico especializado en servicio, diagnóstico,
+  mantenimiento y flasheo de dispositivos electrónicos de la suite KDF-Tools.
+  Dominas las 6 categorías: Smartphones, Tablets, Laptops/PC, Smart TVs, Wearables y Automotriz.
+  Herramientas y protocolos: Fastboot, ADB, EDL 9008 Sahara, MediaTek BROM/Preloader,
+  Odin/Download mode, Apple DFU/Checkm8, PayJoy bypass, Knox Guard, y reparación NV/IMEI.
+  Responde siempre en español, de forma directa, técnica y con los comandos exactos.

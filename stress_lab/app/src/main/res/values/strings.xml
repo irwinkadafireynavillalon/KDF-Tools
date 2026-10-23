@@ -1,0 +1,17 @@
+<resources>
+    <string name="app_name">KDF StressLab</string>
+    <string name="header_title">⚡ KDF-STRESSLAB · HARNESS &amp; BENCHMARK</string>
+    <string name="subtitle">Pruebas de Caos, Fatiga y Rendimiento Límite en Android</string>
+    
+    <string name="section_chaos">Simuladores de Caos &amp; Inyección de Fallos</string>
+    <string name="btn_cpu_stress">🔥 Estrés de CPU (100% Cores)</string>
+    <string name="btn_ram_stress">🧠 Presión de RAM (LMK Trigger)</string>
+    <string name="btn_io_stress">💾 Saturación I/O Disco (50MB/s)</string>
+    <string name="btn_network_chaos">🌐 Caos de Red (Latencia / Drop)</string>
+    <string name="btn_fuzz_ui">🐒 Monkey Fuzzing (Eventos Caóticos)</string>
+    
+    <string name="section_telemetry">Telemetría en Vivo &amp; Diagnóstico</string>
+    <string name="status_idle">Estado: En reposo (Esperando orden)</string>
+    <string name="btn_start_full_test">🚀 INICIAR PRUEBA DE ESTRÉS EXTREMA (300s)</string>
+    <string name="btn_stop_all">🛑 DETENER TODO EL CAOS</string>
+</resources>

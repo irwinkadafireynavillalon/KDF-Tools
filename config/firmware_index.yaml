@@ -1,0 +1,14 @@
+# firmware_index.yaml – Catálogo de firmware/ROM/ISO
+# Cada entrada tiene marca, modelo, país (opcional), url y sha256.
+
+- brand: Samsung
+  model: Galaxy S23
+  country: MX
+  url: https://example.com/samsung/s23/mx/firmware.zip
+  sha256: deadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeef
+
+- brand: Xiaomi
+  model: Redmi Note 12
+  country: BR
+  url: https://example.com/xiaomi/redmi_note12/br/firmware.zip
+  sha256: beefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdead

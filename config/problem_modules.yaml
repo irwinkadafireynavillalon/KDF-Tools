@@ -1,0 +1,17 @@
+# problem_modules.yaml – Lista de problemas comunes para el menú desplegable
+# Cada entrada tiene un identificador y una descripción amigable.
+
+- id: usb_connectivity
+  description: Problemas de conexión USB (cable, modo, drivers)
+- id: bluetooth_pairing
+  description: Fallos al emparejar Bluetooth
+- id: wireless_debugging
+  description: Depuración inalámbrica (ADB over Wi‑Fi)
+- id: bootloader_unlock
+  description: Desbloqueo del bootloader
+- id: payol_account
+  description: Eliminación de cuenta Payol bloqueada
+- id: payment_lock
+  description: Desbloqueo por bloqueo de pago del operador
+- id: firmware_update
+  description: Actualización / reinstalación de firmware

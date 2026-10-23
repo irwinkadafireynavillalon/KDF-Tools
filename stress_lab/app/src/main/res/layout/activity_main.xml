@@ -1,0 +1,257 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bg_dark"
+    android:padding="16dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <!-- Encabezado Mewtwo Bimetálico -->
+        <TextView
+            android:id="@+id/tvHeader"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/header_title"
+            android:textColor="@color/gold_mewtwo"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tvSubtitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="Banco de Pruebas Automatizado: Sube APK/ZIP y llévalo al límite"
+            android:textColor="@color/silver_text"
+            android:textSize="12sp" />
+
+        <!-- BOTÓN PRINCIPAL: SUBIR APK O ZIP -->
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            app:cardBackgroundColor="@color/surface_card"
+            app:cardCornerRadius="14dp"
+            app:strokeColor="@color/cyan_neon"
+            app:strokeWidth="1.5dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:padding="20dp">
+
+                <Button
+                    android:id="@+id/btnUploadFile"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:backgroundTint="@color/purple_psychic"
+                    android:text="📁 SUBIR ARCHIVO APK O ZIP DE PRUEBA"
+                    android:textColor="#FFFFFF"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tvFileLoadedStatus"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:text="Ningún archivo seleccionado aún. Toca arriba para cargar."
+                    android:textColor="@color/gray_muted"
+                    android:textSize="12sp" />
+
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- TARJETA DE PROGRESO DE LA PRUEBA AUTOMATIZADA -->
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cardProgress"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:visibility="gone"
+            app:cardBackgroundColor="@color/surface_card"
+            app:cardCornerRadius="12dp"
+            app:strokeColor="@color/gold_mewtwo"
+            app:strokeWidth="1dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    android:id="@+id/tvPipelinePhaseTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="⚡ FASE 1: Análisis Estático..."
+                    android:textColor="@color/gold_mewtwo"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tvPipelinePhaseDetails"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="Inspeccionando permisos y estructura..."
+                    android:textColor="@color/silver_text"
+                    android:textSize="12sp" />
+
+                <ProgressBar
+                    android:id="@+id/progressBarStress"
+                    style="?android:attr/progressBarStyleHorizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="12dp"
+                    android:layout_marginTop="10dp"
+                    android:max="8"
+                    android:progress="1"
+                    android:progressTint="@color/cyan_neon" />
+
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- TARJETA DE TELEMETRÍA EN VIVO -->
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            app:cardBackgroundColor="@color/surface_card"
+            app:cardCornerRadius="12dp"
+            app:strokeColor="@color/purple_psychic"
+            app:strokeWidth="1dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="14dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="📊 TELEMETRÍA EN VIVO (MOTO G24)"
+                    android:textColor="@color/cyan_neon"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tvCpuUsage"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="CPU: 0% | Hilos: 0"
+                    android:textColor="@color/silver_text"
+                    android:textSize="13sp" />
+
+                <TextView
+                    android:id="@+id/tvMemoryUsage"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="RAM PSS: 0 MB | Libre: 0 MB"
+                    android:textColor="@color/silver_text"
+                    android:textSize="13sp" />
+
+                <TextView
+                    android:id="@+id/tvFpsJank"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="Fotogramas: 0 | Jank: 0 (0.0%)"
+                    android:textColor="@color/silver_text"
+                    android:textSize="13sp" />
+
+                <TextView
+                    android:id="@+id/tvCrashCounter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="Crashes: 0 | ANR: 0"
+                    android:textColor="@color/crimson_alert"
+                    android:textSize="13sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- TARJETA DEL REPORTE FINAL EXHAUSTIVO -->
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cardReport"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:visibility="gone"
+            app:cardBackgroundColor="@color/surface_card"
+            app:cardCornerRadius="14dp"
+            app:strokeColor="@color/green_neon"
+            app:strokeWidth="1.5dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="📋 VEREDICTO DE RESILIENCIA Y PLAY STORE"
+                    android:textColor="@color/green_neon"
+                    android:textSize="15sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tvVerdictScore"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="PUNTUACIÓN: 100 / 100"
+                    android:textColor="@color/gold_mewtwo"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tvVerdictStatus"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="🟢 APROBADA: Lista para producción"
+                    android:textColor="@color/silver_text"
+                    android:textSize="13sp" />
+
+                <TextView
+                    android:id="@+id/tvReportJsonSummary"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:background="#0A0B10"
+                    android:fontFamily="monospace"
+                    android:padding="10dp"
+                    android:textColor="@color/silver_text"
+                    android:textSize="11sp" />
+
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- REGISTRO DE EVENTOS EN TIEMPO REAL -->
+        <TextView
+            android:id="@+id/tvLogs"
+            android:layout_width="match_parent"
+            android:layout_height="160dp"
+            android:layout_marginTop="16dp"
+            android:background="@color/surface_card"
+            android:fontFamily="monospace"
+            android:padding="8dp"
+            android:text="[KDF-StressLab Listo] Selecciona un APK o ZIP para comenzar el test..."
+            android:textColor="@color/green_neon"
+            android:textSize="11sp" />
+
+    </LinearLayout>
+</ScrollView>

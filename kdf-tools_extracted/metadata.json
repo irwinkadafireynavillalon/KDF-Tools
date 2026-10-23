@@ -1,0 +1,6 @@
+{
+  "name": "KDF-Tools",
+  "description": "Suite de arquitectura bimetálica KDF-Tools (Mewtwo Edition) con Spark Core y Gemini 3.8 Flash para gestión multi-dispositivo (Smartphones, Tablets, Laptops, Smart TV, Wearables, Automotriz), herramientas de mantenimiento ADB/Fastboot/EDL (Modo Seguro, App Blocker, Memory Cleaner, Bootloader Unlock, EDL Flasher), estudio IA y bio-telemetría.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

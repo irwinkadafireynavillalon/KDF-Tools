@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="bg_dark">#0F111A</color>
+    <color name="surface_card">#1A1C29</color>
+    <color name="gold_mewtwo">#FFD700</color>
+    <color name="purple_psychic">#8A2BE2</color>
+    <color name="cyan_neon">#00E5FF</color>
+    <color name="crimson_alert">#FF1744</color>
+    <color name="green_neon">#00E676</color>
+    <color name="silver_text">#E0E0E0</color>
+    <color name="gray_muted">#757575</color>
+</resources>

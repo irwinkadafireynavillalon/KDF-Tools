@@ -1,0 +1,182 @@
+# config/categories.yaml - Taxonomía Universal KDF-Tools
+# Suite de Reparación, Firmware & Diagnóstico Bimetálico (Mewtwo Edition)
+
+categories:
+  - id: smartphones
+    name: "📱 Smartphones"
+    description: "Soporte para teléfonos Android móviles (flasheo, unbrick, backup y rescate)"
+    brands:
+      - name: "Motorola"
+        processors: ["MediaTek (Helio)", "Qualcomm (Snapdragon)", "Unisoc"]
+        models: ["Moto G24", "Moto G Series", "Edge Series", "Razr Series", "Moto E Series", "Cualquier Modelo"]
+      - name: "Xiaomi / Redmi / POCO"
+        processors: ["Qualcomm (Snapdragon)", "MediaTek (Dimensity/Helio)"]
+        models: ["Redmi Note 13", "Redmi Note 12", "POCO X6 Pro", "POCO F5", "Xiaomi 14"]
+      - name: "Samsung"
+        processors: ["Exynos", "Qualcomm (Snapdragon)", "MediaTek"]
+        models: ["Galaxy A54", "Galaxy A34", "Galaxy S23/S24", "Galaxy A14", "Galaxy Z Flip"]
+      - name: "OPPO / Realme / Vivo / OnePlus"
+        processors: ["MediaTek", "Qualcomm"]
+        models: ["Realme 11 Pro", "OPPO Reno 10", "Vivo V29", "OnePlus Nord 3"]
+      - name: "Google Pixel"
+        processors: ["Google Tensor G1/G2/G3/G4"]
+        models: ["Pixel 8/8 Pro", "Pixel 7/7a", "Pixel 6/6a"]
+      - name: "Apple (iPhone)"
+        processors: ["Apple Silicon A-Series"]
+        models: ["iPhone 15/15 Pro", "iPhone 14", "iPhone 13", "iPhone SE"]
+
+  - id: tablets
+    name: "📲 Tablets"
+    description: "Soporte para tablets Android (particionado super.img, backup NVRAM y flasheo)"
+    brands:
+      - name: "Samsung Galaxy Tab"
+        processors: ["Qualcomm", "Exynos"]
+      - name: "Lenovo Tab"
+        processors: ["MediaTek", "Qualcomm"]
+      - name: "Apple iPad"
+        processors: ["Apple Silicon M-Series / A-Series"]
+      - name: "Xiaomi Pad"
+        processors: ["Qualcomm (Snapdragon)"]
+      - name: "Amazon Fire HD"
+        processors: ["MediaTek"]
+
+  - id: laptops
+    name: "💻 Laptops & Computadoras"
+    description: "Soporte para laptops/PC con Android-x86 o Windows-ADB"
+    brands:
+      - name: "PC / Laptops Genéricas (Windows / Linux)"
+        processors: ["Intel Core / Xeon (x86_64)", "AMD Ryzen (x86_64)"]
+      - name: "Chromebook / ChromeOS"
+        processors: ["Intel Core", "MediaTek Kompanio", "Qualcomm Snapdragon"]
+      - name: "Apple Mac / MacBook"
+        processors: ["Apple Silicon (M1/M2/M3/M4)", "Intel Core"]
+
+  - id: smart_tv
+    name: "📺 Smart TVs"
+    description: "Soporte para Smart TV Android/Google TV"
+    brands:
+      - name: "Android TV / Google TV (Xiaomi TV, TCL, Sony, Chromecast)"
+        processors: ["Amlogic", "MediaTek", "Realtek"]
+      - name: "Amazon Fire TV Stick / Cube"
+        processors: ["MediaTek"]
+      - name: "Smart TV Samsung (Tizen) & LG (webOS)"
+        processors: ["ARM Propietario"]
+
+  - id: wearables
+    name: "⌚ Smartwatch (Wearables)"
+    description: "Soporte para smartwatches y otros wearables (Wear OS, depuración y sensores)"
+    brands:
+      - name: "Wear OS (Samsung Galaxy Watch, Pixel Watch, TicWatch)"
+        processors: ["Exynos W", "Snapdragon Wear"]
+      - name: "Apple Watch"
+        processors: ["Apple Silicon S-Series"]
+
+  - id: automotriz
+    name: "🚗 Automotriz (Infotainment & Android Auto)"
+    description: "Soporte para unidades de infotainment y Android Auto"
+    brands:
+      - name: "Unidades Android Auto / CarPlay Aftermarket"
+        processors: ["Allwinner T3/T5", "Rockchip PX5/PX6", "UIS7862 Unisoc"]
+      - name: "Sistemas Embebidos Originales (OEM Head Units)"
+        processors: ["NXP i.MX", "Renesas", "Qualcomm Snapdragon Automotive"]
+
+operations:
+  # ─── 1. NUEVOS MÓDULOS DE UTILIDAD & MANTENIMIENTO ────────────────────────
+  - id: mode_safe
+    name: "Entrar en modo seguro"
+    description: "Inicia Android en modo seguro para desactivar apps de terceros."
+    category: "Mantenimiento"
+    command: "scripts/enter_safe_mode.sh"
+    script: "scripts/enter_safe_mode.sh"
+
+  - id: app_blocker
+    name: "Desactivar / eliminar aplicación bloqueadora"
+    description: "Desactiva o desinstala la app que impide el arranque y limpia la memoria."
+    category: "Mantenimiento"
+    command: "scripts/disable_blocker.sh"
+    script: "scripts/disable_blocker.sh"
+
+  - id: mem_cleaner
+    name: "Limpiar cachés y memoria"
+    description: "Borra cachés del dispositivo y, opcionalmente, hace wipe userdata."
+    category: "Mantenimiento"
+    command: "scripts/clean_memory.sh"
+    script: "scripts/clean_memory.sh"
+
+  - id: bootloader_unlock
+    name: "Desbloquear bootloader"
+    description: "Intenta unlock del bootloader mediante fastboot."
+    category: "Bootloader"
+    command: "scripts/unlock_bootloader.sh"
+    script: "scripts/unlock_bootloader.sh"
+
+  - id: edl_flasher
+    name: "Flashear bootloader vía EDL"
+    description: "Flashea bootloader y radio desde modo EDL (test‑point)."
+    category: "Bootloader"
+    command: "scripts/edl_flasher.sh"
+    script: "scripts/edl_flasher.sh"
+
+  # ─── 2. OPERACIONES EXISTENTES DE REPARACIÓN Y FLASHEO ────────────────────
+  - id: unbrick_bootloop
+    name: "🔧 Desbrickeo y Reparación de Bootloop"
+    category: "Reparación"
+    description: "Recupera dispositivos que se quedan en el logo o reinicios continuos"
+    command: "scripts/unbrick_recovery.sh"
+    script: "scripts/unbrick_recovery.sh"
+
+  - id: flash_stock_firmware
+    name: "⚡ Flasheo de Firmware Original (Stock ROM)"
+    category: "Flasheo"
+    description: "Reinstala el sistema operativo oficial de fábrica sin errores"
+    command: "scripts/download_manager.sh"
+    script: "scripts/download_manager.sh"
+
+  - id: flash_aosp_custom
+    name: "🚀 Flasheo de Firmware AOSP / GSI (Android 15/16/17)"
+    category: "Flasheo"
+    description: "Instala imágenes GSI Treble arm64_ab con capa KDF-Tools"
+    command: "scripts/flash_aosp_gsi.sh"
+    script: "scripts/flash_aosp_gsi.sh"
+
+  - id: low_level_tools
+    name: "⚙️ Herramientas de Bajo Nivel (Fastboot, EDL 9008, BROM MTK, Test-Point)"
+    category: "Avanzado"
+    description: "Diagnóstico y acceso por puertos de emergencia cuando el equipo no enciende"
+    command: "scripts/low_level_diagnostic.sh"
+    script: "scripts/low_level_diagnostic.sh"
+
+  - id: usb_boot_creator
+    name: "💾 Creador de Medios USB / SD Booteables (ISO UEFI/BIOS)"
+    category: "Utilidades"
+    description: "Convierte imágenes ISO en unidades de arranque para PC, laptops y consolas"
+    command: "scripts/create_usb_boot.sh"
+    script: "scripts/create_usb_boot.sh"
+
+  - id: connectivity_diagnostics
+    name: "📡 Diagnóstico de Conectividad (ADB Wi-Fi, OTG, Bluetooth, MTP)"
+    category: "Diagnóstico"
+    description: "Verifica puertos de comunicación, drivers, puente de red y protocolos"
+    command: "scripts/diagnose_connectivity.sh"
+    script: "scripts/diagnose_connectivity.sh"
+
+  - id: partition_backup
+    name: "🛡️ Copia de Seguridad y Respaldo de Particiones"
+    category: "Seguridad"
+    description: "Respalda particiones críticas (boot, persist, modem, efs) antes de modificar"
+    command: "scripts/backup_partitions.sh"
+    script: "scripts/backup_partitions.sh"
+
+  - id: flash_moto_g24
+    name: "📲 Flasheo Rápido y Rescate Motorola Moto G24"
+    category: "Reparación"
+    description: "Flasheo automatizado para compilación UTAS34.82-126-5 (canal altmx)"
+    command: "scripts/flash_moto_g24.sh"
+    script: "scripts/flash_moto_g24.sh"
+
+  - id: return_home
+    name: "🔄 Reinicio Normal y Salida de Diagnóstico"
+    category: "Utilidades"
+    description: "Reinicia el dispositivo a su estado operativo habitual de forma segura"
+    command: "scripts/return_home.sh"
+    script: "scripts/return_home.sh"

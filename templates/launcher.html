@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Launcher KDF · Ecosistema Oficial (10 Apps)</title>
+  <style>
+    :root {
+      --kdf-bg: #050608;
+      --card-bg: rgba(16, 18, 28, 0.94);
+      --gold: #ffd700;
+      --gold-dark: #d4af37;
+      --silver: #e2e5f0;
+      --purple: #9b4dff;
+      --purple-deep: #3c096c;
+      --glow-gold: rgba(255, 215, 0, 0.4);
+      --glow-purple: rgba(155, 77, 255, 0.45);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    body {
+      background: var(--kdf-bg);
+      color: #fff;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    header {
+      padding: 18px 26px;
+      background: rgba(8, 10, 16, 0.98);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 2px solid;
+      border-image: linear-gradient(90deg, var(--gold) 0%, var(--purple) 50%, var(--silver) 100%) 1;
+      box-shadow: 0 4px 25px rgba(0,0,0,0.85);
+    }
+    .brand-title {
+      font-size: 1.4rem;
+      font-weight: 800;
+      letter-spacing: 2px;
+      background: linear-gradient(135deg, var(--gold) 0%, var(--purple) 50%, var(--silver) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .status-badge {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 16px;
+      background: linear-gradient(135deg, rgba(255,215,0,0.1), rgba(155,77,255,0.15));
+      border: 1px solid var(--gold);
+      border-radius: 20px;
+      font-size: 0.85rem;
+      color: var(--gold);
+    }
+    .container {
+      max-width: 1200px;
+      margin: 30px auto;
+      padding: 0 20px;
+      width: 100%;
+    }
+    .hero-banner {
+      background: linear-gradient(135deg, rgba(60,9,108,0.3), rgba(10,12,20,0.9));
+      border: 1px solid var(--purple);
+      border-radius: 18px;
+      padding: 24px;
+      margin-bottom: 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 0 30px var(--glow-purple);
+    }
+    .hero-banner h1 {
+      font-size: 1.5rem;
+      color: var(--gold);
+      margin-bottom: 6px;
+    }
+    .hero-banner p {
+      color: var(--silver);
+      font-size: 0.92rem;
+    }
+    .grid-apps {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 20px;
+    }
+    .app-card {
+      background: var(--card-bg);
+      border: 1px solid var(--purple);
+      border-radius: 16px;
+      padding: 22px;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .app-card:hover {
+      transform: translateY(-5px);
+      border-color: var(--gold);
+      box-shadow: 0 0 25px var(--glow-purple), 0 0 15px var(--glow-gold);
+    }
+    .app-card.server-host {
+      border: 2px solid var(--gold);
+      box-shadow: 0 0 20px rgba(255, 215, 0, 0.25);
+    }
+    .app-icon {
+      font-size: 2.2rem;
+      margin-bottom: 12px;
+    }
+    .app-name {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 6px;
+    }
+    .app-desc {
+      font-size: 0.85rem;
+      color: var(--silver);
+      line-height: 1.4;
+      margin-bottom: 14px;
+    }
+    .app-tag {
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 12px;
+      align-self: flex-start;
+      letter-spacing: 0.5px;
+    }
+    .tag-host {
+      background: rgba(255, 215, 0, 0.2);
+      color: var(--gold);
+      border: 1px solid var(--gold);
+    }
+    .tag-client {
+      background: rgba(155, 77, 255, 0.2);
+      color: var(--purple);
+      border: 1px solid var(--purple);
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="brand-title">⚡ LAUNCHER KDF · MEWTWO BIMETALLIC</div>
+    <div class="status-badge">
+      <span>🛡️ Red KDF-STUDIO Activa</span>
+    </div>
+  </header>
+
+  <div class="container">
+    <div class="hero-banner">
+      <div>
+        <h1>SUITE OFICIAL KDF (LAS 10 APLICACIONES)</h1>
+        <p>Modelos: <strong>Gemma 2B · Antigravity · GeminiCLI</strong> | IA 100% Autónoma sin API Keys</p>
+      </div>
+      <button onclick="window.location.href='/call'" style="background: linear-gradient(135deg, var(--gold), var(--gold-dark)); color: #000; border: none; padding: 12px 20px; font-weight: 700; border-radius: 12px; cursor: pointer; box-shadow: 0 0 15px var(--glow-gold);">
+        🎙️ Llamada Live
+      </button>
+    </div>
+
+    <div class="grid-apps">
+      <!-- 1. KDF CAMERA -->
+      <div class="app-card" onclick="alert('Iniciando KDF Camera con visión IA...')">
+        <div>
+          <div class="app-icon">📷</div>
+          <div class="app-name">KDF Camera</div>
+          <div class="app-desc">Captura técnica y análisis visual con IA local sin enviar datos a la nube.</div>
+        </div>
+        <span class="app-tag tag-client">CONSUME IA KDF-STUDIO</span>
+      </div>
+
+      <!-- 2. KDF STUDIO -->
+      <div class="app-card server-host" onclick="window.location.href='/studio'">
+        <div>
+          <div class="app-icon">⚡</div>
+          <div class="app-name">KDF Studio</div>
+          <div class="app-desc">Núcleo Servidor de IA local, descarga de Gemma 2B, orquestación y escudo de seguridad.</div>
+        </div>
+        <span class="app-tag tag-host">SERVIDOR DE IA LOCAL</span>
+      </div>
+
+      <!-- 3. LAUNCHER KDF -->
+      <div class="app-card" onclick="window.location.href='/launcher'">
+        <div>
+          <div class="app-icon">🚀</div>
+          <div class="app-name">Launcher KDF</div>
+          <div class="app-desc">Lanzador principal bimetálico Mewtwo, accesos rápidos y panel unificado.</div>
+        </div>
+        <span class="app-tag tag-client">CONSUME IA KDF-STUDIO</span>
+      </div>
+
+      <!-- 4. NAVEGADOR KDF -->
+      <div class="app-card" onclick="window.location.href='/browser'">
+        <div>
+          <div class="app-icon">🌐</div>
+          <div class="app-name">Navegador KDF</div>
+          <div class="app-desc">Navegación privada con sanitizador de URLs infladas, anti-doxxing y bloqueo de tracking.</div>
+        </div>
+        <span class="app-tag tag-client">ESCUDO URL ACTIVO</span>
+      </div>
+
+      <!-- 5. TELÉFONO KDF -->
+      <div class="app-card" onclick="alert('Iniciando Teléfono KDF...')">
+        <div>
+          <div class="app-icon">📞</div>
+          <div class="app-name">Teléfono KDF</div>
+          <div class="app-desc">Marcador seguro, transcripción de llamadas en tiempo real y filtro de spam.</div>
+        </div>
+        <span class="app-tag tag-client">CONSUME IA KDF-STUDIO</span>
+      </div>
+
+      <!-- 6. SEGURIDAD KDF -->
+      <div class="app-card" onclick="window.location.href='/security'">
+        <div>
+          <div class="app-icon">🛡️</div>
+          <div class="app-name">Seguridad KDF</div>
+          <div class="app-desc">Escudo anti-toques fantasma, anti-deepfake de audio y bóveda protegida por NIP único.</div>
+        </div>
+        <span class="app-tag tag-client">ESCUDO CENTINELA</span>
+      </div>
+
+      <!-- 7. OPTIMIZAR KDF -->
+      <div class="app-card" onclick="window.location.href='/optimizer'">
+        <div>
+          <div class="app-icon">🧹</div>
+          <div class="app-name">Optimizar KDF</div>
+          <div class="app-desc">Purga de cachés, acelerador de RAM para IA y optimización TRIM de flash UFS/eMMC.</div>
+        </div>
+        <span class="app-tag tag-client">OPTIMIZACIÓN FLASH</span>
+      </div>
+
+      <!-- 8. MENSAJES KDF -->
+      <div class="app-card" onclick="alert('Abriendo Mensajes KDF...')">
+        <div>
+          <div class="app-icon">💬</div>
+          <div class="app-name">Mensajes KDF</div>
+          <div class="app-desc">Mensajería punto a punto cifrada con redacción y resumen por IA local.</div>
+        </div>
+        <span class="app-tag tag-client">CONSUME IA KDF-STUDIO</span>
+      </div>
+
+      <!-- 9. TOOLS KDF -->
+      <div class="app-card server-host" onclick="window.location.href='/'">
+        <div>
+          <div class="app-icon">🛠️</div>
+          <div class="app-name">Tools KDF</div>
+          <div class="app-desc">Suite Universal de diagnóstico, desbrickeo EDL 9008, FRP Bypass y mantenimiento.</div>
+        </div>
+        <span class="app-tag tag-host">SERVIDOR DE IA LOCAL</span>
+      </div>
+
+      <!-- 10. SCRIPT KDF -->
+      <div class="app-card" onclick="alert('Iniciando Script KDF...')">
+        <div>
+          <div class="app-icon">💻</div>
+          <div class="app-name">Script KDF</div>
+          <div class="app-desc">Consola de desarrollo y automatización de comandos con asistencia técnica.</div>
+        </div>
+        <span class="app-tag tag-client">CONSUME IA KDF-STUDIO</span>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

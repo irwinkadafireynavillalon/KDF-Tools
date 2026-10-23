@@ -1,0 +1,40 @@
+# ============================================================
+# KDF-LuX · requirements.txt
+# Dependencias Python completas para el backend Flask
+# + IA Local (llama.cpp) + módulos GSM avanzados
+# ============================================================
+
+# ── Core Web Framework ──────────────────────────────────────
+flask>=3.0.0
+werkzeug>=3.0.0
+
+# ── HTTP / Async ─────────────────────────────────────────────
+requests>=2.31.0
+httpx>=0.27.0
+aiohttp>=3.9.0
+
+# ── Config / Serialización ───────────────────────────────────
+pyyaml>=6.0.1
+
+# ── IA / LLM Client (OpenAI-compatible para llama.cpp) ──────
+openai>=1.30.0          # cliente OpenAI-compatible con llama-server
+google-generativeai>=0.8.0   # Google Gemini SDK oficial
+
+# ── IA Local extras ──────────────────────────────────────────
+numpy>=1.26.0
+# llama-cpp-python>=0.2.90   # Opcional: binding Python directo a llama.cpp
+
+# ── Android / USB Tools ──────────────────────────────────────
+pyusb>=1.2.1
+pyserial>=3.5
+
+# ── Sistema / Utilidades ─────────────────────────────────────
+psutil>=5.9.0           # Monitoreo CPU/RAM del servidor IA
+websockets>=12.0        # Streaming de respuestas IA en tiempo real
+rich>=13.0.0            # Output bonito en terminal
+
+# ── Apple / iOS Tools ────────────────────────────────────────
+pymobiledevice3>=4.14.0  # Bypass iCloud, DFU, diagnóstico iOS
+
+# ── Seguridad / Criptografía ─────────────────────────────────
+cryptography>=42.0.0

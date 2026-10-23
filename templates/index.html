@@ -1,0 +1,881 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KDF-Tools · Suite Universal de Reparación, Firmware & Diagnóstico</title>
+  <link rel="icon" type="image/png" href="/static/img_kdf_logo.png">
+  <link rel="stylesheet" href="/static/style.css">
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+
+  <!-- ==============================================================================
+       HEADER MEWTWO BIMETÁLICO: ORO, PLATA, NEGRO, BLANCO Y MORADO
+       ============================================================================== -->
+  <header class="kdf-header">
+    <div class="logo-box">
+      <div class="logo-img-wrapper">
+        <img src="/static/img_kdf_logo.png" alt="KDF-Tools Mewtwo Logo" class="logo-img" onerror="this.src='/static/kdf_tools_logo.png'">
+      </div>
+      <div class="title-group">
+        <h1>KDF-Tools</h1>
+        <p class="subtitle">
+          <span>Arquitectura Bimetálica Mewtwo · Dual Core</span>
+          <span class="brand-pill">⚡ Spark</span>
+          <span class="brand-pill">☁️ Gemini 3.8 Flash</span>
+        </p>
+      </div>
+    </div>
+    <div class="header-status">
+      <span class="telemetry-badge" id="telemetry-badge">
+        <span class="status-dot">●</span> Escaneando Dispositivo...
+      </span>
+    </div>
+  </header>
+
+  <!-- ==============================================================================
+       BARRA DE NAVEGACIÓN RÁPIDA (ACCESO DIRECTO A ASESORÍA & HERRAMIENTAS)
+       ============================================================================== -->
+  <nav class="kdf-top-nav">
+    <a href="#section-chat" class="nav-tab nav-tab-highlight">💬 Asesor & Chat IA</a>
+    <a href="#section-maintenance" class="nav-tab">🛠️ Mantenimiento</a>
+    <a href="#section-operations" class="nav-tab">📦 Flasheo & Operaciones</a>
+    <a href="#section-terminal" class="nav-tab">💻 Consola en Vivo</a>
+  </nav>
+
+  <!-- ==============================================================================
+       CONTENEDOR PRINCIPAL
+       ============================================================================== -->
+  <main class="kdf-container">
+    
+    <!-- BARRA LATERAL: 6 MÓDULOS DE DISPOSITIVOS -->
+    <aside class="kdf-sidebar">
+      <div class="sidebar-title">📁 Módulos por Dispositivo</div>
+      <div class="category-list" id="category-list">
+        <!-- Render dinámico de las 6 categorías -->
+      </div>
+
+      <div class="sidebar-divider"></div>
+
+      <div class="sidebar-title">⚙️ Marca & Procesador</div>
+      <div class="form-group">
+        <label for="brand-select">Marca:</label>
+        <select id="brand-select" class="kdf-select"></select>
+      </div>
+      <div class="form-group">
+        <label for="proc-select">Procesador / Plataforma:</label>
+        <select id="proc-select" class="kdf-select"></select>
+      </div>
+
+      <div class="sidebar-divider"></div>
+
+      <div class="device-card" id="local-device-card">
+        <h4>📡 Dispositivo Detectado</h4>
+        <div id="local-device-info" class="device-info-text">Escaneando subsistema ADB / USB...</div>
+      </div>
+    </aside>
+
+    <!-- PANEL CENTRAL -->
+    <section class="kdf-main-panel">
+
+      <!-- ==============================================================================
+           SECCIÓN 1: ASESOR TÉCNICO & CHAT DE INSTRUCCIONES IA (FRONT & CENTER)
+           ============================================================================== -->
+      <div class="card panel-card diagnostic-chat-card" id="section-chat" style="border: 2px solid var(--mewtwo-purple); box-shadow: 0 0 20px rgba(155, 77, 255, 0.25);">
+        <div class="panel-header">
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <span style="font-size: 1.5rem;">💬</span>
+            <div>
+              <h2>ASESOR TÉCNICO & CHAT DE INSTRUCCIONES IA</h2>
+              <span class="section-desc" style="margin: 0; font-size: 0.8rem; color: #cbd5e1;">Tu copiloto técnico para diagnósticos, asesoría paso a paso e instrucciones personalizadas</span>
+            </div>
+          </div>
+          <div class="ai-header-controls">
+            <span class="m-badge m-badge-purple" id="diag-badge">Telemetría: Enlazada</span>
+            <div class="ai-engine-selector">
+              <div class="engine-tab tab-spark active" data-engine="spark">⚡ Spark Core</div>
+              <div class="engine-tab" data-engine="gemini">☁️ Gemini 3.8 Flash</div>
+              <div class="engine-tab" data-engine="auto">🔄 Auto</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- BOTONES DE ASESORÍA Y ACCIÓN RÁPIDA -->
+        <div class="diag-pills-container">
+          <button class="diag-pill" data-prompt="¿Qué operación me recomiendas ejecutar en este momento para el dispositivo seleccionado?">💡 Recomiéndame qué hacer</button>
+          <button class="diag-pill" data-prompt="Asesórame sobre cómo preparar mi equipo para flasheo o reparación de forma segura sin dañarlo.">📋 Asesoría Previa</button>
+          <button class="diag-pill" data-prompt="Diagnostica el estado general de los dispositivos conectados mediante ADB, Fastboot y USB, e indícame qué pasos o reparaciones recomiendas.">🩺 Diagnóstico General</button>
+          <button class="diag-pill" data-prompt="Tengo un celular atorado en bootloop / reinicios constantes. ¿Cómo lo recupero paso a paso con KDF-Tools sin perder datos si es posible?">🔄 Rescate de Bootloop</button>
+          <button class="diag-pill" data-prompt="Quiero detectar y remover bloqueos crediticios o de empresa (PayJoy, Knox Guard, MDM corporativo). ¿Qué operación debo ejecutar y qué precauciones tomar?">🚫 Remover PayJoy / Knox</button>
+          <button class="diag-pill" data-prompt="Mi dispositivo no enciende ni entra a fastboot, solo se conecta como puerto 9008 Qualcomm o MTK Preloader. ¿Cómo lo flasheo en EDL?">⚡ Flasheo EDL 9008</button>
+          <button class="diag-pill" data-prompt="Explícame cómo desbloquear el bootloader de mi marca de forma segura y cómo verificar que el Anti-Rollback (ARB) no cause brickeo.">🔓 Desbloqueo Bootloader</button>
+          <button class="diag-pill" data-prompt="¿Cómo hago una limpieza profunda de memoria caché y optimización TRIM sin borrar mis fotos o archivos personales?">🧹 Limpiar Memoria</button>
+        </div>
+
+        <div class="chat-history" id="chat-history">
+          <div class="chat-msg bot-msg">
+            <strong>KDF Asesor IA:</strong> Hola. Estoy listo para ayudarte. Puedes <strong>pedirme asesoría técnica</strong>, <strong>indicarme qué función o comando deseas ejecutar</strong>, o pulsar cualquiera de los accesos rápidos arriba. ¿En qué te asesoro hoy?
+          </div>
+        </div>
+        <div class="chat-input-row" style="display: flex; gap: 8px; align-items: center;">
+          <input type="text" id="chat-input" placeholder="Escribe o pulsa el micrófono para hablar en vivo con la IA..." autocomplete="off" style="flex: 1;">
+          <button id="btn-mic-live" class="btn" type="button" title="Conversar en vivo por voz (Estilo Gemini)" style="background: linear-gradient(135deg, #7928ca, #ff0080); color: white; border: none; padding: 10px 14px; border-radius: 8px; font-weight: bold; display: flex; align-items: center; gap: 6px; cursor: pointer; transition: all 0.3s ease;">
+            <span id="mic-icon">🎙️</span> <span id="mic-text">Voz Live</span>
+          </button>
+          <button id="btn-audio-toggle" class="btn" type="button" title="Activar/Silenciar respuesta en voz alta" style="background: rgba(255,255,255,0.08); color: var(--mewtwo-gold, #ffd700); border: 1px solid rgba(255,255,255,0.2); padding: 10px 12px; border-radius: 8px; cursor: pointer;">
+            <span id="speaker-icon">🔊</span>
+          </button>
+          <button id="btn-send-chat" class="btn btn-primary">💬 Enviar</button>
+        </div>
+      </div>
+      
+      <!-- SECCIÓN 2: HERRAMIENTAS DE MANTENIMIENTO (NUEVAS OPERACIONES UNIVERSALES) -->
+      <div class="card maintenance-section" id="section-maintenance">
+        <div class="panel-header">
+          <h2>🛠️ HERRAMIENTAS DE MANTENIMIENTO</h2>
+          <span class="m-badge m-badge-purple">Universal · ADB / Fastboot / EDL</span>
+        </div>
+        <p class="section-desc">Módulos de utilidad directa aplicables a cualquier dispositivo:</p>
+
+        <div class="maintenance-grid">
+          
+          <!-- 1. Modo Seguro -->
+          <div class="maintenance-card" data-op="mode_safe">
+            <div class="m-card-header">
+              <span class="m-card-title">🛡️ Entrar en modo seguro</span>
+              <span class="m-badge m-badge-gold">ADB</span>
+            </div>
+            <p class="m-card-desc">Activa modo seguro de Android (<code>persist.sys.safemode=1</code>) y reinicia para aislar apps de terceros.</p>
+            <div class="m-card-meta">Permiso: ADB (lectura/escritura props, sin root)</div>
+            <button class="btn-card-execute" onclick="openOperationModal('mode_safe')">⚡ Ejecutar</button>
+          </div>
+
+          <!-- 2. App Blocker -->
+          <div class="maintenance-card" data-op="app_blocker">
+            <div class="m-card-header">
+              <span class="m-card-title">🚫 Desactivar / eliminar app bloqueadora</span>
+              <span class="m-badge m-badge-purple">ADB + Fastboot</span>
+            </div>
+            <p class="m-card-desc">Entra en modo seguro, desactiva (<code>pm disable-user</code>) o desinstala paquete bloqueador y opcional fastboot -w.</p>
+            <div class="m-card-meta">Permiso: ADB (pm) + opcional fastboot -w</div>
+            <button class="btn-card-execute" onclick="openOperationModal('app_blocker')">⚡ Ejecutar</button>
+          </div>
+
+          <!-- 3. Memory Cleaner -->
+          <div class="maintenance-card" data-op="mem_cleaner">
+            <div class="m-card-header">
+              <span class="m-card-title">🧹 Limpiar cachés y memoria</span>
+              <span class="m-badge m-badge-gold">ADB + Fastboot</span>
+            </div>
+            <p class="m-card-desc">Borra <code>/data/cache</code>, <code>/cache</code> y, opcionalmente con confirmación, ejecuta <code>fastboot -w</code>.</p>
+            <div class="m-card-meta">Permiso: ADB (rm) + opcional fastboot -w</div>
+            <button class="btn-card-execute" onclick="openOperationModal('mem_cleaner')">⚡ Ejecutar</button>
+          </div>
+
+          <!-- 4. Bootloader Unlock -->
+          <div class="maintenance-card" data-op="bootloader_unlock">
+            <div class="m-card-header">
+              <span class="m-card-title">🔓 Desbloquear bootloader</span>
+              <span class="m-badge m-badge-purple">Fastboot</span>
+            </div>
+            <p class="m-card-desc">Intenta desbloqueo del bootloader ejecutando <code>fastboot flashing unlock</code> y <code>fastboot oem unlock</code>.</p>
+            <div class="m-card-meta">Permiso: Fastboot (dispositivo en bootloader)</div>
+            <button class="btn-card-execute" onclick="openOperationModal('bootloader_unlock')">⚡ Ejecutar</button>
+          </div>
+
+          <!-- 5. EDL Flasher -->
+          <div class="maintenance-card" data-op="edl_flasher">
+            <div class="m-card-header">
+              <span class="m-card-title">⚡ Flashear bootloader vía EDL</span>
+              <span class="m-badge m-badge-gold">Qualcomm 9008</span>
+            </div>
+            <p class="m-card-desc">Usa <code>edl.py</code> para escribir <code>bootloader.img</code> y <code>radio.img</code> en modo EDL test-point.</p>
+            <div class="m-card-meta">Permiso: EDL (chipset Snapdragon / USB 05c6:9008)</div>
+            <button class="btn-card-execute" onclick="openOperationModal('edl_flasher')">⚡ Ejecutar</button>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- SECCIÓN 3: OPERACIONES ESPECÍFICAS DE DISPOSITIVO -->
+      <div class="card panel-card" id="section-operations">
+        <div class="panel-header">
+          <h2>📦 OPERACIONES ESPECÍFICAS DE DISPOSITIVO</h2>
+          <span class="m-badge m-badge-gold">Kernel & Firmware</span>
+        </div>
+        <p class="section-desc">Operaciones avanzadas vinculadas a la categoría, marca y chipset seleccionado:</p>
+        
+        <div class="operations-grid" id="operations-grid">
+          <!-- Render dinámico de operaciones restantes -->
+        </div>
+
+        <div class="action-bar">
+          <button id="btn-execute-op" class="btn btn-primary">▶ Ejecutar Operación Seleccionada</button>
+          <button id="btn-refresh-status" class="btn btn-secondary">🔄 Actualizar Telemetría</button>
+        </div>
+      </div>
+
+      <!-- SECCIÓN 4: CONSOLA DE SALIDA & LOGS EN TIEMPO REAL -->
+      <div class="card panel-card" id="section-terminal">
+        <div class="panel-header">
+          <h2>💻 CONSOLA DE SALIDA & LOGS EN TIEMPO REAL</h2>
+          <div style="display:flex; gap:8px;">
+            <button id="btn-copy-console" class="btn-sm">Copiar</button>
+            <button id="btn-clear-console" class="btn-sm">Limpiar</button>
+          </div>
+        </div>
+        <pre class="terminal-box" id="terminal-output">[KDF-Tools] Suite iniciada con arquitectura Mewtwo. Listo para diagnósticos y operaciones...</pre>
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- BOTÓN FLOTANTE MEWTWO "ASESOR IA" -->
+  <button id="btn-floating-chat" class="floating-chat-btn" onclick="document.getElementById('section-chat').scrollIntoView({behavior: 'smooth'}); document.getElementById('chat-input').focus();">
+    💬 Asesor IA
+  </button>
+
+  <!-- ==============================================================================
+       VENTANA MODAL REUTILIZADA PARA CONFIGURACIÓN DE OPERACIONES
+       ============================================================================== -->
+  <div class="kdf-modal-overlay" id="op-modal">
+    <div class="kdf-modal">
+      <div class="modal-header">
+        <h3 id="modal-title">Configuración de Operación</h3>
+        <button class="modal-close" onclick="closeModal()">&times;</button>
+      </div>
+
+      <div class="modal-body" id="modal-body">
+        <!-- Inyección dinámica de controles según la operación -->
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeModal()">Cancelar</button>
+        <button class="btn btn-primary" id="btn-modal-confirm">Confirmar y Ejecutar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==============================================================================
+       LÓGICA JAVASCRIPT DE INTERFAZ Y TELEMETRÍA
+       ============================================================================== -->
+  <script>
+    let taxonomyData = null;
+    let selectedCategory = null;
+    let selectedOperation = null;
+    let currentModalOp = null;
+    let currentAiEngine = 'spark';
+
+    // 1. Cargar Taxonomía desde API
+    $.getJSON('/api/categories', function(data) {
+      taxonomyData = data;
+      renderCategories();
+      renderGeneralOperations();
+      refreshDeviceStatus();
+    });
+
+    // Renderizado de las 6 categorías de dispositivo
+    function renderCategories() {
+      const container = $('#category-list');
+      container.empty();
+      if (!taxonomyData || !taxonomyData.categories) return;
+
+      taxonomyData.categories.forEach((cat, idx) => {
+        const activeClass = idx === 0 ? 'active' : '';
+        if (idx === 0) selectedCategory = cat;
+        const item = $(`
+          <div class="category-item ${activeClass}" data-id="${cat.id}">
+            <span class="cat-name">${cat.name}</span>
+          </div>
+        `);
+        item.on('click', function() {
+          $('.category-item').removeClass('active');
+          $(this).addClass('active');
+          selectedCategory = cat;
+          updateBrandsAndProcessors();
+          $('#terminal-output').append(`\n[*] Categoría seleccionada: ${cat.name}`);
+          scrollTerminal();
+        });
+        container.append(item);
+      });
+      updateBrandsAndProcessors();
+    }
+
+    function updateBrandsAndProcessors() {
+      const brandSel = $('#brand-select').empty();
+      const procSel = $('#proc-select').empty();
+
+      if (!selectedCategory || !selectedCategory.brands) return;
+
+      selectedCategory.brands.forEach((b) => {
+        brandSel.append($('<option>', { value: b.name, text: b.name }));
+      });
+
+      function fillProcs() {
+        procSel.empty();
+        const currentBrandName = brandSel.val();
+        const bObj = selectedCategory.brands.find(b => b.name === currentBrandName) || selectedCategory.brands[0];
+        if (bObj && bObj.processors) {
+          bObj.processors.forEach((p) => {
+            procSel.append($('<option>', { value: p, text: p }));
+          });
+        } else {
+          procSel.append($('<option>', { value: 'Universal', text: 'Universal / Genérico' }));
+        }
+      }
+
+      brandSel.off('change').on('change', fillProcs);
+      fillProcs();
+    }
+
+    // Render de operaciones generales (excluyendo las 5 destacadas en mantenimiento)
+    function renderGeneralOperations() {
+      const container = $('#operations-grid');
+      container.empty();
+      if (!taxonomyData || !taxonomyData.operations) return;
+
+      const utilityIds = ['mode_safe', 'app_blocker', 'mem_cleaner', 'bootloader_unlock', 'edl_flasher'];
+
+      const generalOps = taxonomyData.operations.filter(op => !utilityIds.includes(op.id));
+
+      generalOps.forEach((op, idx) => {
+        const activeClass = idx === 0 ? 'selected-op' : '';
+        if (idx === 0 && !selectedOperation) selectedOperation = op;
+        const card = $(`
+          <div class="op-card ${activeClass}" data-id="${op.id}">
+            <div class="op-title">${op.name}</div>
+            <div class="op-desc">${op.description}</div>
+            <span class="op-tag">${op.category}</span>
+          </div>
+        `);
+        card.on('click', function() {
+          $('.op-card').removeClass('selected-op');
+          $(this).addClass('selected-op');
+          selectedOperation = op;
+          $('#terminal-output').append(`\n[*] Operación seleccionada: ${op.name}`);
+          scrollTerminal();
+        });
+        container.append(card);
+      });
+    }
+
+    // Telemetría en tiempo real
+    function refreshDeviceStatus() {
+      $.getJSON('/api/device_status', function(data) {
+        const badge = $('#telemetry-badge');
+        const infoBox = $('#local-device-info');
+        
+        // Actualizar Badge con fase de telemetría
+        const phase = data.phase_status || 'Modo Normal';
+        badge.html(`<span class="status-dot">●</span> ${phase}`);
+
+        if (data.safe_mode_active && data.bootloader_unlocked) {
+          badge.removeClass('badge-online').addClass('badge-safe-unlocked');
+        } else if (data.safe_mode_active || data.bootloader_unlocked) {
+          badge.removeClass('badge-safe-unlocked').addClass('badge-online');
+        } else {
+          badge.removeClass('badge-safe-unlocked badge-online');
+        }
+
+        if (data.local_device && data.local_device.model) {
+          const d = data.local_device;
+          infoBox.html(`
+            <b>Modelo:</b> ${d.brand} ${d.model}<br>
+            <b>Placa / SKU:</b> ${d.device} (${d.sku || 'N/A'})<br>
+            <b>Android / Build:</b> Android ${d.android} (${d.build || 'N/A'})<br>
+            <b>Fase Sistema:</b> ${phase}<br>
+            <b>Dispositivos ADB:</b> ${data.adb_devices.length > 0 ? data.adb_devices.join(', ') : 'Ninguno'}<br>
+            <b>Fastboot:</b> ${data.fastboot_devices.length > 0 ? data.fastboot_devices.join(', ') : 'No detectado'}
+          `);
+        } else {
+          infoBox.text('No se detectó dispositivo local getprop.');
+        }
+      });
+    }
+
+    function scrollTerminal() {
+      const box = $('#terminal-output');
+      box.scrollTop(box[0].scrollHeight);
+    }
+
+    $('#btn-refresh-status').on('click', function() {
+      refreshDeviceStatus();
+      $('#terminal-output').append('\n[*] Telemetría de hardware y estado de fase actualizados.');
+      scrollTerminal();
+    });
+
+    $('#btn-clear-console').on('click', function() {
+      $('#terminal-output').text('[KDF-Tools] Consola limpia. Listo para comandos.');
+    });
+
+    $('#btn-copy-console').on('click', function() {
+      const txt = $('#terminal-output').text();
+      navigator.clipboard.writeText(txt).then(() => {
+        alert('Salida de consola copiada al portapapeles.');
+      });
+    });
+
+    // ==========================================================================
+    // VENTANA MODAL REUTILIZADA PARA APP BLOCKER, MEM CLEANER, EDL, ETC.
+    // ==========================================================================
+    function openOperationModal(opId) {
+      currentModalOp = opId;
+      const modal = $('#op-modal');
+      const title = $('#modal-title');
+      const body = $('#modal-body');
+
+      if (opId === 'app_blocker') {
+        title.html('🚫 Configuración: Desactivar App Bloqueadora');
+        body.html(`
+          <p>Indica el nombre de paquete de la aplicación que deseas desactivar o remover:</p>
+          <div class="form-group">
+            <label>Nombre del Paquete (Package Name):</label>
+            <input type="text" id="modal-pkg-name" class="modal-input" value="com.ejemplo.blocker" placeholder="ej. com.payjoy.access o com.ejemplo.blocker">
+          </div>
+          <div class="form-group">
+            <label>Acción a Ejecutar:</label>
+            <div class="radio-group">
+              <label class="radio-label"><input type="radio" name="modal-action-mode" value="disable" checked> Desactivar (pm disable-user)</label>
+              <label class="radio-label"><input type="radio" name="modal-action-mode" value="uninstall"> Desinstalar (pm uninstall)</label>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>¿Realizar formateo de datos de usuario (fastboot -w)?</label>
+            <div class="radio-group">
+              <label class="radio-label"><input type="radio" name="modal-wipe-user" value="no" checked> No (Conservar datos)</label>
+              <label class="radio-label"><input type="radio" name="modal-wipe-user" value="yes"> Sí (fastboot -w wipe completo)</label>
+            </div>
+          </div>
+          <div class="warning-callout">
+            ⚠️ Si activas <b>fastboot -w</b>, se borrarán todos los datos del usuario (/data) para eliminar residuos del bloqueo.
+          </div>
+        `);
+      } else if (opId === 'mem_cleaner') {
+        title.html('🧹 Limpieza de Memoria & Caché');
+        body.html(`
+          <p>Esta operación purga <code>/data/cache/*</code> y <code>/cache/*</code> para acelerar el sistema y liberar espacio.</p>
+          <div class="form-group">
+            <label>¿Deseas realizar wipe de datos de usuario con fastboot -w?</label>
+            <div class="radio-group">
+              <label class="radio-label"><input type="radio" name="modal-mem-wipe" value="no" checked> No (Solo limpiar cachés)</label>
+              <label class="radio-label"><input type="radio" name="modal-mem-wipe" value="yes"> Sí (Wipe profundo fastboot -w)</label>
+            </div>
+          </div>
+          <div class="warning-callout">
+            ℹ️ La limpieza de caché no borra fotos ni archivos personales, salvo que elijas la opción de wipe profundo.
+          </div>
+        `);
+      } else if (opId === 'mode_safe') {
+        title.html('🛡️ Gestión de Modo Seguro Android');
+        body.html(`
+          <p>Configura la propiedad <code>persist.sys.safemode</code> y reinicia el dispositivo:</p>
+          <div class="form-group">
+            <label>Estado Deseado:</label>
+            <div class="radio-group">
+              <label class="radio-label"><input type="radio" name="modal-safe-action" value="--on" checked> Activar Modo Seguro (--on)</label>
+              <label class="radio-label"><input type="radio" name="modal-safe-action" value="--off"> Modo Normal / Salir (--off)</label>
+            </div>
+          </div>
+        `);
+      } else if (opId === 'bootloader_unlock') {
+        title.html('🔓 Desbloquear Bootloader (Fastboot)');
+        body.html(`
+          <p>Se ejecutará la secuencia de comandos <code>fastboot flashing unlock</code> y <code>fastboot oem unlock</code>.</p>
+          <div class="warning-callout">
+            ⚠️ El desbloqueo del bootloader formateará las claves de cifrado del dispositivo. Asegúrate de tener respaldo de datos.
+          </div>
+        `);
+      } else if (opId === 'edl_flasher') {
+        title.html('⚡ Flasheo Bootloader vía EDL (9008)');
+        body.html(`
+          <p>Escribe bootloader y módem directamente por protocolo Sahara en chipsets Qualcomm:</p>
+          <div class="form-group">
+            <label>Imagen de Bootloader:</label>
+            <input type="text" id="modal-boot-img" class="modal-input" value="bootloader.img">
+          </div>
+          <div class="form-group">
+            <label>Imagen de Radio / Módem:</label>
+            <input type="text" id="modal-radio-img" class="modal-input" value="radio.img">
+          </div>
+          <div class="form-group">
+            <label>Programador Firehose:</label>
+            <input type="text" id="modal-firehose" class="modal-input" value="prog_firehose_ddr.elf">
+          </div>
+        `);
+      } else if (opId === 'payjoy_unlock') {
+        title.html('🔓 Desbloqueo PayJoy / Peyo / Finance Lock');
+        body.html(`
+          <p>Se ejecutará el bypass de paquetes de bloqueo crediticio, Knox Guard y bloqueo MDM.</p>
+          <div class="warning-callout" style="border-left-color: #ff4757; color: #ff8b94;">
+            ⚠️ ADVERTENCIA CRÍTICA: Esta operación deshabilitará y desinstalará los servicios de bloqueo financiero y requerirá reinicio del dispositivo.
+          </div>
+          <p style="margin-top: 10px; font-size: 0.85rem; color: #cbd5e1;">Asegúrate de que el equipo esté conectado con Depuración USB activa o en Fastboot.</p>
+        `);
+      } else if (opId === 'imei_repair') {
+        title.html('📶 Reparación y Calibración de IMEI / NV Data');
+        body.html(`
+          <p>Restauración de particiones NVRAM/NVDATA y reparación de baseband/señal celular.</p>
+          <div class="warning-callout" style="border-left-color: #ffd700; color: #ffe57f;">
+            ⚠️ ADVERTENCIA LEGAL: La reescritura de IMEI debe realizarse únicamente con el número original asignado por el fabricante tras pérdida de datos NV o brickeo.
+          </div>
+        `);
+      } else if (opId === 'icloud_bypass') {
+        title.html('🍏 Asistente Bypass iCloud / Apple DFU');
+        body.html(`
+          <p>Diagnóstico en modo DFU / Recovery y asistente Checkm8 para dispositivos Apple.</p>
+          <div class="warning-callout">
+            ℹ️ Conecta el iPhone/iPad en modo DFU (VID 05ac:1227) o Recovery (VID 05ac:1281) mediante cable OTG.
+          </div>
+        `);
+      } else if (opId === 'nh_root_tool') {
+        title.html('⚡ NH Root / Magisk / KernelSU Engine');
+        body.html(`
+          <p>Inyección de privilegios root automatizada mediante parchado de boot.img o KernelSU GKI.</p>
+          <div class="warning-callout">
+            ⚠️ Modificar la partición de arranque (boot/init_boot) requiere bootloader previamente desbloqueado.
+          </div>
+        `);
+      } else if (opId === 'mitool_service') {
+        title.html('🦊 Xiaomi MiTool Service (Fastboot / EDL)');
+        body.html(`
+          <p>Verificación de índice Anti-Rollback (ARB) y flasheo de servicio para Xiaomi, Redmi y POCO.</p>
+          <div class="warning-callout">
+            ⚠️ Si el nivel de ARB de la ROM es inferior al del equipo, se producirá un hard brick permanente.
+          </div>
+        `);
+      } else {
+        // Modal genérico para cualquier otra operación crítica
+        const opName = selectedOperation ? selectedOperation.name : opId;
+        title.html('⚠️ Confirmación de Seguridad: ' + opName);
+        body.html(`
+          <p>Estás a punto de ejecutar una operación a bajo nivel en el dispositivo seleccionado.</p>
+          <div class="form-group">
+            <label>Dispositivo Seleccionado:</label>
+            <div style="padding: 8px; background: #0b0d14; border-radius: 6px; font-family: monospace; color: #00ff9d;">
+              ${$('#brand-select').val() || 'Universal'} · ${$('#proc-select').val() || 'Auto-detect'}
+            </div>
+          </div>
+          <div class="warning-callout" style="border-left-color: #ffd700; color: #ffe57f;">
+            ⚠️ Confirma que has respaldado los datos importantes y que el dispositivo cuenta con al menos 50% de batería.
+          </div>
+        `);
+      }
+
+      modal.css('display', 'flex');
+    }
+
+    function closeModal() {
+      $('#op-modal').hide();
+      currentModalOp = null;
+    }
+
+    // Confirmación y ejecución desde el modal
+    $('#btn-modal-confirm').on('click', function() {
+      if (!currentModalOp) return;
+      const opId = currentModalOp;
+      let payload = {
+        operation_id: opId,
+        brand: $('#brand-select').val() || '',
+        processor: $('#proc-select').val() || '',
+        device: selectedCategory ? selectedCategory.id : ''
+      };
+
+      if (opId === 'app_blocker') {
+        payload.package_name = $('#modal-pkg-name').val().trim();
+        payload.action_mode = $('input[name="modal-action-mode"]:checked').val();
+        payload.wipe_userdata = $('input[name="modal-wipe-user"]:checked').val();
+      } else if (opId === 'mem_cleaner') {
+        payload.wipe_userdata = $('input[name="modal-mem-wipe"]:checked').val();
+      } else if (opId === 'mode_safe') {
+        payload.action_mode = $('input[name="modal-safe-action"]:checked').val();
+      } else if (opId === 'edl_flasher') {
+        payload.boot_img = $('#modal-boot-img').val().trim();
+        payload.radio_img = $('#modal-radio-img').val().trim();
+        payload.firehose = $('#modal-firehose').val().trim();
+      }
+
+      closeModal();
+      executePayload(payload);
+    });
+
+    // Ejecutar operación seleccionada en la cuadrícula general
+    $('#btn-execute-op').on('click', function() {
+      if (!selectedOperation) {
+        alert('Por favor selecciona una operación.');
+        return;
+      }
+      const op = selectedOperation;
+      const utilityIds = ['mode_safe', 'app_blocker', 'mem_cleaner', 'bootloader_unlock', 'edl_flasher', 'payjoy_unlock', 'imei_repair', 'icloud_bypass', 'nh_root_tool', 'mitool_service'];
+      if (op.critical || utilityIds.includes(op.id)) {
+        openOperationModal(op.id);
+        return;
+      }
+
+      executePayload({
+        operation_id: op.id,
+        brand: $('#brand-select').val() || '',
+        processor: $('#proc-select').val() || '',
+        device: selectedCategory ? selectedCategory.id : ''
+      });
+    });
+
+    function executePayload(payload) {
+      $('#terminal-output').append(`\n\n==========================================================\n[EJECUTANDO KDF-TOOLS] Operación: ${payload.operation_id}\nParámetros: ${JSON.stringify(payload)}\n==========================================================\n`);
+      scrollTerminal();
+
+      $.ajax({
+        url: '/api/execute',
+        method: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify(payload),
+        success: function(resp) {
+          $('#terminal-output').append('\n' + resp.output + '\n[OK] Fin de ejecución de operación.\n');
+          scrollTerminal();
+          refreshDeviceStatus();
+        },
+        error: function(xhr) {
+          $('#terminal-output').append('\n[ERROR] Fallo de comunicación con el backend KDF-Tools: ' + xhr.statusText + '\n');
+          scrollTerminal();
+        }
+      });
+    }
+
+    // ==========================================================================
+    // ASISTENTE INTELIGENTE: SPARK & GEMINI DUAL CORE
+    // ==========================================================================
+    $('.engine-tab').on('click', function() {
+      $('.engine-tab').removeClass('active tab-spark');
+      $(this).addClass('active');
+      currentAiEngine = $(this).data('engine');
+      if (currentAiEngine === 'spark') {
+        $(this).addClass('tab-spark');
+      }
+      $('#terminal-output').append(`\n[*] Motor IA activo: ${currentAiEngine.toUpperCase()}`);
+      scrollTerminal();
+    });
+
+    // Píldoras de diagnóstico rápido
+    $(document).on('click', '.diag-pill', function() {
+      const prompt = $(this).data('prompt');
+      $('#chat-input').val(prompt);
+      sendChat();
+    });
+
+    function sendChat() {
+      const input = $('#chat-input');
+      const text = input.val().trim();
+      if (!text) return;
+      input.val('');
+
+      const history = $('#chat-history');
+      history.append(`<div class="chat-msg user-msg"><strong>Tú:</strong> ${text}</div>`);
+      history.scrollTop(history[0].scrollHeight);
+
+      const brand = $('#brand-select').val() || '';
+      const proc = $('#proc-select').val() || '';
+      const cat = selectedCategory ? selectedCategory.name : '';
+      const op = selectedOperation ? selectedOperation.name : '';
+
+      history.append(`<div class="chat-msg bot-msg typing-msg"><em>KDF-Tools AI (${currentAiEngine}) procesando...</em></div>`);
+      history.scrollTop(history[0].scrollHeight);
+
+      $.ajax({
+        url: '/api/chat',
+        method: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify({
+          message: text,
+          category: cat,
+          brand: brand,
+          processor: proc,
+          operation: op,
+          engine: currentAiEngine
+        }),
+        success: function(resp) {
+          $('.typing-msg').remove();
+          history.append(`<div class="chat-msg bot-msg"><strong>KDF-Tools AI [${resp.source}]:</strong><br>${resp.reply.replace(/\n/g, '<br>')}</div>`);
+          history.scrollTop(history[0].scrollHeight);
+          speakResponse(resp.reply);
+        },
+        error: function() {
+          $('.typing-msg').remove();
+          history.append(`<div class="chat-msg bot-msg">[Error de respuesta del asistente]</div>`);
+          history.scrollTop(history[0].scrollHeight);
+        }
+      });
+    }
+
+    // =========================================================================
+    // NÚCLEO DE LLAMADA EN VIVO CONTINUA (ESTILO GEMINI LIVE / DUPLEX AUDIO)
+    // Permite hablar continuamente, escuchar la IA y seguir dictando mejoras
+    // =========================================================================
+    let callActive = false;
+    let ttsEnabled = true;
+    let recognition = null;
+    let isSpeaking = false;
+
+    // Toggle de voz en alto
+    $('#btn-audio-toggle').on('click', function() {
+      ttsEnabled = !ttsEnabled;
+      $('#speaker-icon').text(ttsEnabled ? '🔊' : '🔇');
+      if (!ttsEnabled && window.speechSynthesis) {
+        window.speechSynthesis.cancel();
+      }
+    });
+
+    function cleanTextForSpeech(raw) {
+      return raw.replace(/[*#`_~]/g, '')
+                .replace(/https?:\/\/\S+/g, 'enlace')
+                .replace(/\b(adb|fastboot)\s+[^\n]+/gi, 'comando técnico')
+                .trim();
+    }
+
+    function speakResponse(text) {
+      if (!ttsEnabled || !('speechSynthesis' in window)) {
+        if (callActive) setTimeout(resumeListening, 400);
+        return;
+      }
+      window.speechSynthesis.cancel();
+      const clean = cleanTextForSpeech(text);
+      if (!clean) {
+        if (callActive) setTimeout(resumeListening, 400);
+        return;
+      }
+
+      isSpeaking = true;
+      const utter = new SpeechSynthesisUtterance(clean);
+      utter.lang = 'es-MX';
+      utter.rate = 1.08;
+      utter.pitch = 1.02;
+
+      const voices = window.speechSynthesis.getVoices();
+      const esVoice = voices.find(v => v.lang.startsWith('es') && (v.name.includes('Google') || v.name.includes('Natural') || v.name.includes('Premium')));
+      if (esVoice) utter.voice = esVoice;
+
+      utter.onend = function() {
+        isSpeaking = false;
+        // Si la llamada está activa, volver a escuchar de inmediato al terminar de responder
+        if (callActive) {
+          setTimeout(resumeListening, 300);
+        }
+      };
+
+      utter.onerror = function() {
+        isSpeaking = false;
+        if (callActive) {
+          setTimeout(resumeListening, 300);
+        }
+      };
+
+      window.speechSynthesis.speak(utter);
+    }
+
+    function resumeListening() {
+      if (!callActive || !recognition || isSpeaking) return;
+      try {
+        recognition.start();
+      } catch (e) {
+        // En caso de que ya estuviera en start
+      }
+    }
+
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (SpeechRecognition) {
+      recognition = new SpeechRecognition();
+      recognition.lang = 'es-MX';
+      recognition.continuous = false;
+      recognition.interimResults = true;
+
+      recognition.onstart = function() {
+        $('#btn-mic-live').css({
+          'background': 'linear-gradient(135deg, #00ff88, #00b4d8)',
+          'box-shadow': '0 0 20px rgba(0, 255, 136, 0.9)',
+          'color': '#000'
+        });
+        $('#mic-icon').text('🟢');
+        $('#mic-text').text(callActive ? 'Llamada en Vivo' : 'Escuchando...');
+      };
+
+      recognition.onresult = function(event) {
+        let transcript = '';
+        for (let i = event.resultIndex; i < event.results.length; ++i) {
+          transcript += event.results[i][0].transcript;
+        }
+        $('#chat-input').val(transcript);
+      };
+
+      recognition.onerror = function(event) {
+        if (event.error !== 'no-speech' && event.error !== 'aborted') {
+          console.warn('SpeechRecognition error:', event.error);
+        }
+      };
+
+      recognition.onend = function() {
+        const text = $('#chat-input').val().trim();
+        if (text) {
+          sendChat();
+        } else if (callActive && !isSpeaking) {
+          // Si no hubo voz pero la llamada sigue activa, reanudar escucha automáticamente
+          setTimeout(resumeListening, 400);
+        } else if (!callActive) {
+          stopCallUI();
+        }
+      };
+    } else {
+      $('#btn-mic-live').attr('title', 'Voz no soportada directamente en este navegador').css('opacity', '0.6');
+    }
+
+    function stopCallUI() {
+      $('#btn-mic-live').css({
+        'background': 'linear-gradient(135deg, #7928ca, #ff0080)',
+        'box-shadow': 'none',
+        'color': '#fff'
+      });
+      $('#mic-icon').text('📞');
+      $('#mic-text').text('Iniciar Llamada');
+    }
+
+    $('#btn-mic-live').on('click', function() {
+      if (!recognition) {
+        alert('El reconocimiento de voz requiere Chrome, Edge, Brave o WebView compatible.');
+        return;
+      }
+
+      if (callActive) {
+        // Finalizar llamada
+        callActive = false;
+        if (window.speechSynthesis) window.speechSynthesis.cancel();
+        try { recognition.abort(); } catch (e) {}
+        stopCallUI();
+      } else {
+        // Iniciar llamada continua estilo Gemini Live
+        callActive = true;
+        if (window.speechSynthesis) window.speechSynthesis.cancel();
+        try {
+          recognition.start();
+        } catch (e) {
+          console.error(e);
+        }
+      }
+    });
+
+    // Inicializar estado del botón de llamada
+    stopCallUI();
+
+    $('#btn-send-chat').on('click', sendChat);
+    $('#chat-input').on('keypress', function(e) { if (e.which === 13) sendChat(); });
+
+    // Cierre modal con Escape o click fuera
+    $(window).on('click', function(e) {
+      if ($(e.target).is('#op-modal')) {
+        closeModal();
+      }
+    });
+    $(document).on('keydown', function(e) {
+      if (e.key === 'Escape') closeModal();
+    });
+  </script>
+</body>
+</html>

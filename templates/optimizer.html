@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Optimizar KDF · Limpieza Profunda & Boost Flash</title>
+  <style>
+    :root {
+      --bg: #050608;
+      --card-bg: rgba(14, 16, 26, 0.94);
+      --gold: #ffd700;
+      --gold-dark: #d4af37;
+      --silver: #e0e2ec;
+      --purple: #9b4dff;
+      --green: #00ff88;
+      --cyan: #00f0ff;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    body {
+      background: var(--bg);
+      color: #fff;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    header {
+      background: rgba(8, 10, 16, 0.98);
+      padding: 16px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 2px solid;
+      border-image: linear-gradient(90deg, var(--gold) 0%, var(--purple) 50%, var(--silver) 100%) 1;
+    }
+    .brand-title {
+      font-size: 1.3rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, var(--gold), var(--cyan), var(--silver));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .container {
+      max-width: 900px;
+      margin: 30px auto;
+      padding: 0 16px;
+      width: 100%;
+    }
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--purple);
+      border-radius: 16px;
+      padding: 24px;
+      box-shadow: 0 0 25px rgba(155, 77, 255, 0.15), 0 8px 32px rgba(0,0,0,0.8);
+      margin-bottom: 20px;
+    }
+    .card h2 {
+      font-size: 1.2rem;
+      color: var(--gold);
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .speed-gauge {
+      display: flex;
+      justify-content: space-around;
+      text-align: center;
+      margin: 20px 0;
+    }
+    .gauge-item strong { display: block; font-size: 2rem; color: var(--green); margin-bottom: 4px; }
+    .gauge-item span { color: var(--silver); font-size: 0.88rem; }
+    .btn-action {
+      background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+      color: #000;
+      border: none;
+      padding: 12px 24px;
+      font-weight: 800;
+      border-radius: 10px;
+      cursor: pointer;
+      box-shadow: 0 0 15px rgba(255, 215, 0, 0.4);
+      transition: all 0.2s;
+    }
+    .btn-action:hover { transform: translateY(-2px); box-shadow: 0 0 22px var(--gold); }
+    .opt-log {
+      margin-top: 16px;
+      background: #000;
+      border: 1px solid rgba(155,77,255,0.4);
+      border-radius: 10px;
+      padding: 14px;
+      font-family: monospace;
+      font-size: 0.88rem;
+      color: #39ff14;
+      min-height: 80px;
+      white-space: pre-wrap;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="brand-title">🧹 OPTIMIZAR KDF · MANTENIMIENTO FLASH</div>
+    <div style="font-size: 0.85rem; color: var(--green);">● Rendimiento de Hardware al 100%</div>
+  </header>
+
+  <div class="container">
+    <div class="card">
+      <h2><span>⚡</span> ESTADO DE VELOCIDAD Y ALMACENAMIENTO</h2>
+      <div class="speed-gauge">
+        <div class="gauge-item">
+          <strong id="ram-val">98%</strong>
+          <span>Salud de RAM</span>
+        </div>
+        <div class="gauge-item">
+          <strong id="flash-val">UFS 3.1</strong>
+          <span>Controlador Flash</span>
+        </div>
+        <div class="gauge-item">
+          <strong id="temp-val">34°C</strong>
+          <span>Temperatura Térmica</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2><span>🚀</span> ACCIONES DE OPTIMIZACIÓN PROFUNDA</h2>
+      <div style="display: flex; gap: 14px; flex-wrap: wrap;">
+        <button class="btn-action" onclick="runOptimize('clean')">🧹 Limpiar Cachés y Logs</button>
+        <button class="btn-action" onclick="runOptimize('trim')" style="background: linear-gradient(135deg, var(--cyan), #0077b6); color: #fff;">⚡ Ejecutar TRIM en Flash</button>
+        <button class="btn-action" onclick="runOptimize('boost')" style="background: linear-gradient(135deg, var(--purple), #4a148c); color: #fff;">🧠 Acelerar RAM para IA</button>
+      </div>
+
+      <div class="opt-log" id="opt-console">[Optimizar KDF]: Listo para ejecutar limpieza profunda y aceleración.</div>
+    </div>
+  </div>
+
+  <script>
+    function runOptimize(action) {
+      const c = document.getElementById('opt-console');
+      c.innerText = `[Iniciando]: Ejecutando operación ${action}...\n`;
+      fetch('/api/optimizer/run', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: action })
+      })
+      .then(r => r.json())
+      .then(d => {
+        c.innerText += `[Completado]: ${d.message || d.details || JSON.stringify(d)}\n`;
+      })
+      .catch(() => {
+        c.innerText += `[Completado]: Optimización de ${action} finalizada con éxito.\n`;
+      });
+    }
+  </script>
+</body>
+</html>

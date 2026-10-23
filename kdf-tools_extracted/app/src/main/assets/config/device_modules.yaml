@@ -1,0 +1,28 @@
+# device_modules.yaml – Definiciones de dispositivos compatibles
+# Cada entrada representa una marca y modelo con información mínima.
+# El agente podrá expandir esta lista según se necesiten más dispositivos.
+
+- brand: Samsung
+  models:
+    - name: Galaxy S23
+      codename: a53
+    - name: Galaxy A54
+      codename: a54
+- brand: Motorola
+  models:
+    - name: Moto G Power
+      codename: gpower
+    - name: Moto E7
+      codename: e7
+- brand: Apple
+  models:
+    - name: iPhone 15
+      codename: iphone15
+    - name: iPhone SE (2022)
+      codename: iphone_se_2022
+- brand: Xiaomi
+  models:
+    - name: Redmi Note 12
+      codename: note12
+    - name: POCO X5
+      codename: poco_x5

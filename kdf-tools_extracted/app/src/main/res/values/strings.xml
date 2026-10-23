@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">KDF-Tools</string>
+    <string name="subtitle_kdf_lux">ARQUITECTURA KDF-LUX • SUITE BIMETÁLICA AUTÓNOMA</string>
+    <string name="tab_dashboard">Inicio</string>
+    <string name="tab_diagnostic">Diagnóstico</string>
+    <string name="tab_maintenance">Herramientas</string>
+    <string name="tab_hardware_visual">Visual &amp; GPU</string>
+    <string name="tab_wallpaper">Fondo</string>
+    <string name="tab_scripts_studio">Scripts &amp; IA</string>
+    <string name="execute_btn">Ejecutar</string>
+    <string name="security_warning_prototype">Security Warning: I have included your API keys in the generated APK file for this prototype. Please be aware that Android APKs can be easily decompiled, and these keys can be extracted by anyone who has access to the file. Do not share this APK file publicly or with unauthorized individuals to prevent potential misuse.</string>
+</resources>

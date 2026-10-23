@@ -1,0 +1,41 @@
+# ==============================================================================
+# KDF-TOOLS / KDF-LUX · GITIGNORE OFICIAL
+# ==============================================================================
+
+# Variables de entorno y credenciales sensibles (NUNCA SUBIR CLAVES)
+.env
+*.env
+*.keystore
+*.jks
+*.p12
+
+# Archivos de caché y compilación Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+.venv/
+
+# Archivos de compilación Android / Gradle
+.gradle/
+build/
+app/build/
+kdf-tools_extracted/build/
+kdf-tools_extracted/app/build/
+*.iml
+.idea/
+local.properties
+
+# Archivos temporales y de registro
+*.log
+logs/
+temp_extract/
+
+# Modelos LLM pesados y archivos comprimidos locales
+*.gguf
+*.bin
+*.zip
+*.tar.gz

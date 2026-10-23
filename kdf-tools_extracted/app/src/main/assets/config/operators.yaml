@@ -1,0 +1,15 @@
+# operators.yaml – Operadores/carriers que pueden bloquear dispositivos por pagos
+# Cada operador tiene un nombre legible y un código interno opcional.
+
+- name: Movistar
+  code: MOV
+- name: Telcel
+  code: TEL
+- name: AT&T
+  code: ATT
+- name: Payol
+  code: PAY
+- name: Electra
+  code: ELE
+- name: Bodegón
+  code: BOD

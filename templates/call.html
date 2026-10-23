@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KDF Voice Live Console · Asistente en Llamada</title>
+  <style>
+    :root {
+      --bg: #090a10;
+      --card: #121420;
+      --neon-cyan: #00f0ff;
+      --neon-purple: #9d4edd;
+      --neon-green: #00ff88;
+      --text: #ffffff;
+      --text-dim: #9aa0a6;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
+    }
+    header {
+      padding: 16px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(18, 20, 32, 0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 700;
+      letter-spacing: 1px;
+    }
+    .brand span {
+      background: linear-gradient(135deg, var(--neon-cyan), var(--neon-purple));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .orb-container {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+    .orb {
+      width: 170px;
+      height: 170px;
+      border-radius: 50%;
+      background: radial-gradient(circle, #7928ca 0%, #ff0080 70%, #000 100%);
+      box-shadow: 0 0 45px rgba(121, 40, 202, 0.4);
+      position: relative;
+      cursor: pointer;
+      transition: all 0.4s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 48px;
+    }
+    .orb.active {
+      transform: scale(1.1);
+      background: radial-gradient(circle, #00ff88 0%, #00b4d8 70%, #090a10 100%);
+      box-shadow: 0 0 65px rgba(0, 255, 136, 0.8);
+      animation: pulse 1.8s infinite alternate;
+    }
+    .orb.speaking {
+      background: radial-gradient(circle, #ff007f 0%, #7928ca 70%, #000 100%);
+      box-shadow: 0 0 75px rgba(255, 0, 127, 0.9);
+      animation: speakPulse 0.9s infinite alternate;
+    }
+    @keyframes pulse {
+      0% { transform: scale(1.05); box-shadow: 0 0 40px rgba(0,255,136,0.6); }
+      100% { transform: scale(1.18); box-shadow: 0 0 85px rgba(0,180,216,0.9); }
+    }
+    @keyframes speakPulse {
+      0% { transform: scale(1.08); }
+      100% { transform: scale(1.24); }
+    }
+    .status-text {
+      margin-top: 24px;
+      font-size: 1.15rem;
+      font-weight: 500;
+      color: var(--neon-cyan);
+    }
+    .transcript-box {
+      width: 90%;
+      max-width: 600px;
+      max-height: 190px;
+      background: var(--card);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 14px;
+      padding: 14px 18px;
+      margin-top: 18px;
+      overflow-y: auto;
+      font-size: 0.95rem;
+      line-height: 1.5;
+    }
+    .chat-bubble-u { color: #00ff88; margin-bottom: 6px; }
+    .chat-bubble-ai { color: #ffffff; margin-bottom: 10px; }
+    .footer-ctrls {
+      padding: 20px;
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      background: rgba(18, 20, 32, 0.9);
+      border-top: 1px solid rgba(255,255,255,0.05);
+    }
+    .btn {
+      padding: 12px 24px;
+      border-radius: 30px;
+      font-size: 1rem;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s;
+    }
+    .btn-call {
+      background: linear-gradient(135deg, #00ff88, #00b4d8);
+      color: #000;
+    }
+    .btn-hangup {
+      background: #e63946;
+      color: #fff;
+    }
+    .btn-copy {
+      background: rgba(255,255,255,0.1);
+      color: #fff;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="brand">
+      <span>⚡ KDF LIVE CALL</span>
+    </div>
+    <div id="ai-engine-badge" style="font-size: 0.85rem; color: var(--neon-green);">
+      ● IA Local & Cloud Conectada
+    </div>
+  </header>
+
+  <main class="orb-container">
+    <div class="orb" id="voice-orb" onclick="toggleCall()">
+      <span id="orb-emoji">🎙️</span>
+    </div>
+    <div class="status-text" id="status-label">Toca la esfera para iniciar la llamada</div>
+
+    <div class="transcript-box" id="transcript-feed">
+      <div class="chat-bubble-ai">🤖 <strong>KDF Assistant:</strong> Llamada lista. Puedes decirme qué modificaciones o código quieres que agregue.</div>
+    </div>
+  </main>
+
+  <footer class="footer-ctrls">
+    <button class="btn btn-call" id="btn-toggle" onclick="toggleCall()">
+      <span>📞</span> <span id="btn-text">Comenzar Llamada</span>
+    </button>
+    <button class="btn btn-copy" onclick="copyInstructions()" title="Copiar historial de órdenes">
+      📋 Copiar Órdenes
+    </button>
+  </footer>
+
+  <script>
+    let inCall = false;
+    let recognition = null;
+    let isSpeaking = false;
+    let speechHistory = [];
+
+    const orb = document.getElementById('voice-orb');
+    const orbEmoji = document.getElementById('orb-emoji');
+    const statusLabel = document.getElementById('status-label');
+    const btnToggle = document.getElementById('btn-toggle');
+    const btnText = document.getElementById('btn-text');
+    const feed = document.getElementById('transcript-feed');
+
+    function appendFeed(role, text) {
+      const div = document.createElement('div');
+      div.className = role === 'user' ? 'chat-bubble-u' : 'chat-bubble-ai';
+      div.innerHTML = (role === 'user' ? '🗣️ <strong>Tú:</strong> ' : '🤖 <strong>KDF:</strong> ') + text;
+      feed.appendChild(div);
+      feed.scrollTop = feed.scrollHeight;
+      speechHistory.push(`${role.toUpperCase()}: ${text}`);
+    }
+
+    function speak(text) {
+      if (!('speechSynthesis' in window)) {
+        if (inCall) setTimeout(resumeListening, 400);
+        return;
+      }
+      window.speechSynthesis.cancel();
+      isSpeaking = true;
+      orb.className = 'orb speaking';
+      orbEmoji.innerText = '🔊';
+      statusLabel.innerText = 'KDF Respondiendo...';
+
+      const utter = new SpeechSynthesisUtterance(text.replace(/[*#`_]/g, ''));
+      utter.lang = 'es-MX';
+      utter.rate = 1.08;
+
+      const voices = window.speechSynthesis.getVoices();
+      const voice = voices.find(v => v.lang.startsWith('es'));
+      if (voice) utter.voice = voice;
+
+      utter.onend = function() {
+        isSpeaking = false;
+        orbEmoji.innerText = '🎙️';
+        if (inCall) {
+          orb.className = 'orb active';
+          statusLabel.innerText = 'Te escucho... habla libremente';
+          setTimeout(resumeListening, 300);
+        } else {
+          orb.className = 'orb';
+          statusLabel.innerText = 'Llamada finalizada';
+        }
+      };
+
+      utter.onerror = function() {
+        isSpeaking = false;
+        if (inCall) resumeListening();
+      };
+
+      window.speechSynthesis.speak(utter);
+    }
+
+    function resumeListening() {
+      if (!inCall || isSpeaking || !recognition) return;
+      try {
+        recognition.start();
+      } catch (e) {}
+    }
+
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (SpeechRecognition) {
+      recognition = new SpeechRecognition();
+      recognition.lang = 'es-MX';
+      recognition.continuous = false;
+      recognition.interimResults = false;
+
+      recognition.onstart = function() {
+        if (!isSpeaking) {
+          orb.className = 'orb active';
+          orbEmoji.innerText = '🟢';
+          statusLabel.innerText = 'Te escucho... habla libremente';
+        }
+      };
+
+      recognition.onresult = function(e) {
+        const text = e.results[0][0].transcript.trim();
+        if (text) {
+          appendFeed('user', text);
+          processVoiceInstruction(text);
+        }
+      };
+
+      recognition.onend = function() {
+        if (inCall && !isSpeaking) {
+          setTimeout(resumeListening, 350);
+        }
+      };
+
+      recognition.onerror = function(e) {
+        if (e.error !== 'no-speech' && e.error !== 'aborted') {
+          console.warn('Speech error:', e.error);
+        }
+      };
+    }
+
+    function processVoiceInstruction(userText) {
+      statusLabel.innerText = 'Procesando instrucción...';
+      fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          message: userText,
+          operation: 'VOICE_ASSISTED_DEVELOPMENT',
+          engine: 'auto'
+        })
+      })
+      .then(res => res.json())
+      .then(data => {
+        const reply = data.reply || 'Entendido. Tomé nota de la instrucción.';
+        appendFeed('ai', reply);
+        speak(reply);
+      })
+      .catch(err => {
+        const errReply = 'Recibido tu mensaje. Puedes continuar dictándome.';
+        appendFeed('ai', errReply);
+        speak(errReply);
+      });
+    }
+
+    function toggleCall() {
+      if (!recognition) {
+        alert('Tu navegador no soporta reconocimiento de voz en vivo. Usa Chrome, Edge o WebView.');
+        return;
+      }
+      inCall = !inCall;
+      if (inCall) {
+        btnToggle.className = 'btn btn-hangup';
+        btnText.innerText = 'Colgar Llamada';
+        speak('Llamada en vivo iniciada. Dime qué necesitas que prepare o agregue.');
+      } else {
+        btnToggle.className = 'btn btn-call';
+        btnText.innerText = 'Comenzar Llamada';
+        orb.className = 'orb';
+        orbEmoji.innerText = '🎙️';
+        statusLabel.innerText = 'Toca la esfera para iniciar la llamada';
+        if (window.speechSynthesis) window.speechSynthesis.cancel();
+        try { recognition.abort(); } catch (e) {}
+      }
+    }
+
+    function copyInstructions() {
+      if (speechHistory.length === 0) {
+        alert('Aún no hay instrucciones dictadas.');
+        return;
+      }
+      navigator.clipboard.writeText(speechHistory.join('\n\n'))
+        .then(() => alert('Instrucciones copiadas al portapapeles. ¡Pégalas aquí en Antigravity para ejecutarlas!'))
+        .catch(() => alert('Error al copiar.'));
+    }
+  </script>
+</body>
+</html>
