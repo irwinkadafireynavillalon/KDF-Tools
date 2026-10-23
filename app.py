@@ -191,20 +191,97 @@ def query_local_llm(prompt: str, context: str = "") -> str | None:
             pass
     return None
 
+def query_gemini(prompt: str, context: str = "") -> str:
+    key = os.getenv("GEMINI_API_KEY", GEMINI_API_KEY).strip()
+    url = f"https://generativelanguage.googleapis.com/v1beta/models/{GEMINI_MODEL}:generateContent?key={key}"
+    full_prompt = f"{SYSTEM_PROMPT}\n\n{context}\n\nUsuario: {prompt}" if context else f"{SYSTEM_PROMPT}\n\nUsuario: {prompt}"
+    payload = {"contents": [{"role": "user", "parts": [{"text": full_prompt}]}]}
+    try:
+        r = requests.post(url, json=payload, timeout=GEMINI_TIMEOUT)
+        if r.status_code == 200:
+            candidates = r.json().get("candidates", [])
+            if candidates:
+                return candidates[0].get("content", {}).get("parts", [{}])[0].get("text", "").strip()
+        elif r.status_code == 403:
+            return "☁️ [Gemini Cloud]: Clave de API no autorizada o agotada. Puedes renovar tu clave gratuita en Google AI Studio (aistudio.google.com) o alternar a Spark Core / Modo Local."
+    except Exception as e:
+        pass
+    return "☁️ [Gemini Cloud]: No se pudo conectar con el endpoint externo de nube. Usando respuesta heurística local."
+
+def query_mcp_orchestrator(prompt: str, context: str = "") -> str:
+    try:
+        r = requests.post("http://127.0.0.1:8888/api/chat", json={"prompt": prompt}, timeout=5)
+        if r.status_code == 200:
+            res = r.json()
+            return res.get("response") or res.get("reply") or "Orquestador MCP activo en puerto 8888."
+    except Exception:
+        pass
+    return "🛡️ Orquestador MCP KDF (Modo Autónomo Local :8888) activo y listo para comandos en Termux."
+
+def ask_all_ai(prompt: str, context: str = "") -> dict:
+    from concurrent.futures import ThreadPoolExecutor
+
+    with ThreadPoolExecutor(max_workers=3) as executor:
+        f_spark  = executor.submit(query_spark, prompt, context)
+        f_mcp    = executor.submit(query_mcp_orchestrator, prompt, context)
+        f_gemini = executor.submit(query_gemini, prompt, context)
+
+        spark_res  = f_spark.result()
+        mcp_res    = f_mcp.result()
+        gemini_res = f_gemini.result()
+
+    return {
+        "is_multi": True,
+        "source": "Concilio Multi-IA KDF 🌐",
+        "responses": [
+            {
+                "id": "spark",
+                "name": "Spark Core",
+                "icon": "⚡",
+                "badge": "Heurística & Comandos",
+                "color": "#ffd700",
+                "reply": spark_res
+            },
+            {
+                "id": "gemini",
+                "name": "Gemini Cloud",
+                "icon": "☁️",
+                "badge": "Nube & Análisis",
+                "color": "#00e5ff",
+                "reply": gemini_res
+            },
+            {
+                "id": "mcp",
+                "name": "KDF MCP Eterno",
+                "icon": "🛡️",
+                "badge": "Super-Agente :8888",
+                "color": "#c77dff",
+                "reply": mcp_res
+            }
+        ],
+        "synthesis": "⚡ Resumen del Concilio: Spark ofrece la acción inmediata para tu dispositivo, KDF MCP respalda las herramientas locales de Termux y Gemini complementa el panorama general."
+    }
+
 # ─────────────────────────────────────────────────────────────────────────────
-# ENRUTADOR IA UNIVERSAL (PRIORIDAD NÚCLEO LOCAL KDF-STUDIO)
+# ENRUTADOR IA UNIVERSAL (SELECCIÓN INDIVIDUAL O TODAS A LA VEZ)
 # ─────────────────────────────────────────────────────────────────────────────
 def ask_ai(prompt: str, context: str = "", preferred_engine: str = "auto") -> dict:
+    if preferred_engine in ["all", "roundtable", "concilio"]:
+        return ask_all_ai(prompt, context)
+
     if preferred_engine == "spark":
         reply = query_spark(prompt, context)
         return {"reply": reply, "source": "Spark Core ⚡"}
 
-    # Prioridad absoluta: IA Local de KDF-Studio (Gemma 2B) sin API Keys
-    local_reply = query_local_llm(prompt, context)
-    if local_reply:
-        return {"reply": local_reply, "source": "KDF-Studio Local IA 🛡️"}
+    if preferred_engine == "gemini":
+        reply = query_gemini(prompt, context)
+        return {"reply": reply, "source": "Gemini Cloud ☁️"}
 
-    # Fallback automático al motor analítico interno Spark
+    if preferred_engine == "local" or preferred_engine == "mcp":
+        mcp_reply = query_mcp_orchestrator(prompt, context)
+        return {"reply": mcp_reply, "source": "KDF MCP Eterno 🛡️"}
+
+    # Fallback automático
     spark_reply = query_spark(prompt, context)
     return {"reply": spark_reply, "source": "Spark Core ⚡"}
 
@@ -432,6 +509,24 @@ def execute_operation():
             cmd.append(apk_target)
         output = run_cmd(cmd)
         return jsonify({"status": "ok", "output": output})
+    elif op_id == "stress_test":
+        script_path = os.path.join(BASE_DIR, "stress_lab", "harness_cli", "kdf_stress_runner.py")
+        apk_target = data.get("apk_path", "") or data.get("apk_url", "")
+        if not apk_target:
+            candidates = [
+                os.path.join(BASE_DIR, "downloads", "KDF-Tools-LuX.apk"),
+                os.path.join(BASE_DIR, "kdf-tools.zip"),
+                os.path.join(BASE_DIR, "dist_apk", "KDF-Tools-LuX.apk")
+            ]
+            for cand in candidates:
+                if os.path.exists(cand):
+                    apk_target = cand
+                    break
+        if not apk_target:
+            return jsonify({"status": "error", "output": "No se encontró ningún archivo APK o ZIP en ~/KDF-LuX para realizar la prueba."})
+        cmd = ["python3", script_path, apk_target]
+        output = run_cmd(cmd)
+        return jsonify({"status": "ok", "output": output})
     elif op_id == "fastboot_info":
         cmd = ["fastboot", "getvar", "all"]
         output = run_cmd(cmd)
@@ -532,9 +627,19 @@ def chat():
     )
 
     result = ask_ai(msg, context=context, preferred_engine=engine)
+    if result.get("is_multi"):
+        return jsonify({
+            "is_multi":  True,
+            "reply":     result.get("synthesis", ""),
+            "responses": result.get("responses", []),
+            "source":    result.get("source", "Concilio Multi-IA"),
+            "telemetry": telemetry
+        })
+
     return jsonify({
-        "reply":     result["reply"],
-        "source":    result["source"],
+        "is_multi":  False,
+        "reply":     result.get("reply", "Sin respuesta."),
+        "source":    result.get("source", "IA"),
         "telemetry": telemetry
     })
 

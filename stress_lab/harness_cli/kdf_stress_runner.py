@@ -13,7 +13,8 @@ import subprocess
 import shutil
 from datetime import datetime
 
-REPORT_DIR = "/storage/emulated/0/Download"
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+REPORT_DIR = "/storage/emulated/0/Download" if os.path.exists("/storage/emulated/0/Download") else os.path.join(BASE_DIR, "reports")
 os.makedirs(REPORT_DIR, exist_ok=True)
 
 def print_banner():
@@ -36,7 +37,7 @@ def extract_apk_from_input(file_path):
         print(f"\033[31m[-] Error: Archivo no encontrado: {file_path}\033[0m")
         sys.exit(1)
 
-    work_dir = "/data/data/com.termux/files/home/KDF-StressLab/temp_extract"
+    work_dir = os.path.join(BASE_DIR, "temp_extract")
     if os.path.exists(work_dir):
         shutil.rmtree(work_dir)
     os.makedirs(work_dir, exist_ok=True)
