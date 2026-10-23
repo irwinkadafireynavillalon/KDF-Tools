@@ -1,0 +1,1204 @@
+/* ==============================================================================
+   KDF-Tools · Mewtwo Bimetallic Theme CSS
+   Paleta Oficial: Oro Imperial, Plata Líquida, Negro Obsidiana, Blanco Cerámico y Morado Mewtwo
+   ============================================================================== */
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+:root {
+  /* 1. NEGRO OBSIDIANA (Fondos Mewtwo) */
+  --bg-void: #07060b;
+  --bg-primary: #0b0912;
+  --bg-panel: #141122;
+  --bg-card: #1c172e;
+  --bg-card-hover: #261f3d;
+  --bg-input: #100d1a;
+
+  /* 2. ORO IMPERIAL (Corona & Acentos Reales) */
+  --gold-primary: #d4af37;
+  --gold-light: #ffd700;
+  --gold-high: #ffdf73;
+  --gold-dark: #997a15;
+  --gold-glow: rgba(212, 175, 55, 0.35);
+
+  /* 3. PLATA LÍQUIDA (Escudo, Bordes & Tipografía Técnica) */
+  --silver-light: #f8fafc;
+  --silver-primary: #e2e8f0;
+  --silver-mid: #cbd5e1;
+  --silver-steel: #94a3b8;
+  --silver-gunmetal: #334e68;
+  --border-bimetallic: #2d2645;
+
+  /* 4. BLANCO CERÁMICO (Brillos Especulares & Texto Primario) */
+  --white-pure: #ffffff;
+  --white-soft: #f1f5f9;
+  --text-muted: #a3a0b8;
+
+  /* 5. MORADO MEWTWO (Energía Psíquica & Glow) */
+  --mewtwo-purple: #9b4dff;
+  --mewtwo-aura: #c77dff;
+  --mewtwo-deep: #4a148c;
+  --mewtwo-indigo: #2d0c57;
+  --mewtwo-glow: rgba(155, 77, 255, 0.45);
+
+  /* Estados de Telemetría */
+  --telemetry-emerald: #10b981;
+  --telemetry-amber: #f59e0b;
+  --telemetry-crimson: #ef4444;
+
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: var(--bg-primary);
+  background-image: 
+    radial-gradient(circle at 10% 10%, rgba(155, 77, 255, 0.08) 0%, transparent 40%),
+    radial-gradient(circle at 90% 90%, rgba(212, 175, 55, 0.06) 0%, transparent 45%);
+  color: var(--silver-primary);
+  font-family: var(--font-sans);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ==============================================================================
+   HEADER MEWTWO BIMETÁLICO
+   ============================================================================== */
+.kdf-header {
+  background: linear-gradient(180deg, #181329 0%, #0d0a17 100%);
+  border-bottom: 2px solid;
+  border-image: linear-gradient(90deg, var(--gold-primary) 0%, var(--mewtwo-purple) 50%, var(--silver-mid) 100%) 1;
+  padding: 14px 28px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 4px 25px rgba(0, 0, 0, 0.6), 0 0 15px rgba(155, 77, 255, 0.15);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.logo-box {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.logo-img-wrapper {
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+  padding: 2px;
+  background: linear-gradient(135deg, var(--gold-high), var(--mewtwo-purple), var(--silver-steel));
+  box-shadow: 0 0 16px var(--mewtwo-glow);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.logo-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  border-radius: 12px;
+  background: #0b0912;
+}
+
+.title-group h1 {
+  font-size: 1.45rem;
+  letter-spacing: 2px;
+  font-weight: 900;
+  background: linear-gradient(90deg, #ffffff 0%, var(--gold-high) 45%, var(--mewtwo-aura) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-transform: uppercase;
+}
+
+.title-group .subtitle {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin-top: 2px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.brand-pill {
+  background: rgba(155, 77, 255, 0.15);
+  border: 1px solid var(--mewtwo-purple);
+  color: var(--mewtwo-aura);
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+.header-status {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.telemetry-badge {
+  background: var(--bg-panel);
+  border: 1px solid var(--border-bimetallic);
+  color: var(--silver-mid);
+  padding: 8px 16px;
+  border-radius: 24px;
+  font-size: 0.82rem;
+  font-family: var(--font-mono);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.4);
+}
+
+.telemetry-badge.badge-safe-unlocked {
+  background: rgba(155, 77, 255, 0.15);
+  color: var(--mewtwo-aura);
+  border-color: var(--mewtwo-purple);
+  box-shadow: 0 0 16px var(--mewtwo-glow);
+  font-weight: 700;
+}
+
+.telemetry-badge.badge-online {
+  color: var(--telemetry-emerald);
+  border-color: rgba(16, 185, 129, 0.4);
+  box-shadow: 0 0 10px rgba(16, 185, 129, 0.2);
+}
+
+/* ==============================================================================
+   LAYOUT PRINCIPAL
+   ============================================================================== */
+.kdf-container {
+  display: flex;
+  flex: 1;
+  gap: 24px;
+  padding: 24px 28px;
+  max-width: 1750px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+@media (max-width: 1080px) {
+  .kdf-container {
+    flex-direction: column;
+    padding: 16px;
+  }
+}
+
+/* ==============================================================================
+   SIDEBAR: MÓDULOS DE DISPOSITIVOS
+   ============================================================================== */
+.kdf-sidebar {
+  width: 330px;
+  flex-shrink: 0;
+  background-color: var(--bg-panel);
+  border: 1px solid var(--border-bimetallic);
+  border-radius: 16px;
+  padding: 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+}
+
+@media (max-width: 1080px) {
+  .kdf-sidebar {
+    width: 100%;
+  }
+}
+
+.sidebar-title {
+  font-size: 0.85rem;
+  letter-spacing: 1.5px;
+  color: var(--gold-primary);
+  text-transform: uppercase;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.sidebar-divider {
+  height: 1px;
+  background: linear-gradient(90deg, var(--gold-dark) 0%, var(--border-bimetallic) 50%, transparent 100%);
+  margin: 2px 0;
+}
+
+.category-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.category-item {
+  padding: 12px 14px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-bimetallic);
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.category-item:hover {
+  background: var(--bg-card-hover);
+  border-color: var(--mewtwo-purple);
+  transform: translateX(4px);
+  box-shadow: 0 0 12px rgba(155, 77, 255, 0.2);
+}
+
+.category-item.active {
+  background: linear-gradient(90deg, #281a44 0%, #1a142e 100%);
+  border-color: var(--gold-primary);
+  color: #ffffff;
+  box-shadow: 0 0 16px var(--gold-glow);
+  font-weight: 700;
+  border-left: 4px solid var(--gold-primary);
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.form-group label {
+  font-size: 0.78rem;
+  color: var(--silver-steel);
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.kdf-select {
+  background-color: var(--bg-input);
+  border: 1px solid var(--border-bimetallic);
+  color: var(--silver-light);
+  padding: 10px 14px;
+  border-radius: 10px;
+  font-size: 0.88rem;
+  outline: none;
+  transition: border-color 0.2s ease;
+}
+
+.kdf-select:focus {
+  border-color: var(--mewtwo-purple);
+  box-shadow: 0 0 10px var(--mewtwo-glow);
+}
+
+.device-card {
+  background: #0d0b17;
+  border: 1px solid var(--border-bimetallic);
+  border-radius: 12px;
+  padding: 14px;
+}
+
+.device-card h4 {
+  font-size: 0.82rem;
+  color: var(--mewtwo-aura);
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.device-info-text {
+  font-size: 0.78rem;
+  line-height: 1.5;
+  color: var(--silver-mid);
+  font-family: var(--font-mono);
+}
+
+/* ==============================================================================
+   PANEL CENTRAL
+   ============================================================================== */
+.kdf-main-panel {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+.card {
+  background-color: var(--bg-panel);
+  border: 1px solid var(--border-bimetallic);
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+}
+
+.panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.panel-header h2 {
+  font-size: 1.15rem;
+  font-weight: 800;
+  letter-spacing: 1px;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.section-desc {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin-bottom: 18px;
+}
+
+/* ==============================================================================
+   SECCIÓN: HERRAMIENTAS DE MANTENIMIENTO (NUEVAS OPERACIONES)
+   ============================================================================== */
+.maintenance-section {
+  background: linear-gradient(135deg, rgba(30, 23, 50, 0.7) 0%, rgba(20, 17, 34, 0.9) 100%);
+  border: 1px solid var(--mewtwo-purple);
+  box-shadow: 0 0 20px rgba(155, 77, 255, 0.12);
+}
+
+.maintenance-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 16px;
+  margin-bottom: 8px;
+}
+
+.maintenance-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-bimetallic);
+  border-radius: 14px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 12px;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.maintenance-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+  background: linear-gradient(180deg, var(--gold-primary), var(--mewtwo-purple));
+  opacity: 0;
+  transition: opacity 0.25s ease;
+}
+
+.maintenance-card:hover {
+  border-color: var(--gold-primary);
+  background: var(--bg-card-hover);
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.4), 0 0 14px var(--gold-glow);
+}
+
+.maintenance-card:hover::before {
+  opacity: 1;
+}
+
+.m-card-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.m-card-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.m-badge {
+  font-size: 0.68rem;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 6px;
+  text-transform: uppercase;
+}
+
+.m-badge-gold {
+  background: rgba(212, 175, 55, 0.15);
+  color: var(--gold-light);
+  border: 1px solid var(--gold-primary);
+}
+
+.m-badge-purple {
+  background: rgba(155, 77, 255, 0.15);
+  color: var(--mewtwo-aura);
+  border: 1px solid var(--mewtwo-purple);
+}
+
+.m-card-desc {
+  font-size: 0.8rem;
+  color: var(--silver-steel);
+  line-height: 1.4;
+  flex: 1;
+}
+
+.m-card-meta {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+}
+
+.btn-card-execute {
+  width: 100%;
+  padding: 9px 14px;
+  border-radius: 8px;
+  border: 1px solid var(--mewtwo-purple);
+  background: linear-gradient(90deg, #37185e 0%, #251342 100%);
+  color: #ffffff;
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: all 0.2s ease;
+}
+
+.btn-card-execute:hover {
+  background: linear-gradient(90deg, var(--mewtwo-purple) 0%, #6a1b9a 100%);
+  border-color: var(--gold-primary);
+  box-shadow: 0 0 12px var(--mewtwo-glow);
+  transform: translateY(-1px);
+}
+
+/* ==============================================================================
+   OPERACIONES GENERALES
+   ============================================================================== */
+.operations-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 14px;
+  margin-bottom: 20px;
+}
+
+.op-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-bimetallic);
+  border-radius: 12px;
+  padding: 14px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.op-card:hover {
+  background: var(--bg-card-hover);
+  border-color: var(--silver-mid);
+  transform: translateY(-2px);
+}
+
+.op-card.selected-op {
+  background: linear-gradient(135deg, #2b1f48 0%, #1e1635 100%);
+  border-color: var(--gold-primary);
+  box-shadow: 0 0 16px var(--gold-glow);
+}
+
+.op-title {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #ffffff;
+  margin-bottom: 6px;
+}
+
+.op-desc {
+  font-size: 0.78rem;
+  color: var(--silver-steel);
+  line-height: 1.35;
+  margin-bottom: 10px;
+}
+
+.op-tag {
+  align-self: flex-start;
+  font-size: 0.68rem;
+  padding: 2px 7px;
+  border-radius: 4px;
+  background: rgba(255,255,255,0.06);
+  color: var(--silver-mid);
+  font-weight: 600;
+}
+
+.action-bar {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+/* ==============================================================================
+   BOTONES
+   ============================================================================== */
+.btn {
+  padding: 10px 20px;
+  border-radius: 10px;
+  font-size: 0.88rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  border: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--gold-primary) 0%, var(--gold-dark) 100%);
+  color: #0b0912;
+  box-shadow: 0 4px 14px var(--gold-glow);
+}
+
+.btn-primary:hover {
+  background: linear-gradient(135deg, var(--gold-high) 0%, var(--gold-primary) 100%);
+  box-shadow: 0 6px 20px var(--gold-glow);
+  transform: translateY(-2px);
+}
+
+.btn-secondary {
+  background: var(--bg-card);
+  border: 1px solid var(--border-bimetallic);
+  color: var(--silver-light);
+}
+
+.btn-secondary:hover {
+  background: var(--bg-card-hover);
+  border-color: var(--mewtwo-purple);
+  color: #ffffff;
+}
+
+.btn-sm {
+  padding: 5px 12px;
+  font-size: 0.75rem;
+  border-radius: 6px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-bimetallic);
+  color: var(--silver-mid);
+  cursor: pointer;
+}
+
+.btn-sm:hover {
+  color: #ffffff;
+  border-color: var(--gold-primary);
+}
+
+/* ==============================================================================
+   TERMINAL BOX
+   ============================================================================== */
+.terminal-box {
+  background-color: var(--bg-void);
+  border: 1px solid var(--border-bimetallic);
+  border-radius: 12px;
+  padding: 18px;
+  color: #a8b3cf;
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  line-height: 1.6;
+  max-height: 280px;
+  overflow-y: auto;
+  white-space: pre-wrap;
+  word-break: break-all;
+  box-shadow: inset 0 2px 10px rgba(0,0,0,0.6);
+}
+
+/* ==============================================================================
+   ASISTENTE IA DUAL: SPARK & GEMINI
+   ============================================================================== */
+.ai-header-controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.ai-engine-selector {
+  display: flex;
+  background: var(--bg-void);
+  border: 1px solid var(--border-bimetallic);
+  border-radius: 10px;
+  padding: 3px;
+  gap: 4px;
+}
+
+.engine-tab {
+  padding: 5px 12px;
+  border-radius: 7px;
+  font-size: 0.74rem;
+  font-weight: 700;
+  cursor: pointer;
+  color: var(--silver-steel);
+  transition: all 0.2s ease;
+}
+
+.engine-tab.active {
+  background: linear-gradient(135deg, var(--gold-primary), #a67c00);
+  color: #0b0912;
+  box-shadow: 0 0 10px var(--gold-glow);
+}
+
+.engine-tab.active.tab-spark {
+  background: linear-gradient(135deg, var(--mewtwo-purple), var(--mewtwo-deep));
+  color: #ffffff;
+  box-shadow: 0 0 12px var(--mewtwo-glow);
+}
+
+.diag-pills-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 14px;
+  padding: 10px 14px;
+  background: rgba(11, 13, 20, 0.7);
+  border: 1px solid var(--border-bimetallic);
+  border-radius: 10px;
+}
+
+.diag-pill {
+  background: var(--bg-card);
+  border: 1px solid var(--border-bimetallic);
+  color: var(--silver-primary);
+  font-size: 0.76rem;
+  font-weight: 600;
+  padding: 6px 12px;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.diag-pill:hover {
+  background: linear-gradient(135deg, rgba(155, 81, 224, 0.35), rgba(212, 175, 55, 0.2));
+  border-color: var(--gold-primary);
+  color: #ffffff;
+  transform: translateY(-1px);
+  box-shadow: 0 3px 10px rgba(155, 81, 224, 0.4);
+}
+
+.chat-history {
+  background: var(--bg-void);
+  border: 1px solid var(--border-bimetallic);
+  border-radius: 12px;
+  padding: 18px;
+  min-height: 190px;
+  max-height: 320px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.chat-msg {
+  padding: 10px 14px;
+  border-radius: 10px;
+  font-size: 0.85rem;
+  line-height: 1.5;
+  max-width: 85%;
+}
+
+.chat-msg.user-msg {
+  align-self: flex-end;
+  background: linear-gradient(135deg, #37185e 0%, #20103a 100%);
+  border: 1px solid var(--mewtwo-purple);
+  color: #ffffff;
+}
+
+.chat-msg.bot-msg {
+  align-self: flex-start;
+  background: var(--bg-card);
+  border: 1px solid var(--border-bimetallic);
+  color: var(--silver-primary);
+}
+
+.chat-msg.bot-msg code {
+  background: rgba(0,0,0,0.4);
+  color: var(--gold-light);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+}
+
+.chat-input-row {
+  display: flex;
+  gap: 10px;
+}
+
+.chat-input-row input {
+  flex: 1;
+  background: var(--bg-input);
+  border: 1px solid var(--border-bimetallic);
+  color: #ffffff;
+  padding: 12px 16px;
+  border-radius: 10px;
+  font-size: 0.88rem;
+  outline: none;
+}
+
+.chat-input-row input:focus {
+  border-color: var(--mewtwo-purple);
+  box-shadow: 0 0 12px var(--mewtwo-glow);
+}
+
+/* ==============================================================================
+   VENTANA MODAL REUTILIZADA
+   ============================================================================== */
+.kdf-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(7, 6, 11, 0.8);
+  backdrop-filter: blur(8px);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+}
+
+.kdf-modal {
+  background: var(--bg-panel);
+  border: 2px solid var(--gold-primary);
+  box-shadow: 0 0 35px var(--mewtwo-glow), 0 20px 40px rgba(0,0,0,0.8);
+  border-radius: 18px;
+  width: 100%;
+  max-width: 520px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  animation: modalIn 0.25s ease-out;
+}
+
+@keyframes modalIn {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.modal-header h3 {
+  font-size: 1.15rem;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.modal-close {
+  background: none;
+  border: none;
+  color: var(--silver-steel);
+  font-size: 1.5rem;
+  cursor: pointer;
+  line-height: 1;
+}
+
+.modal-close:hover {
+  color: #ffffff;
+}
+
+.modal-body {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  font-size: 0.86rem;
+  color: var(--silver-mid);
+}
+
+.modal-input {
+  background: var(--bg-input);
+  border: 1px solid var(--border-bimetallic);
+  color: #ffffff;
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-size: 0.88rem;
+  outline: none;
+  width: 100%;
+}
+
+.modal-input:focus {
+  border-color: var(--gold-primary);
+  box-shadow: 0 0 10px var(--gold-glow);
+}
+
+.modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 6px;
+}
+
+.warning-callout {
+  background: rgba(239, 68, 68, 0.12);
+  border: 1px solid var(--telemetry-crimson);
+  color: #fca5a5;
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-size: 0.78rem;
+  line-height: 1.4;
+}
+
+.radio-group {
+  display: flex;
+  gap: 16px;
+}
+
+.radio-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+}
+
+/* ==============================================================================
+   BARRA DE NAVEGACIÓN SUPERIOR (TABS DE ACCESO RÁPIDO)
+   ============================================================================== */
+.kdf-top-nav {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 24px;
+  background: rgba(14, 11, 24, 0.95);
+  border-bottom: 1px solid var(--border-bimetallic);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  backdrop-filter: blur(12px);
+  overflow-x: auto;
+}
+
+.nav-tab {
+  text-decoration: none;
+  font-size: 0.82rem;
+  font-weight: 700;
+  padding: 8px 16px;
+  border-radius: 8px;
+  color: var(--silver-steel);
+  background: var(--bg-card);
+  border: 1px solid var(--border-bimetallic);
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.nav-tab:hover, .nav-tab.active {
+  background: linear-gradient(135deg, rgba(155, 77, 255, 0.4), rgba(212, 175, 55, 0.2));
+  color: #ffffff;
+  border-color: var(--gold-primary);
+  box-shadow: 0 0 12px var(--mewtwo-glow);
+}
+
+.nav-tab-highlight {
+  background: linear-gradient(135deg, var(--mewtwo-deep), #200b3b) !important;
+  border-color: var(--mewtwo-purple) !important;
+  color: #ffffff !important;
+  box-shadow: 0 0 10px rgba(155, 77, 255, 0.35);
+}
+
+/* ==============================================================================
+   BOTÓN FLOTANTE MEWTWO "ASESOR IA"
+   ============================================================================== */
+.floating-chat-btn {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 999;
+  background: linear-gradient(135deg, #9b4dff 0%, #6a0dad 50%, #d4af37 100%);
+  color: #ffffff;
+  border: 2px solid #ffd700;
+  border-radius: 30px;
+  padding: 12px 22px;
+  font-size: 0.92rem;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 0 6px 20px rgba(155, 77, 255, 0.6), 0 0 15px rgba(212, 175, 55, 0.4);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.floating-chat-btn:hover {
+  transform: translateY(-4px) scale(1.06);
+  box-shadow: 0 10px 28px rgba(155, 77, 255, 0.8), 0 0 22px rgba(255, 215, 0, 0.7);
+}
+
+/* ==============================================================================
+   KDFLUXSTUDIO · APK WEBAPP INTEGRATION STYLES (MEWTWO BIMETALLIC)
+   ============================================================================== */
+
+.nav-tab-lux-studio {
+  background: linear-gradient(135deg, #3c096c 0%, #7b2cbf 50%, #d4af37 100%) !important;
+  color: #ffffff !important;
+  border: 1.5px solid #ffd700 !important;
+  border-radius: 8px;
+  cursor: pointer;
+  box-shadow: 0 0 14px rgba(212, 175, 55, 0.4), 0 0 20px rgba(155, 77, 255, 0.5) !important;
+  font-weight: 800 !important;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  animation: pulse-glow-lux 3s infinite alternate;
+}
+
+@keyframes pulse-glow-lux {
+  0% { box-shadow: 0 0 10px rgba(212, 175, 55, 0.3), 0 0 15px rgba(155, 77, 255, 0.4); }
+  100% { box-shadow: 0 0 22px rgba(255, 215, 0, 0.7), 0 0 30px rgba(155, 77, 255, 0.8); }
+}
+
+.kdf-app-modal-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(5, 6, 8, 0.88);
+  backdrop-filter: blur(16px);
+  z-index: 10000;
+  justify-content: center;
+  align-items: center;
+  padding: 16px;
+}
+
+.kdf-app-phone-container {
+  width: 100%;
+  max-width: 960px;
+  height: 92vh;
+  background: #0d0f18;
+  border-radius: 20px;
+  border: 2px solid;
+  border-image: linear-gradient(135deg, #ffd700 0%, #9b4dff 50%, #e0e2ec 100%) 1;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.9), 0 0 35px rgba(155, 77, 255, 0.45);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  position: relative;
+}
+
+.studio-app-topbar {
+  background: rgba(14, 16, 26, 0.98);
+  padding: 14px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid rgba(212, 175, 55, 0.3);
+}
+
+.studio-app-title-group {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.studio-app-title-group img {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+}
+
+.studio-app-title-group h2 {
+  font-size: 1.15rem;
+  color: #ffd700;
+  font-weight: 800;
+  margin: 0;
+}
+
+.studio-app-title-group span {
+  font-size: 0.75rem;
+  color: #9da3b4;
+  display: block;
+}
+
+.studio-app-close-btn {
+  background: rgba(255, 23, 68, 0.2);
+  border: 1px solid #ff1744;
+  color: #ffffff;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.studio-app-close-btn:hover {
+  background: #ff1744;
+  transform: scale(1.1);
+}
+
+.studio-app-tabs-bar {
+  display: flex;
+  background: #111322;
+  border-bottom: 1px solid rgba(155, 77, 255, 0.25);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.studio-tab-btn {
+  flex: 1;
+  min-width: 120px;
+  padding: 12px 10px;
+  background: transparent;
+  border: none;
+  color: #9da3b4;
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border-bottom: 3px solid transparent;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.studio-tab-btn:hover {
+  color: #ffffff;
+  background: rgba(155, 77, 255, 0.15);
+}
+
+.studio-tab-btn.active {
+  color: #ffd700;
+  border-bottom: 3px solid #ffd700;
+  background: rgba(212, 175, 55, 0.12);
+}
+
+.studio-app-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 18px;
+}
+
+.studio-screen-view {
+  display: none;
+}
+
+.studio-screen-view.active {
+  display: block;
+  animation: fadeIn 0.25s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.studio-grid-2 {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.studio-card {
+  background: rgba(18, 20, 32, 0.95);
+  border-radius: 14px;
+  border: 1px solid rgba(155, 77, 255, 0.3);
+  padding: 16px;
+}
+
+.studio-card-gold {
+  border-color: rgba(212, 175, 55, 0.4);
+}
+
+.studio-card h3 {
+  font-size: 0.95rem;
+  color: #ffd700;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.studio-metric-val {
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: #ffffff;
+}
+
+.studio-metric-sub {
+  font-size: 0.78rem;
+  color: #9da3b4;
+  margin-top: 2px;
+}
+
+.studio-btn-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.studio-act-btn {
+  background: linear-gradient(135deg, rgba(155, 77, 255, 0.3), rgba(212, 175, 55, 0.2));
+  color: #ffffff;
+  border: 1px solid rgba(212, 175, 55, 0.4);
+  padding: 9px 15px;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.studio-act-btn:hover {
+  background: linear-gradient(135deg, rgba(155, 77, 255, 0.6), rgba(212, 175, 55, 0.4));
+  border-color: #ffd700;
+  transform: translateY(-2px);
+}
+
+.multimeter-gauge {
+  background: #08090f;
+  border-radius: 12px;
+  padding: 14px;
+  border: 1px solid #00e5ff;
+  text-align: center;
+  margin-top: 10px;
+}
+
+.multimeter-value {
+  font-size: 2.2rem;
+  font-weight: 900;
+  color: #00e5ff;
+  font-family: monospace;
+}

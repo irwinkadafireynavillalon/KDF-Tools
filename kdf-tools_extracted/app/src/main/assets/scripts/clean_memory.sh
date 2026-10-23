@@ -1,68 +1,50 @@
 #!/usr/bin/env bash
-# ==============================================================================
-# KDF-Tools · Script: clean_memory.sh
-# Módulo: Memory Cleaner (Limpieza de Memoria y Caché)
-# Permisos: ADB (rm) + Fastboot (opcional wipe userdata con confirmación)
-# ==============================================================================
-set -e
-
-WIPE_FLAG="${1:-no}"
+# scripts/clean_memory.sh - Limpieza de Memoria y Cachés Android
+# KDF-Tools · Módulo de Utilidad Universal
+set -euo pipefail
 
 echo "=========================================================="
-echo "  ⚡ [KDF-Tools] MÓDULO MEMORY CLEANER (clean_memory.sh)  "
-echo "  Tema Mewtwo: Dorado • Plateado • Negro • Blanco • Morado"
+echo "  [KDF-Tools] LIMPIEZA DE MEMORIA Y CACHÉS                "
 echo "=========================================================="
-echo "[*] Limpieza de particiones temporales y memoria caché"
-echo "[*] Opción Wipe Userdata: $WIPE_FLAG"
-echo "----------------------------------------------------------"
 
-# 1. Comprobar herramientas
-DEV=$(adb devices 2>/dev/null | grep -v "List" | grep "device$" | head -1 | awk '{print $1}' || true)
-
-if [ -n "$DEV" ]; then
-    echo "[+] Dispositivo ADB conectado: $DEV"
-    echo "[1/3] Estado de memoria en el dispositivo:"
-    adb -s "$DEV" shell "grep -E 'MemTotal|MemFree|MemAvailable|Cached' /proc/meminfo 2>/dev/null" || true
-
-    echo "[2/3] Purgando /data/cache/* y /cache/* vía ADB..."
-    adb -s "$DEV" shell "rm -rf /data/cache/* 2>/dev/null || true"
-    adb -s "$DEV" shell "rm -rf /cache/* 2>/dev/null || true"
-    echo "[+] Directorios de caché purgados con éxito."
-
-    echo "[*] Forzando sincronización de disco (sync) y trim de memoria..."
-    adb -s "$DEV" shell "sync; fstrim -v /data 2>/dev/null || true"
-else
-    echo "[!] No se detectó dispositivo ADB conectado en modo normal."
-    echo "[*] Inspeccionando memoria en el sistema local:"
-    if [ -f "/proc/meminfo" ]; then
-        grep -E 'MemTotal|MemFree|MemAvailable|Cached' /proc/meminfo || true
+# 1. Comprobar ADB
+DEV=$(adb devices 2>/dev/null | grep -v "List" | grep -v "^$" | head -1 || true)
+if [ -z "$DEV" ]; then
+    echo "[!] No se detectó dispositivo en ADB."
+    echo "    Intentando comprobar modo Fastboot..."
+    FB_DEV=$(fastboot devices 2>/dev/null | head -1 || true)
+    if [ -n "$FB_DEV" ] && [[ "${1-}" == "--wipe" ]]; then
+        echo "[+] Dispositivo en Fastboot: $FB_DEV"
+        echo "[*] Ejecutando fastboot -w (Wipe Userdata)..."
+        fastboot -w || echo "[!] Error en fastboot -w"
+        fastboot reboot
+        exit 0
     fi
-    echo "[+] Limpieza de caché local realizada."
+    echo "[!] Conecta el dispositivo con depuración USB."
+    exit 1
 fi
 
-# 2. Wipe userdata opcional
-echo "[3/3] Comprobando solicitud de formateo profundo (fastboot -w)..."
-if [ "$WIPE_FLAG" == "--wipe" ] || [ "$WIPE_FLAG" == "yes" ] || [ "$WIPE_FLAG" == "-w" ] || [ "$WIPE_FLAG" == "true" ]; then
-    echo "[!] ATENCIÓN: Ejecutando formateo de partición userdata..."
-    if [ -n "$DEV" ]; then
-        echo "[*] Reiniciando a Fastboot/Bootloader..."
-        adb -s "$DEV" reboot bootloader 2>&1 || true
-        sleep 4
-    fi
+echo "[+] Dispositivo detectado: $DEV"
+echo "[1/3] Limpiando particiones de caché..."
 
-    if command -v fastboot >/dev/null 2>&1; then
-        echo "[*] Ejecutando: fastboot -w"
-        fastboot -w 2>&1 || echo "[!] fastboot -w completado con advertencias o requiere dispositivo en bootloader."
-        echo "[*] Reiniciando dispositivo..."
-        fastboot reboot 2>&1 || true
-    else
-        echo "[!] Binario fastboot no disponible."
-    fi
-    echo "[+] Proceso de Wipe finalizado."
-else
-    echo "[+] Modo seguro: fastboot -w OMITIDO (datos de usuario preservados)."
+adb shell "rm -rf /data/cache/* /cache/* /data/local/tmp/*" 2>/dev/null || true
+echo "  [✓] Cachés de /data/cache, /cache y /data/local/tmp purgados."
+
+echo "[2/3] Optimizando almacenamiento y TRIM..."
+adb shell "sm fstrim" 2>/dev/null || adb shell "fstrim -v /data" 2>/dev/null || echo "  [i] fstrim no soportado sin root (ignorado)."
+
+# Liberar RAM del kernel si hay root
+echo "[3/3] Liberando búferes y cachés de RAM..."
+adb shell "su -c 'echo 3 > /proc/sys/vm/drop_caches'" 2>/dev/null || true
+
+if [[ "${1-}" == "--wipe" ]]; then
+    echo "[*] Reiniciando a Fastboot para wipe de userdata..."
+    adb reboot bootloader
+    sleep 5
+    fastboot -w || echo "[!] Error en fastboot -w"
+    fastboot reboot
 fi
 
 echo "=========================================================="
-echo "  [+] LIMPIEZA DE MEMORIA Y CACHÉ FINALIZADA CON ÉXITO    "
+echo "  [✓] Limpieza de memoria completada exitosamente.        "
 echo "=========================================================="

@@ -1,0 +1,218 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KDF Maps · Navegación & Telemetría GPS Mewtwo</title>
+  <link rel="icon" type="image/jpeg" href="/static/icons/icon_launcher.jpg">
+  <link rel="stylesheet" href="/static/style.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <style>
+    body { background: #07060b; color: #e2e8f0; font-family: 'Inter', sans-serif; height: 100vh; display: flex; flex-direction: column; margin: 0; }
+    .maps-top-bar {
+      background: #141122;
+      border-bottom: 2px solid #d4af37;
+      padding: 10px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.6);
+    }
+    .maps-brand { display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 1.1rem; color: #ffd700; }
+    .maps-telemetry-strip {
+      display: flex;
+      gap: 16px;
+      font-size: 0.8rem;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .maps-telemetry-item { display: flex; flex-direction: column; }
+    .maps-telemetry-label { color: #94a3b8; font-size: 0.7rem; }
+    .maps-telemetry-val { color: #ffffff; font-weight: 700; }
+    #map-container { flex: 1; width: 100%; position: relative; background: #0b0912; }
+    .custom-pulse-marker {
+      background: linear-gradient(135deg, #d4af37, #9b4dff);
+      border: 2px solid #ffffff;
+      border-radius: 50%;
+      box-shadow: 0 0 15px #9b4dff;
+    }
+    .maps-floating-panel {
+      position: absolute;
+      bottom: 20px;
+      left: 20px;
+      right: 20px;
+      max-width: 600px;
+      margin: 0 auto;
+      background: rgba(14, 11, 24, 0.92);
+      backdrop-filter: blur(10px);
+      border: 1px solid #d4af37;
+      border-radius: 14px;
+      padding: 14px 18px;
+      z-index: 1000;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.8), 0 0 15px rgba(155, 77, 255, 0.3);
+    }
+    .panel-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+    .panel-title { font-size: 0.88rem; font-weight: 800; color: #ffd700; display: flex; align-items: center; gap: 6px; }
+    .btn-action-maps {
+      padding: 7px 14px;
+      border-radius: 8px;
+      border: none;
+      font-weight: 700;
+      font-size: 0.8rem;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+    }
+    .btn-gold { background: linear-gradient(135deg, #d4af37, #997a15); color: #07060b; }
+    .btn-gold:hover { transform: translateY(-1px); box-shadow: 0 0 10px rgba(212, 175, 55, 0.5); }
+    .btn-purple { background: linear-gradient(135deg, #9b4dff, #4a148c); color: #ffffff; }
+    .btn-purple:hover { transform: translateY(-1px); box-shadow: 0 0 12px rgba(155, 77, 255, 0.5); }
+  </style>
+</head>
+<body>
+
+  <header class="maps-top-bar">
+    <div class="maps-brand">
+      <span>🗺️</span>
+      <span>KDF MAPS & TELEMETRÍA GPS</span>
+      <span style="font-size:0.75rem; background:rgba(155,77,255,0.2); border:1px solid #9b4dff; color:#c77dff; padding:2px 8px; border-radius:10px;">Mewtwo HUD</span>
+    </div>
+
+    <div class="maps-telemetry-strip">
+      <div class="maps-telemetry-item">
+        <span class="maps-telemetry-label">POSICIÓN GNSS</span>
+        <span class="maps-telemetry-val" id="hud-latlng">19.4326° N, 99.1332° W</span>
+      </div>
+      <div class="maps-telemetry-item">
+        <span class="maps-telemetry-label">PRECISIÓN</span>
+        <span class="maps-telemetry-val" style="color:#10b981;" id="hud-accuracy">±3.5 m (14 SAT)</span>
+      </div>
+      <div class="maps-telemetry-item">
+        <span class="maps-telemetry-label">ALTITUD</span>
+        <span class="maps-telemetry-val" style="color:#ffd700;" id="hud-altitude">2,240 m</span>
+      </div>
+    </div>
+
+    <div>
+      <a href="/" class="btn-action-maps btn-gold" style="text-decoration:none;">⬅ Volver a KDF-Tools</a>
+    </div>
+  </header>
+
+  <div id="map-container"></div>
+
+  <div class="maps-floating-panel">
+    <div class="panel-row">
+      <div class="panel-title">⚡ PLANIFICADOR DE RUTA TÉCNICA Y RESCATE</div>
+      <div style="display:flex; gap:6px;">
+        <button class="btn-action-maps btn-purple" onclick="toggleMapLayer()">Alternar Satélite / Dark</button>
+        <button class="btn-action-maps btn-gold" onclick="sendToOrchestrator()">Vincular al Orquestador</button>
+      </div>
+    </div>
+    <div style="font-size:0.8rem; color:#cbd5e1; line-height:1.4;">
+      <span id="route-text">Ruta activa: Base Central KDF ➔ Estación Móvil Fastboot (8.4 km • Est. 14 min).</span>
+    </div>
+  </div>
+
+  <script>
+    let currentLat = 19.432608;
+    let currentLng = -99.133209;
+    let currentLayer = 'dark';
+    let map = null;
+    let tileLayer = null;
+
+    function initMap() {
+      map = L.map('map-container', { zoomControl: false }).setView([currentLat, currentLng], 14);
+
+      setLayer('dark');
+
+      const pulseIcon = L.divIcon({
+        className: 'custom-pulse-marker',
+        iconSize: [20, 20],
+        iconAnchor: [10, 10]
+      });
+
+      // Marcador central
+      L.marker([currentLat, currentLng], { icon: pulseIcon }).addTo(map)
+        .bindPopup('<b>⚡ Dispositivo KDF-Tools</b><br>Base Central de Diagnóstico').openPopup();
+
+      L.circle([currentLat, currentLng], {
+        color: '#9b4dff',
+        fillColor: '#9b4dff',
+        fillOpacity: 0.15,
+        radius: 120
+      }).addTo(map);
+
+      // Waypoints de soporte
+      L.marker([19.441200, -99.145000], { icon: pulseIcon }).addTo(map)
+        .bindPopup('<b>🔧 Estación Rescate Fastboot</b><br>Punto de intervención');
+
+      L.marker([19.425000, -99.120000], { icon: pulseIcon }).addTo(map)
+        .bindPopup('<b>🔬 Laboratorio Microelectrónica</b><br>Banco de pruebas EDL 9008');
+
+      // Ruta técnica
+      const latlngs = [
+        [currentLat, currentLng],
+        [19.441200, -99.145000]
+      ];
+      L.polyline(latlngs, { color: '#ffd700', weight: 4, opacity: 0.9, dashArray: '8, 8' }).addTo(map);
+    }
+
+    function setLayer(mode) {
+      if (tileLayer) map.removeLayer(tileLayer);
+      if (mode === 'satellite') {
+        tileLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+          maxZoom: 19,
+          attribution: 'Esri World Imagery / KDF-Tools'
+        }).addTo(map);
+      } else {
+        tileLayer = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+          maxZoom: 19,
+          attribution: '© OpenStreetMap / CartoDB / KDF-Tools'
+        }).addTo(map);
+      }
+    }
+
+    function toggleMapLayer() {
+      currentLayer = (currentLayer === 'dark') ? 'satellite' : 'dark';
+      setLayer(currentLayer);
+    }
+
+    function sendToOrchestrator() {
+      const payload = {
+        lat: currentLat,
+        lng: currentLng,
+        accuracy: 3.5,
+        message: 'Telemetría de posición vinculada al Orquestador KDF-Tools'
+      };
+      $.ajax({
+        url: '/api/chat',
+        method: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify({
+          message: 'Vincular coordenadas de rescate técnico: Lat ' + currentLat + ', Lng ' + currentLng,
+          engine: 'spark'
+        }),
+        success: function() {
+          alert('¡Telemetría GPS vinculada al Orquestador con éxito!');
+          $('#route-text').text('Coordenadas sincronizadas con el planificador de rescate.');
+        }
+      });
+    }
+
+    // Intentar leer GPS real de navegador si está disponible
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(function(pos) {
+        currentLat = pos.coords.latitude;
+        currentLng = pos.coords.longitude;
+        $('#hud-latlng').text(currentLat.toFixed(4) + '° N, ' + Math.abs(currentLng).toFixed(4) + '° W');
+        if (map) map.setView([currentLat, currentLng], 14);
+      }, function() {}, { timeout: 3000 });
+    }
+
+    $(document).ready(initMap);
+  </script>
+</body>
+</html>

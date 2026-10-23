@@ -1,81 +1,66 @@
 # ============================================================
-# KDF-LuX · config/ai_config.yaml
+# KDF-Tools · config/ai_config.yaml
 # Configuración centralizada del motor de IA local y cloud
 # ============================================================
 
-# ── Servidor IA Local (llama.cpp / llama-server) ─────────────
+# ── Servidor IA Local (KDF-STUDIO / llama.cpp en :4250) ─────
 local_llm:
   enabled: true
   host: "127.0.0.1"
-  port: 8080
-  base_url: "http://127.0.0.1:8080"
+  port: 4250
+  base_url: "http://127.0.0.1:4250"
 
-  # Endpoints disponibles (llama-server expone OpenAI-compatible API)
+  # Endpoints OpenAI-compatibles expuestos por KDF-STUDIO
   endpoints:
     chat:        "/v1/chat/completions"
-    completions: "/v1/completions"
+    completions: "/v1/chat/completions"
     models:      "/v1/models"
     health:      "/health"
-    slots:       "/slots"
+    status:      "/status"
 
-  # Parámetros de generación
+  # Parámetros de generación optimizados para Gemma 2B
   generation:
     temperature: 0.45
     top_p: 0.92
     top_k: 40
     max_tokens: 1024
     repeat_penalty: 1.1
-    stop: ["</s>", "<|eot_id|>", "Human:", "Usuario:"]
+    stop: ["</s>", "<|eot_id|>", "<end_of_turn>", "Human:", "Usuario:"]
 
-  # Timeout en segundos para llamadas al servidor local
-  timeout_seconds: 20
+  timeout_seconds: 30
 
 # ── Modelos disponibles en el dispositivo ────────────────────
 models:
-  - id: llama32_1b
-    name: "Llama 3.2 1B Instruct (Ultra-rápido)"
-    path: "/data/data/com.termux/files/home/modelos_kdf/Llama-3.2-1B-Instruct-Q4_K_M.gguf"
+  - id: ia_lux_gemma2b
+    name: "IA-LuX · Google Gemma 2 2B Instruct (1.6 GB)"
+    path: "/data/data/com.termux/files/home/.kdf-studio/models/gemma-2-2b-it-Q4_K_M.gguf"
+    alias: "IA-LuX"
     ctx_size: 2048
     threads: 4
     gpu_layers: 0
-    recommended_for: ["diagnóstico rápido", "comandos ADB", "respuestas cortas"]
-    priority: 1   # Se usa primero
-
-  - id: gemma3_270m
-    name: "Gemma 3 270M (Ultra-ligero)"
-    path: "/storage/emulated/0/Download/Archivos_Recuperados_USB/gemma-3-270m.Q8_0.gguf"
-    ctx_size: 1024
-    threads: 2
-    gpu_layers: 0
-    recommended_for: ["consultas simples", "modo sin internet"]
-    priority: 2   # Fallback 1
+    recommended_for: ["diagnóstico local", "comandos ADB/Fastboot", "flasheo", "reparación"]
+    priority: 1
 
 # ── Google Gemini Cloud (fallback cloud) ─────────────────────
 gemini:
   enabled: true
   model: "gemini-2.0-flash"
-  # La API key se lee de la variable de entorno GEMINI_API_KEY
-  # Nunca hardcodear aquí en producción
   temperature: 0.35
   top_p: 0.90
   max_output_tokens: 2048
-  timeout_seconds: 12
+  timeout_seconds: 15
 
 # ── Orden de prioridad (fallback chain) ──────────────────────
-# 1º Intenta IA Local (llama-server en :8080)
-# 2º Si falla → Gemini Cloud
-# 3º Si falla → Respuesta offline estática
 fallback_chain:
   - local_llm
   - gemini
   - offline
 
-# ── System prompt base del asistente KDF-LuX ─────────────────
+# ── System prompt base del asistente KDF-Tools ───────────────
 system_prompt: |
-  Eres KDF-LuX AI, asistente técnico especialista universal en reparación,
-  diagnóstico y flasheo de dispositivos electrónicos.
-  Dominas: Smartphones, Tablets, Laptops, Smart TVs, Wearables y sistemas Automotrices.
-  Procesadores: MediaTek (BROM/SP Flash/MTKClient), Qualcomm (EDL 9008/QFIL/edl-tool),
-  Exynos (Odin/Download Mode), Apple Silicon (DFU/checkm8/palera1n), x86_64.
-  Herramientas: Chimera, Hydra, MiTools, NH Root, Magisk, KernelSU, ADB, Fastboot.
-  Responde siempre en español, de forma técnica, clara y directa con comandos exactos.
+  Eres KDF-Tools AI, el asistente técnico especializado en servicio, diagnóstico,
+  mantenimiento y flasheo de dispositivos electrónicos de la suite KDF-Tools.
+  Dominas las 6 categorías: Smartphones, Tablets, Laptops/PC, Smart TVs, Wearables y Automotriz.
+  Herramientas y protocolos: Fastboot, ADB, EDL 9008 Sahara, MediaTek BROM/Preloader,
+  Odin/Download mode, Apple DFU/Checkm8, PayJoy bypass, Knox Guard, y reparación NV/IMEI.
+  Responde siempre en español, de forma directa, técnica y con los comandos exactos.

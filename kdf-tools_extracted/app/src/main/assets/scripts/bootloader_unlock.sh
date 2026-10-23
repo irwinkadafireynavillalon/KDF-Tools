@@ -47,7 +47,11 @@ case "$BRAND" in
         echo "          Ajustes → Sistema → Opciones de desarrollador → Desbloqueo OEM"
         echo "  Paso 3: Reiniciar a Fastboot: adb reboot bootloader"
         echo "  Paso 4: Obtener código de dispositivo:"
-        fastboot oem get_unlock_data 2>&1 || echo "    (conectar en fastboot primero)"
+        if [ -n "$FB_DEV" ]; then
+            fastboot oem get_unlock_data 2>&1 || echo "    (error al leer unlock data)"
+        else
+            echo "    [i] Conecta el teléfono en modo Fastboot para extraer el unlock data."
+        fi
         echo "  Paso 5: Pegar código en la web de Motorola → obtener unlock code"
         echo "  Paso 6: fastboot oem unlock UNLOCK_CODE_AQUI"
         echo "  Paso 7: fastboot reboot"
@@ -64,7 +68,11 @@ case "$BRAND" in
         echo "    fastboot flashing unlock_critical"
         echo ""
         echo "  Anti-Rollback Check (IMPORTANTE para Xiaomi):"
-        fastboot getvar anti 2>&1 || echo "  (conectar en fastboot)"
+        if [ -n "$FB_DEV" ]; then
+            fastboot getvar anti 2>&1 || echo "  (error al leer anti)"
+        else
+            echo "    [i] Conecta en Fastboot para leer Anti-Rollback."
+        fi
         ;;
     *Samsung*)
         echo "  ── SAMSUNG ──"

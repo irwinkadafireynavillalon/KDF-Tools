@@ -67,7 +67,15 @@ import com.example.ui.components.SwissChronographTelemetryHeader
 import com.example.ui.screens.AiStudioAndConsoleScreen
 import com.example.ui.screens.DeviceModulesDashboardSection
 import com.example.ui.screens.DiagnosticCenterScreen
+import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.material.icons.filled.Language
+import androidx.compose.material.icons.filled.Map
+import androidx.compose.material.icons.filled.SmartToy
 import com.example.ui.screens.HardwarePermissionManagerCard
+import com.example.ui.screens.PersonalAssistantAndPlannerScreen
+import com.example.ui.screens.SystemBrowserScreen
+import com.example.ui.screens.SystemMapsScreen
 import com.example.ui.screens.HardwareVisualSuperResolutionCard
 import com.example.ui.screens.HeuristicsElizaAndAiWashingCard
 import com.example.ui.screens.KdfBimetallicChatbotModal
@@ -233,6 +241,29 @@ fun KdfToolsRootApp(viewModel: KdfToolsViewModel) {
                                         onExecuteTerminalCmd = viewModel::runRawTerminalCommand
                                     )
                                 }
+                            }
+
+                            KdfScreenTab.SYSTEM_BROWSER -> {
+                                SystemBrowserScreen(
+                                    isObsidianMode = uiState.isObsidianMode
+                                )
+                            }
+
+                            KdfScreenTab.SYSTEM_MAPS -> {
+                                SystemMapsScreen(
+                                    isObsidianMode = uiState.isObsidianMode,
+                                    onSendTelemetryToOrchestrator = { coords ->
+                                        viewModel.sendChatMessage("Telemetría de posición enviada al Orquestador: $coords")
+                                    }
+                                )
+                            }
+
+                            KdfScreenTab.PERSONAL_ASSISTANT_PLANNER -> {
+                                PersonalAssistantAndPlannerScreen(
+                                    isObsidianMode = uiState.isObsidianMode,
+                                    onExecuteStep = { cmd -> viewModel.runRawTerminalCommand(cmd) },
+                                    onConsultAi = viewModel::sendChatMessage
+                                )
                             }
 
                             KdfScreenTab.HARDWARE_VISUAL -> {
@@ -453,6 +484,9 @@ private fun CompactBimetallicNavigationBar(
         Triple(KdfScreenTab.DASHBOARD_MODULES, stringResource(id = R.string.tab_dashboard), Icons.Filled.Dashboard),
         Triple(KdfScreenTab.DIAGNOSTIC_CENTER, stringResource(id = R.string.tab_diagnostic), Icons.Filled.PermDeviceInformation),
         Triple(KdfScreenTab.MAINTENANCE_OPS, stringResource(id = R.string.tab_maintenance), Icons.Filled.Build),
+        Triple(KdfScreenTab.SYSTEM_BROWSER, "Navegador", Icons.Filled.Language),
+        Triple(KdfScreenTab.SYSTEM_MAPS, "Mapas", Icons.Filled.Map),
+        Triple(KdfScreenTab.PERSONAL_ASSISTANT_PLANNER, "Asistente", Icons.Filled.SmartToy),
         Triple(KdfScreenTab.HARDWARE_VISUAL, stringResource(id = R.string.tab_hardware_visual), Icons.Filled.HighQuality),
         Triple(KdfScreenTab.WALLPAPER_CUSTOMIZER, stringResource(id = R.string.tab_wallpaper), Icons.Filled.Palette),
         Triple(KdfScreenTab.SCRIPTS_STUDIO, stringResource(id = R.string.tab_scripts_studio), Icons.Filled.Code)
@@ -474,8 +508,9 @@ private fun CompactBimetallicNavigationBar(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 2.dp, vertical = 3.dp),
-            horizontalArrangement = Arrangement.SpaceEvenly,
+                .horizontalScroll(rememberScrollState())
+                .padding(horizontal = 4.dp, vertical = 3.dp),
+            horizontalArrangement = Arrangement.spacedBy(4.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             items.forEach { (tab, label, icon) ->

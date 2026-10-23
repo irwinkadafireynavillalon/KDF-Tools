@@ -350,6 +350,9 @@
           <button id="btn-audio-toggle" class="btn" type="button" title="Activar/Silenciar respuesta en voz alta" style="background: rgba(255,255,255,0.08); color: var(--mewtwo-gold, #ffd700); border: 1px solid rgba(255,255,255,0.2); padding: 10px 12px; border-radius: 8px; cursor: pointer;">
             <span id="speaker-icon">🔊</span>
           </button>
+          <button id="btn-voice-settings" class="btn" type="button" title="Configurar Voz, Tono y Personalidad" onclick="window.location.href='/call'" style="background: rgba(255,255,255,0.08); color: #ffd700; border: 1px solid rgba(255,255,255,0.2); padding: 10px 12px; border-radius: 8px; cursor: pointer;">
+            ⚙️
+          </button>
           <button id="btn-send-chat" class="btn btn-primary">💬 Enviar</button>
         </div>
       </div>
@@ -1008,6 +1011,20 @@
       const esVoice = voices.find(v => v.lang.startsWith('es') && (v.name.includes('Google') || v.name.includes('Natural') || v.name.includes('Premium')));
       if (esVoice) utter.voice = esVoice;
 
+      // Cargar configuración guardada de voz si existe
+      try {
+        const savedCfg = localStorage.getItem('kdf_voice_config');
+        if (savedCfg) {
+          const cfg = JSON.parse(savedCfg);
+          if (cfg.pitch) utter.pitch = parseFloat(cfg.pitch);
+          if (cfg.rate) utter.rate = parseFloat(cfg.rate);
+          if (cfg.voiceURI) {
+            const vMatch = voices.find(v => v.voiceURI === cfg.voiceURI);
+            if (vMatch) utter.voice = vMatch;
+          }
+        }
+      } catch (e) {}
+
       utter.onend = function() {
         isSpeaking = false;
         // Si la llamada está activa, volver a escuchar de inmediato al terminar de responder
@@ -1399,15 +1416,29 @@
               </div>
 
               <!-- App 6: KDF Browser -->
-              <div class="kdf-suite-app-item" onclick="window.open('/', '_blank')" title="Abrir portal web KDFLuXStudio">
+              <div class="kdf-suite-app-item" onclick="window.location.href='/browser'" title="Abrir Navegador KDF con protección de privacidad">
                 <img src="/static/icons/icon_browser.jpg" class="kdf-suite-app-icon" alt="KDF Browser">
                 <div class="kdf-suite-app-name">KDF Browser</div>
-                <div class="kdf-suite-app-desc">Portal Web</div>
+                <div class="kdf-suite-app-desc">Navegador Web</div>
               </div>
 
-              <!-- App 7: KDF Launcher -->
+              <!-- App 7: KDF Maps -->
+              <div class="kdf-suite-app-item" onclick="window.location.href='/maps'" title="Abrir Mapas y Telemetría GPS Mewtwo">
+                <img src="/static/icons/icon_launcher.jpg" class="kdf-suite-app-icon" alt="KDF Maps">
+                <div class="kdf-suite-app-name">KDF Maps</div>
+                <div class="kdf-suite-app-desc">Mapas & GPS</div>
+              </div>
+
+              <!-- App 8: KDF Assistant & Planificador -->
+              <div class="kdf-suite-app-item" onclick="window.location.href='/assistant'" title="Asistente Personal y Planificador del Orquestador">
+                <img src="/static/icons/icon_message.jpg" class="kdf-suite-app-icon" alt="KDF Assistant">
+                <div class="kdf-suite-app-name">Asistente IA</div>
+                <div class="kdf-suite-app-desc">Planificador</div>
+              </div>
+
+              <!-- App 9: KDF Launcher -->
               <div class="kdf-suite-app-item" onclick="switchStudioTab('studio-screen-diagnostic', $('.studio-tab-btn')[1])" title="Diagnóstico y selector de hardware">
-                <img src="/static/icons/icon_launcher.jpg" class="kdf-suite-app-icon" alt="KDF Launcher">
+                <img src="/static/icons/icon_tools.jpg" class="kdf-suite-app-icon" alt="KDF Launcher">
                 <div class="kdf-suite-app-name">KDF Launcher</div>
                 <div class="kdf-suite-app-desc">Diagnóstico HW</div>
               </div>

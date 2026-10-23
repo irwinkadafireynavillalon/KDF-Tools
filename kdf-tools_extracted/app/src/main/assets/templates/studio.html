@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KDF Studio · Universal Neural Hub (Mewtwo Edition)</title>
+  <style>
+    /* =========================================================================
+       PALETA MEWTWO BIMETÁLICA OFICIAL (ORO, PLATA, NEGRO OBSIDIANA, MORADO)
+       ========================================================================= */
+    :root {
+      --bg-mewtwo: #050608;
+      --card-bg: rgba(14, 16, 26, 0.92);
+      
+      /* Dorado Imperial */
+      --gold-primary: #d4af37;
+      --gold-light: #ffd700;
+      --gold-glow: rgba(212, 175, 55, 0.4);
+      
+      /* Plata Líquida */
+      --silver-steel: #e0e2ec;
+      --silver-mid: #9da3b4;
+      --silver-glow: rgba(224, 226, 236, 0.35);
+
+      /* Morado Mewtwo & Aura */
+      --mewtwo-purple: #9b4dff;
+      --mewtwo-deep: #3c096c;
+      --mewtwo-aura: #c77dff;
+      --mewtwo-glow: rgba(155, 77, 255, 0.5);
+
+      --text: #ffffff;
+      --text-muted: #8b949e;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    body {
+      background: var(--bg-mewtwo);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    header {
+      background: rgba(10, 11, 18, 0.98);
+      padding: 16px 28px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 2px solid;
+      border-image: linear-gradient(90deg, var(--gold-primary) 0%, var(--mewtwo-purple) 50%, var(--silver-steel) 100%) 1;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.8);
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 1.35rem;
+      font-weight: 800;
+      letter-spacing: 2px;
+    }
+    .brand span {
+      background: linear-gradient(135deg, var(--gold-light), var(--mewtwo-aura), var(--silver-steel));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .shield-badge {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 16px;
+      background: linear-gradient(135deg, rgba(212,175,55,0.1), rgba(155,77,255,0.15));
+      border: 1px solid var(--gold-primary);
+      border-radius: 20px;
+      font-size: 0.85rem;
+      color: var(--gold-light);
+      box-shadow: 0 0 14px var(--gold-glow);
+    }
+    .container {
+      max-width: 1240px;
+      margin: 24px auto;
+      padding: 0 16px;
+      width: 100%;
+      display: grid;
+      grid-template-columns: 1fr 360px;
+      gap: 22px;
+    }
+    @media (max-width: 900px) {
+      .container { grid-template-columns: 1fr; }
+    }
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--mewtwo-purple);
+      border-radius: 16px;
+      padding: 22px;
+      box-shadow: 0 0 25px rgba(155, 77, 255, 0.15), 0 12px 40px rgba(0,0,0,0.7);
+    }
+    .card h2 {
+      font-size: 1.15rem;
+      color: var(--silver-steel);
+      margin-bottom: 18px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      padding-bottom: 10px;
+    }
+    .card h2 span {
+      color: var(--gold-light);
+    }
+    /* Consola de Operaciones */
+    .tools-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 14px;
+      margin-bottom: 24px;
+    }
+    .tool-btn {
+      background: linear-gradient(135deg, rgba(255,255,255,0.03), rgba(60,9,108,0.25));
+      border: 1px solid rgba(212, 175, 55, 0.3);
+      border-radius: 12px;
+      padding: 16px;
+      color: var(--text);
+      cursor: pointer;
+      text-align: left;
+      transition: all 0.25s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    .tool-btn:hover {
+      border-color: var(--gold-light);
+      background: linear-gradient(135deg, rgba(155,77,255,0.2), rgba(212,175,55,0.15));
+      transform: translateY(-3px);
+      box-shadow: 0 0 20px var(--mewtwo-glow);
+    }
+    .tool-btn strong { display: block; margin-bottom: 6px; color: var(--gold-light); font-size: 1.05rem; }
+    .tool-btn p { font-size: 0.85rem; color: var(--silver-mid); line-height: 1.4; }
+    
+    /* Consola Interactiva */
+    .terminal-box {
+      background: #020204;
+      border: 1px solid rgba(155,77,255,0.4);
+      border-radius: 12px;
+      padding: 16px;
+      height: 220px;
+      overflow-y: auto;
+      font-family: monospace;
+      font-size: 0.88rem;
+      color: var(--silver-steel);
+      white-space: pre-wrap;
+      box-shadow: inset 0 0 15px rgba(0,0,0,0.8);
+    }
+    /* Chat & Control */
+    .chat-box {
+      display: flex;
+      flex-direction: column;
+      height: 540px;
+    }
+    .chat-history {
+      flex: 1;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 14px;
+      padding-right: 6px;
+    }
+    .msg {
+      padding: 12px 16px;
+      border-radius: 14px;
+      font-size: 0.92rem;
+      line-height: 1.45;
+      max-width: 90%;
+    }
+    .msg-u {
+      align-self: flex-end;
+      background: linear-gradient(135deg, var(--mewtwo-purple), var(--mewtwo-deep));
+      color: #fff;
+      border: 1px solid var(--mewtwo-aura);
+      box-shadow: 0 0 12px var(--mewtwo-glow);
+    }
+    .msg-ai {
+      align-self: flex-start;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(212,175,55,0.3);
+      color: var(--silver-steel);
+    }
+    .input-row {
+      display: flex;
+      gap: 10px;
+    }
+    input[type="text"] {
+      flex: 1;
+      padding: 12px 16px;
+      background: rgba(0,0,0,0.5);
+      border: 1px solid rgba(212,175,55,0.4);
+      border-radius: 10px;
+      color: #fff;
+      outline: none;
+    }
+    input[type="text"]:focus {
+      border-color: var(--gold-light);
+      box-shadow: 0 0 10px var(--gold-glow);
+    }
+    button.btn-primary {
+      padding: 12px 20px;
+      background: linear-gradient(135deg, var(--gold-light), var(--gold-primary));
+      border: none;
+      border-radius: 10px;
+      font-weight: 700;
+      color: #000;
+      cursor: pointer;
+      box-shadow: 0 0 14px var(--gold-glow);
+      transition: all 0.2s ease;
+    }
+    button.btn-primary:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 0 20px var(--gold-glow);
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="brand">
+      <span>⚡ KDF STUDIO</span>
+    </div>
+    <div class="shield-badge">
+      <span id="shield-indicator">🛡️ SHIELD ACTIVO:</span> <strong id="alias-label">KDF-STUDIO</strong>
+    </div>
+  </header>
+
+  <div class="container">
+    <main>
+      <div class="card">
+        <h2><span>🛠️</span> SUITE UNIVERSAL DE HARDWARE Y REPARACIÓN</h2>
+        <div class="tools-grid">
+          <div class="tool-btn" onclick="executeKdfTool('payload_extractor')">
+            <strong>📦 Payload Dumper</strong>
+            <p>Extraer boot.img y particiones de payload.bin OTA.</p>
+          </div>
+          <div class="tool-btn" onclick="executeKdfTool('frp_bypass')">
+            <strong>🔓 Universal FRP Bypass</strong>
+            <p>Remoción de cuenta Google vía ADB / Fastboot.</p>
+          </div>
+          <div class="tool-btn" onclick="executeKdfTool('edl_flasher')">
+            <strong>⚡ Qualcomm 9008 EDL</strong>
+            <p>Desbrickeo por protocolo Sahara / Firehose.</p>
+          </div>
+          <div class="tool-btn" onclick="executeKdfTool('mtk_service')">
+            <strong>🔮 MediaTek BROM</strong>
+            <p>Bypass SLA/DAA y volcado de particiones.</p>
+          </div>
+          <div class="tool-btn" onclick="executeKdfTool('fastboot_info')">
+            <strong>📋 Fastboot Getvar All</strong>
+            <p>Diagnóstico de bootloader, CID y bloqueo.</p>
+          </div>
+          <div class="tool-btn" onclick="window.location.href='/call'">
+            <strong>🎙️ Llamada en Vivo Live</strong>
+            <p>Consola continua manos libres estilo Gemini.</p>
+          </div>
+        </div>
+
+        <h2><span>🖥️</span> SALIDA DE TELEMETRÍA Y SISTEMA</h2>
+        <div class="terminal-box" id="terminal-output">[KDF-Studio Core]: Listo. Conexión blindada enrutada en dominio KDF-STUDIO sin exponer IP ni MAC.</div>
+      </div>
+    </main>
+
+    <aside>
+      <div class="card chat-box">
+        <h2><span>🧠</span> ASISTENTE KDF IA LOCAL</h2>
+        <div class="chat-history" id="chat-history">
+          <div class="msg msg-ai">Hola. Soy KDF Studio AI. Estoy conectado al motor local protegido sin claves externas. ¿En qué dispositivo o tarea trabajamos hoy?</div>
+        </div>
+        <div class="input-row">
+          <input type="text" id="chat-input" placeholder="Pregunta técnica u orden..." onkeypress="if(event.key==='Enter') sendMsg()">
+          <button class="btn-primary" onclick="sendMsg()">Enviar</button>
+        </div>
+      </div>
+    </aside>
+  </div>
+
+  <script>
+    function appendChat(role, text) {
+      const h = document.getElementById('chat-history');
+      const d = document.createElement('div');
+      d.className = role === 'u' ? 'msg msg-u' : 'msg msg-ai';
+      d.innerHTML = text.replace(/\n/g, '<br>');
+      h.appendChild(d);
+      h.scrollTop = h.scrollHeight;
+    }
+
+    function sendMsg() {
+      const inp = document.getElementById('chat-input');
+      const val = inp.value.trim();
+      if (!val) return;
+      inp.value = '';
+      appendChat('u', val);
+
+      fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: val, operation: 'KDF_STUDIO_WEBAPP' })
+      })
+      .then(r => r.json())
+      .then(d => {
+        appendChat('ai', d.reply || 'Sin respuesta.');
+      })
+      .catch(() => {
+        appendChat('ai', '[Error de conexión al servidor KDF]');
+      });
+    }
+
+    function executeKdfTool(action) {
+      const term = document.getElementById('terminal-output');
+      term.innerText = `[KDF Exec]: Ejecutando ${action}...\n`;
+      fetch('/api/execute', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ operation: action })
+      })
+      .then(r => r.json())
+      .then(d => {
+        term.innerText += (d.output || d.status || JSON.stringify(d)) + '\n';
+        term.scrollTop = term.scrollHeight;
+      })
+      .catch(e => {
+        term.innerText += `[Error]: ${e.message}\n`;
+      });
+    }
+  </script>
+</body>
+</html>

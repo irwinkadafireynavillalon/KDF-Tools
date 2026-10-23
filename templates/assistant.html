@@ -1,0 +1,218 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KDF Assistant & Planificador del Orquestador</title>
+  <link rel="icon" type="image/jpeg" href="/static/icons/icon_message.jpg">
+  <link rel="stylesheet" href="/static/style.css">
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <style>
+    body { background: #07060b; color: #e2e8f0; font-family: 'Inter', sans-serif; margin: 0; min-height: 100vh; display: flex; flex-direction: column; }
+    .assistant-container { max-width: 1300px; margin: 0 auto; padding: 20px; width: 100%; display: flex; flex-direction: column; gap: 20px; flex: 1; }
+    .top-header { background: #141122; border-bottom: 2px solid #9b4dff; padding: 14px 24px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 20px rgba(0,0,0,0.6); }
+    .brand-group { display: flex; align-items: center; gap: 12px; }
+    .brand-title { font-size: 1.25rem; font-weight: 900; background: linear-gradient(90deg, #ffffff, #ffd700, #c77dff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .planner-board { display: grid; grid-template-columns: 1.1fr 1.3fr; gap: 20px; }
+    @media (max-width: 900px) { .planner-board { grid-template-columns: 1fr; } }
+    .card-panel { background: #141122; border: 1px solid #2d2645; border-radius: 14px; padding: 18px; box-shadow: 0 6px 20px rgba(0,0,0,0.4); display: flex; flex-direction: column; gap: 14px; }
+    .step-item { background: #0b0912; border: 1px solid #2d2645; border-radius: 10px; padding: 12px; display: flex; justify-content: space-between; align-items: center; gap: 10px; transition: border-color 0.2s ease; }
+    .step-item:hover { border-color: #ffd700; }
+    .step-num { width: 26px; height: 26px; border-radius: 50%; background: #2d0c57; border: 1px solid #9b4dff; color: #ffffff; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: 800; flex-shrink: 0; }
+    .step-completed .step-num { background: #10b981; border-color: #10b981; }
+    .step-info { flex: 1; }
+    .step-title { font-size: 0.88rem; font-weight: 700; color: #ffffff; }
+    .step-desc { font-size: 0.76rem; color: #94a3b8; }
+    .step-cmd { font-size: 0.72rem; font-family: 'JetBrains Mono', monospace; color: #ffd700; margin-top: 2px; }
+    .btn-step-run { background: linear-gradient(135deg, #d4af37, #997a15); color: #07060b; border: none; border-radius: 6px; padding: 6px 12px; font-weight: 700; font-size: 0.75rem; cursor: pointer; }
+    .btn-step-run:hover { box-shadow: 0 0 10px rgba(212, 175, 55, 0.5); }
+    .btn-preset { background: #1e1735; border: 1px solid #9b4dff; color: #ffffff; border-radius: 8px; padding: 6px 12px; font-size: 0.78rem; font-weight: 700; cursor: pointer; }
+    .btn-preset.active { background: linear-gradient(90deg, #9b4dff, #6a1b9a); border-color: #ffd700; }
+  </style>
+</head>
+<body>
+
+  <header class="top-header">
+    <div class="brand-group">
+      <span style="font-size:1.6rem;">🤖</span>
+      <div>
+        <div class="brand-title">KDF ASSISTANT & PLANIFICADOR DEL ORQUESTADOR</div>
+        <div style="font-size:0.75rem; color:#94a3b8;">Motor Dual Spark Heuristic + Google Gemini 3.8 Flash</div>
+      </div>
+    </div>
+    <div>
+      <a href="/" class="btn btn-secondary" style="text-decoration:none; font-size:0.8rem;">⬅ Volver a KDF-Tools</a>
+    </div>
+  </header>
+
+  <main class="assistant-container">
+
+    <!-- SELECTOR DE PLANES TÉCNICOS -->
+    <div class="card-panel">
+      <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
+        <span style="font-size:0.9rem; font-weight:800; color:#ffd700;">📋 PLANES TÉCNICOS DEL ORQUESTADOR</span>
+        <div style="display:flex; gap:6px; flex-wrap:wrap;">
+          <button class="btn-preset active" onclick="loadPlan('PAYJOY')">🚫 App Blocker</button>
+          <button class="btn-preset" onclick="loadPlan('UNBRICK')">🔧 Rescate Bootloop</button>
+          <button class="btn-preset" onclick="loadPlan('MEMORY')">🧹 Limpieza Profunda</button>
+          <button class="btn-preset" onclick="loadPlan('EDL')">⚡ Flasheo EDL 9008</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- TABLERO PRINCIPAL: PLANIFICADOR (IZQUIERDA) + CHAT ASISTENTE (DERECHA) -->
+    <div class="planner-board">
+      
+      <!-- COLUMNA IZQUIERDA: LISTA DE PASOS EJECUTABLES -->
+      <div class="card-panel">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <h3 style="font-size:1rem; color:#ffffff; font-weight:800;" id="plan-heading">Pasos del Plan: App Blocker</h3>
+          <span style="font-size:0.75rem; background:rgba(16,185,129,0.15); border:1px solid #10b981; color:#10b981; padding:2px 8px; border-radius:10px;">Orquestador Activo</span>
+        </div>
+
+        <div style="display:flex; flex-direction:column; gap:10px;" id="steps-container">
+          <!-- Renderizado dinámico de pasos -->
+        </div>
+
+        <div style="background:#07060b; border:1px solid #2d2645; border-radius:10px; padding:12px; margin-top:10px;">
+          <span style="font-size:0.75rem; font-family:'JetBrains Mono', monospace; color:#a3a0b8;" id="step-output">[KDF-Tools Assistant] Esperando orden de ejecución...</span>
+        </div>
+      </div>
+
+      <!-- COLUMNA DERECHA: CONVERSACIÓN MULTIMODAL CON EL ASISTENTE -->
+      <div class="card-panel">
+        <h3 style="font-size:1rem; color:#ffffff; font-weight:800;">💬 Conversar con el Asistente Orquestador</h3>
+        <p style="font-size:0.8rem; color:#94a3b8; margin:0;">Pide al asistente que analice el estado del hardware, diagnoctique o planifique una intervención técnica personalizada:</p>
+
+        <div class="chat-history" id="assistant-chat-history" style="flex:1; min-height:280px; max-height:360px;">
+          <div class="chat-msg bot-msg">
+            <strong>Asistente KDF:</strong> Hola. Estoy sincronizado con el backend KDF-Tools y tus scripts de diagnóstico. Puedes pedirme que genere planes complejos o ejecute cualquier secuencia técnica sobre el dispositivo conectado.
+          </div>
+        </div>
+
+        <div class="chat-input-row">
+          <input type="text" id="assistant-chat-input" placeholder="Ej: Planifica un flasheo seguro o revisa si hay cortos...">
+          <button class="btn btn-primary" id="btn-assistant-send">Enviar</button>
+        </div>
+      </div>
+
+    </div>
+
+  </main>
+
+  <script>
+    const plansData = {
+      PAYJOY: [
+        { num: 1, title: 'Modo Seguro Aislado', desc: 'Aplica persist.sys.safemode=1', cmd: 'scripts/enter_safe_mode.sh' },
+        { num: 2, title: 'Neutralizar Paquete', desc: 'Desactiva con pm disable-user', cmd: 'scripts/disable_blocker.sh com.ejemplo.blocker disable no' },
+        { num: 3, title: 'Purgar Dalvik y Cachés', desc: 'Limpia /data/cache/*', cmd: 'scripts/clean_memory.sh no' },
+        { num: 4, title: 'Auditoría Final', desc: 'Restaura y verifica inicio normal', cmd: 'scripts/return_home.sh' }
+      ],
+      UNBRICK: [
+        { num: 1, title: 'Diagnóstico Bajo Nivel', desc: 'Comprueba puertos y slot A/B', cmd: 'scripts/low_level_diagnostic.sh' },
+        { num: 2, title: 'Desbloqueo Bootloader', desc: 'fastboot flashing unlock', cmd: 'scripts/unlock_bootloader.sh' },
+        { num: 3, title: 'Parche vbmeta AVB 2.0', desc: 'Flashea vbmeta deshabilitado', cmd: 'scripts/unbrick_recovery.sh' },
+        { num: 4, title: 'Reinicio Seguro', desc: 'fastboot reboot', cmd: 'scripts/return_home.sh' }
+      ],
+      MEMORY: [
+        { num: 1, title: 'Diagnóstico de RAM', desc: 'Inspecciona memoria libre y swap', cmd: 'scripts/clean_memory.sh no' },
+        { num: 2, title: 'Purga de Caché del Sistema', desc: 'rm -rf /data/cache/*', cmd: 'scripts/clean_memory.sh no' },
+        { num: 3, title: 'Optimización de Nodos', desc: 'Sincroniza y corre fstrim', cmd: 'scripts/clean_memory.sh no' }
+      ],
+      EDL: [
+        { num: 1, title: 'Detección Puerto 9008', desc: 'Verifica test-point Qualcomm', cmd: 'scripts/low_level_diagnostic.sh' },
+        { num: 2, title: 'Flasheo Sahara / Firehose', desc: 'Escribe bootloader y radio en UFS', cmd: 'scripts/edl_flasher.sh bootloader.img radio.img prog_firehose_ddr.elf' },
+        { num: 3, title: 'Reset SoC Qualcomm', desc: 'edl.py reset', cmd: 'scripts/return_home.sh' }
+      ]
+    };
+
+    function loadPlan(type) {
+      $('.btn-preset').removeClass('active');
+      $(`button[onclick="loadPlan('${type}')"]`).addClass('active');
+
+      const steps = plansData[type] || plansData.PAYJOY;
+      $('#plan-heading').text(`Pasos del Plan: ${type}`);
+      const container = $('#steps-container').empty();
+
+      steps.forEach((step, idx) => {
+        const item = $(`
+          <div class="step-item" id="step-${idx}">
+            <div class="step-num">${step.num}</div>
+            <div class="step-info">
+              <div class="step-title">${step.title}</div>
+              <div class="step-desc">${step.desc}</div>
+              <div class="step-cmd">${step.cmd}</div>
+            </div>
+            <button class="btn-step-run" onclick="executePlanStep('${step.cmd}', ${idx})">⚡ Ejecutar</button>
+          </div>
+        `);
+        container.append(item);
+      });
+    }
+
+    function executePlanStep(cmd, idx) {
+      $('#step-output').text(`[EJECUTANDO EN EL ORQUESTADOR]: ${cmd}...`);
+      
+      // Mapear comando a API execute
+      let opId = 'mode_safe';
+      if (cmd.includes('disable_blocker')) opId = 'app_blocker';
+      else if (cmd.includes('clean_memory')) opId = 'mem_cleaner';
+      else if (cmd.includes('unlock_bootloader')) opId = 'bootloader_unlock';
+      else if (cmd.includes('edl_flasher')) opId = 'edl_flasher';
+      else if (cmd.includes('unbrick')) opId = 'unbrick_bootloop';
+      else if (cmd.includes('return_home')) opId = 'return_home';
+
+      $.ajax({
+        url: '/api/execute',
+        method: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify({ operation_id: opId }),
+        success: function(resp) {
+          $('#step-output').text(resp.output || '[OK] Paso finalizado con éxito.');
+          $(`#step-${idx}`).addClass('step-completed');
+          $(`#step-${idx} .step-num`).html('✓');
+        },
+        error: function(xhr) {
+          $('#step-output').text(`[Error]: ${xhr.statusText}`);
+        }
+      });
+    }
+
+    function sendAssistantChat() {
+      const text = $('#assistant-chat-input').val().trim();
+      if (!text) return;
+      $('#assistant-chat-input').val('');
+
+      const history = $('#assistant-chat-history');
+      history.append(`<div class="chat-msg user-msg"><strong>Tú:</strong> ${text}</div>`);
+      history.scrollTop(history[0].scrollHeight);
+
+      history.append(`<div class="chat-msg bot-msg typing"><em>Asistente consultando con el Orquestador...</em></div>`);
+      history.scrollTop(history[0].scrollHeight);
+
+      $.ajax({
+        url: '/api/chat',
+        method: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify({ message: text, engine: 'spark' }),
+        success: function(resp) {
+          $('.typing').remove();
+          history.append(`<div class="chat-msg bot-msg"><strong>Asistente KDF [${resp.source}]:</strong><br>${resp.reply.replace(/\n/g, '<br>')}</div>`);
+          history.scrollTop(history[0].scrollHeight);
+        },
+        error: function() {
+          $('.typing').remove();
+          history.append(`<div class="chat-msg bot-msg">[Error de respuesta del orquestador]</div>`);
+        }
+      });
+    }
+
+    $('#btn-assistant-send').on('click', sendAssistantChat);
+    $('#assistant-chat-input').on('keypress', function(e) { if (e.which === 13) sendAssistantChat(); });
+
+    $(document).ready(function() {
+      loadPlan('PAYJOY');
+    });
+  </script>
+</body>
+</html>
