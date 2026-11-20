@@ -1,0 +1,8 @@
+{
+  "schema_version": 1,
+  "storage": "runtime app-private directory or user-selected local path; do not commit case data",
+  "privacy": "No customer identity, phone number, serial, IMEI, passwords, or tokens by default.",
+  "outcomes": ["confirmed", "ruled_out", "inconclusive", "pending"],
+  "fields": ["category", "brand", "model", "board_revision", "symptoms", "observations", "protocol", "hypotheses", "steps", "outcome", "notes"],
+  "learning_rule": "Only technician-confirmed outcomes are positive evidence; hypotheses remain hypotheses until marked with a result."
+}

@@ -1,0 +1,34 @@
+{
+  "schema_version": 1,
+  "protocol": "kdf-measurement-json-v1",
+  "measurement": {
+    "captured_at": "ISO-8601",
+    "device_timestamp_ns": null,
+    "sampling_rate_hz": null,
+    "calibration_id": null,
+    "adapter_id": null,
+    "usb_mode": "unknown",
+    "charger_state": "unknown",
+    "device_model": null,
+    "board_revision": null,
+    "samples": [
+      {"t_ns":0,"vbus_mv":null,"input_current_ma":null,"charger_state":"unknown","quality":"unknown"}
+    ]
+  },
+  "triage": {
+    "status":"insufficient_data",
+    "suspected_areas":[],
+    "confidence":"none",
+    "evidence":[],
+    "not_measured":[],
+    "not_ruled_out":[],
+    "recommended_next_step":"Sin datos calibrados suficientes; no afirmar corto ni ubicación."
+  },
+  "rules": [
+    "No existe un umbral universal; caracterizar por adaptador, fuente, protocolo y familia de placa.",
+    "La corriente de entrada representa varias cargas y protecciones; no localiza un componente por sí sola.",
+    "No marcar batería, pantalla ni placa como descartadas sin prueba que las aísle.",
+    "Una ausencia de alerta no demuestra que no exista una falla.",
+    "Este contrato no especifica circuito, cableado ni procedimiento para inyectar corriente."
+  ]
+}
