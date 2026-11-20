@@ -1,17 +1,17 @@
 # Scripts del usuario y del orquestador
 
-El usuario mantiene sus scripts. Esta carpeta define cómo encontrarlos y conservarlos; no contiene código ejecutable generado para un dispositivo real. Los scripts creados durante el uso se guardan en el almacenamiento privado de la app, por ejemplo `KDF-LuX/generated/`, separados del repositorio.
+El catálogo puede enlazar scripts mantenidos por el usuario o por el proyecto, pero los scripts de ejecución y su integración de interfaz están fuera del alcance de esta carpeta hasta que se autorice su incorporación. Los scripts generados durante el uso no se escriben en Git: la app debe guardarlos en su espacio privado `KDF-LuX/generated/`.
 
-## Buscar herramienta/script con el diagnóstico
+## Botón «Buscar herramienta» (contrato para la app
 
-El botón previsto «Buscar herramienta» consume el informe disponible y busca coincidencias en `../catalogo/herramientas.json` y en el índice local de scripts del usuario. Debe usar tipo de dispositivo, fabricante, modelo y revisión de placa cuando estén confirmados, chipset, VID/PID, protocolo USB/ADB/Fastboot y el estado del adaptador de medición. La tarjeta de resultado muestra fuente, versión/hash cuando existan, requisitos, por qué coincide, incertidumbre y alternativas manuales.
+1. Recibir el informe de diagnóstico disponible: descriptores USB, permiso USB concedido, estado ADB/Fastboot, fabricante/modelo/variante/chipset solo si el dispositivo los expone, y nivel de confianza.
+2. Buscar en `../catalogo/herramientas.json` por protocolo y coincidencias de fabricante/modelo/chipset.
+3. Mostrar coincidencias ordenadas, sus limitaciones, compatibilidad y fuente. Marcar claramente cuando una coincidencia sea solo aproximada.
+4. Permitir abrir la herramienta local existente o consultar su fuente oficial; una descarga requiere aceptación visible.
+5. Si no hay coincidencia fiable, ofrecer selección manual y ruta de trabajo manual. No generar comandos de escritura ni escoger firmware por conjetura.
 
-Si la pantalla está rota, el modo USB puede exponer fabricante/modelo, pero no se garantiza: VID/PID/chipset pueden ser compartidos. Marcar los campos como observados/no disponibles/no confirmados; permitir completar modelo y variante manualmente. Sin identidad suficiente, mostrar únicamente diagnóstico de solo lectura y no sugerir acciones de escritura o firmware específico.
+## Scripts creados por el usuario
 
-## Reutilizar scripts del usuario
+La aplicación puede mostrar o indexar scripts que el usuario coloque en su ubicación de scripts, pero debe distinguirlos de herramientas verificadas. Antes de ejecutar: mostrar ruta/origen, contenido o diff, permisos, argumentos, dispositivo objetivo y efectos previstos; detectar operaciones de escritura/borrado y pedir confirmación. No ejecutar código generado por IA solo por haberlo creado el orquestador.
 
-Conservar scripts por fabricante/modelo/revisión y etiqueta de síntoma, protocolo, versión, fecha, fuente y resultado del técnico (hipótesis confirmada/descartada/no concluyente). Al buscar un caso parecido, presentar el script previo y las diferencias a revisar; no modificar ni borrar el original automáticamente. El usuario puede clonar una copia, ajustar variables y guardar una nueva revisión. El aprendizaje local debe guardar solo datos autorizados y permitir exportar/eliminar registros.
-
-Antes de ejecutar un script, mostrar contenido/diff, origen, objetivo, argumentos, compatibilidad y efectos previstos. Lectura/diagnóstico se distingue de escritura, borrado, desbloqueo y flasheo; para las acciones modificadoras se requiere confirmación explícita. No ejecutar automáticamente código de IA, GitHub o foros. Si una herramienta no es compatible, explicar la razón y dejar la ruta manual.
-
-No se incluyen bypass de FRP/iCloud, MDM/financiamiento, protecciones de acceso, modificación de IMEI ni evasión de autorización OEM.
+No se implementan aquí mecanismos de evasión de autenticación, FRP/iCloud, gestión MDM/financiación, IMEI ni controles OEM. Para operaciones no compatibles, presentar el motivo y permitir que el técnico continúe manualmente fuera de la app.

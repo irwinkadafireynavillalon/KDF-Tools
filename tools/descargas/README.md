@@ -1,19 +1,22 @@
-# Descargas visibles y a petición
+# Descargas visibles y bajo demanda
 
-Este directorio contiene reglas y metadatos, no binarios. La app puede ofrecer una selección durante la instalación y permitir descargas posteriores bajo demanda. El presupuesto inicial sugerido para herramientas opcionales es 100 MiB. El firmware, si el usuario decide descargarlo desde una fuente oficial para un modelo exacto, muestra tamaño y confirmación aparte.
+Este directorio contiene la política del descargador, no binarios. La app debe pedir selección y confirmación; también puede ofrecer herramientas opcionales en la configuración inicial. El presupuesto inicial sugerido para herramientas es 100 MiB. No se aplica al firmware escogido por el usuario: mostrar su tamaño y pedir confirmación independiente.
 
-## Herramientas
+## Verificación antes de habilitar una herramienta
 
-Antes de ofrecer una herramienta: mostrar fuente, propietario, versión/release, licencia, compatibilidad de host/ABI/modelo, tamaño y requisitos. Descargar solo por HTTPS desde la fuente revisada; validar tamaño y SHA-256/firma cuando el proveedor publique un valor de confianza. Si no existe hash o firma verificable, marcarlo claramente como no verificado. Mantener el archivo temporal en almacenamiento privado y no ejecutarlo automáticamente. Permitir cancelar, actualizar y borrar herramientas sin tocar otros datos del usuario.
+- Permitir únicamente HTTPS y fuentes revisadas; mostrar propietario, repositorio/página, versión/release, licencia y fecha de revisión.
+- Resolver compatibilidad de sistema operativo, ABI/arquitectura, Android/Termux y modelo de dispositivo. No asumir que herramientas de escritorio funcionan en Android.
+- Comprobar tamaño contra presupuesto/espacio disponible; permitir cancelar y reanudar de forma segura.
+- Validar SHA-256 o firma si el proveedor publica un valor de confianza. Si no hay verificación, indicarlo y no marcar el archivo como verificado.
+- Descargar a almacenamiento privado y temporal, validar, y luego habilitar como herramienta instalada. No ejecutar automáticamente.
+- Permitir ver, borrar y actualizar herramientas, conservando el sistema de archivos del usuario fuera del alcance.
 
-Android SDK Platform-Tools se distribuye para sistemas host; no asumir que sus binarios de escritorio se ejecutan dentro de Android. Verificar por separado Android/Termux, ABI, permisos y licencia.
+## Firmware bajo demanda
 
-## Firmware/ROM a petición
+No se guarda firmware, ROM, imagen de partición ni programador en el repositorio. Cuando haya una página oficial para un modelo exacto, la app puede mostrar el enlace y dejar que el usuario inicie la descarga. Antes, pedir confirmación del modelo, variante, región, versión y tamaño, explicar riesgos de pérdida de datos/incompatibilidad y mostrar la firma/hash oficial si se publica. No hacer flasheo automático ni convertir publicaciones de foros en fuentes de firmware confiables.
 
-No se guarda firmware, ROM, imagen de partición ni programador en Git. Solo mostrar una descarga del fabricante cuando la fuente y el modelo/variante/región exactos hayan sido revisados. Explicar versión, tamaño, hash/firma publicada y riesgos; la descarga la inicia el usuario y no se ejecuta flasheo automático. Disponibilidad pública no equivale automáticamente a permiso de redistribución o a compatibilidad.
+## Repositorios GitHub y scripts
 
-## GitHub y foros
+Una cuenta de GitHub conectada es opcional; debe usar autorización oficial, permisos mínimos y revocables. Los repositorios públicos pueden servir como referencia, pero no se ejecuta código de un repositorio automáticamente. Mostrar dueño, URL, licencia, release/tag y cambios; revisar dependencias y hash. Los tokens no se guardan en el catálogo, scripts ni logs.
 
-El enlace opcional de GitHub debe usar OAuth oficial, permisos mínimos y revocables; nunca guardar tokens en el catálogo, scripts o logs. Para proyectos, mostrar owner, URL, licencia, release/tag y compatibilidad. Foros, vídeos y repositorios comunitarios pueden aportar pistas para el diagnóstico y la IA, citando fuente y fecha; no son por sí solos prueba de compatibilidad ni autorización para redistribuir o ejecutar scripts.
-
-La revisión de licencia sirve para saber si se puede incluir, empaquetar o redistribuir una herramienta. Si no se conoce, enlazar la fuente para evaluación manual, sin copiar el software.
+La revisión de licencia es necesaria para decidir si se puede incluir, redistribuir o empaquetar una herramienta. Si no se conoce, se puede mostrar un enlace al proveedor para evaluación manual, sin copiar el software.

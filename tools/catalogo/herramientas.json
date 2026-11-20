@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "catalog_version": "0.3.0",
+  "catalog_version": "0.2.0",
   "policy": {
     "optional_tool_download_budget_bytes": 104857600,
     "download_mode": "visible_on_demand",
@@ -16,117 +16,116 @@
   },
   "runtime_storage": {
     "tools": "Android app-private storage/KDF-LuX/tools/",
-    "user_selected_firmware": "app-private storage or a location explicitly selected by the user",
-    "user_orchestrator_scripts": "Android app-private storage/KDF-LuX/generated/"
+    "firmware_user_selected": "app-private storage or a location explicitly selected by the user",
+    "orchestrator_generated_scripts": "Android app-private storage/KDF-LuX/generated/"
+  },
+  "matching": {
+    "prefer": ["usb_vendor_product_id", "usb_interface_class", "protocol", "manufacturer", "model", "variant", "soc"],
+    "require_user_confirmation_for_ambiguous_model": true,
+    "never_infer_exact_model_from_brand_or_soc_alone": true
   },
   "device_categories": [
-    {"id":"phones","name":"Teléfonos","brands":["Samsung","Xiaomi","POCO","Google Pixel","Motorola","OnePlus","ASUS","Nothing","Realme","Sony","Other"],"tool_ids":["android-platform-tools","usb-inspector","usb-measurement-adapter"]},
-    {"id":"tablets","name":"Tabletas","brands":["Samsung","Xiaomi","Lenovo","Google Pixel","OnePlus","Other"],"tool_ids":["android-platform-tools","usb-inspector","usb-measurement-adapter"]},
-    {"id":"computers","name":"Laptops y computadoras","brands":["ASUS","HP","Lenovo","Microsoft Surface","Framework","Other"],"tool_ids":["android-platform-tools","usb-inspector","usb-measurement-adapter"]},
-    {"id":"smart-tvs","name":"Smart TV y TV boxes","brands":["Sony","TCL","Hisense","NVIDIA Shield","Xiaomi","Other"],"tool_ids":["android-platform-tools","usb-inspector","usb-measurement-adapter"]},
+    {"id":"phones","name":"Teléfonos","brands":["Samsung","Xiaomi","POCO","Google Pixel","Motorola","OnePlus","ASUS","Nothing","Realme","Sony","Other"],"tool_ids":["android-platform-tools","usb-inspector"]},
+    {"id":"tablets","name":"Tabletas","brands":["Samsung","Xiaomi","Lenovo","Google Pixel","OnePlus","Other"],"tool_ids":["android-platform-tools","usb-inspector"]},
+    {"id":"computers","name":"Laptops y computadoras","brands":["ASUS","HP","Lenovo","Microsoft Surface","Framework","Other"],"tool_ids":["android-platform-tools","usb-inspector"]},
+    {"id":"smart-tvs","name":"Smart TV y TV boxes","brands":["Sony","TCL","Hisense","NVIDIA Shield","Xiaomi","Other"],"tool_ids":["android-platform-tools","usb-inspector"]},
     {"id":"wearables","name":"Smartwatch y wearables","brands":["Samsung","Google Pixel","OnePlus","Mobvoi TicWatch","Xiaomi","Other"],"tool_ids":["android-platform-tools","usb-inspector"]},
     {"id":"automotive","name":"Pantallas y sistemas multimedia de automóvil","brands":["Volvo/Polestar","Renault","Pioneer","Sony","Other"],"tool_ids":["android-platform-tools","usb-inspector"]}
   ],
-  "universal_tools": [
+  "tools": [
     {
       "id":"android-platform-tools",
       "name":"Android SDK Platform-Tools (ADB/Fastboot)",
-      "category":"authorized_device_diagnostics",
-      "status":"official_reference_only",
+      "scope":"universal_android_host",
+      "category":"diagnostics_and_authorized_device_maintenance",
+      "status":"reference_only",
       "official_source":"https://developer.android.com/tools/releases/platform-tools",
       "download_url":null,
       "version":null,
       "size_bytes":null,
       "sha256":null,
-      "license_review_required":true,
-      "android_app_binary_compatibility":"must_be_validated_per_android_version_and_abi",
-      "capabilities":["list authorized ADB devices","read properties exposed by an authorized device","read Fastboot variables exposed by the device"],
+      "license":"Review terms at the official source before bundling or redistributing",
+      "android_app_binary_compatibility":"not_assumed; host binaries are not automatically runnable inside an Android app",
+      "capabilities":["list authorized ADB devices","read device properties where permitted","read Fastboot variables where the device exposes them"],
       "destructive_operations_allowed":false,
-      "notes":"Official host tools are not automatically executable inside an Android app. This catalog entry does not authorize unlocking or writing partitions."
-    },
-    {
-      "id":"usb-inspector",
-      "name":"USB device inspector",
-      "category":"read_only_diagnostics",
-      "status":"integration_candidate",
-      "official_source":"https://developer.android.com/develop/connectivity/usb/host",
-      "download_url":null,
-      "version":null,
-      "size_bytes":0,
-      "license_review_required":false,
-      "capabilities":["enumerate USB descriptors after Android permission","show VID/PID/interface descriptors and connection state"],
-      "destructive_operations_allowed":false,
-      "notes":"USB descriptors may suggest vendor/protocol but do not necessarily identify the exact model or board revision."
-    },
-    {
-      "id":"usb-measurement-adapter",
-      "name":"Adaptador externo de medición USB (hardware del usuario)",
-      "category":"electrical_triage_input",
-      "status":"user_hardware_not_implemented",
-      "measurement_contract":"diagnostico_usb/formato_medicion.json",
-      "download_url":null,
-      "version":null,
-      "size_bytes":0,
-      "license_review_required":false,
-      "capabilities":["consume timestamped calibrated input voltage/current and charger-state samples, if adapter supports them","produce evidence-linked approximate fault-area hypotheses"],
-      "destructive_operations_allowed":false,
-      "notes":"USB cable/OTG alone is not a multimeter. No pin-level readings or short localization are claimed without a compatible validated meter."
+      "notes":"Use the official download page and verify the host OS/CPU build. This entry does not authorize unlocking or writing partitions."
     },
     {
       "id":"qualcomm-edl-reference",
-      "name":"Qualcomm EDL service references",
-      "category":"authorized_diagnostics",
-      "status":"official_reference_only",
+      "name":"Qualcomm Emergency Download Mode (EDL) support information",
+      "scope":"chipset_qualcomm",
+      "category":"diagnostics",
+      "status":"reference_only",
       "official_source":"https://www.qualcomm.com/support",
       "download_url":null,
       "version":null,
       "size_bytes":null,
-      "license_review_required":true,
-      "capabilities":["identify supported recovery interface where host permissions allow","link authorized OEM/service documentation"],
+      "sha256":null,
+      "license":"Check each vendor tool's license and device authorization requirements",
+      "capabilities":["recognize a supported USB recovery interface where Android/host permissions allow","link to authorized manufacturer or service-provider documentation"],
       "destructive_operations_allowed":false,
-      "notes":"EDL, programmers and service authorization are model/OEM-specific. No auth-bypass method or firmware payload included."
+      "notes":"EDL access and authorized programmers are device/OEM-specific. No authentication-bypass procedure or programmer/firmware payload is included."
     },
     {
       "id":"mediatek-service-reference",
-      "name":"MediaTek service-tool references",
-      "category":"authorized_diagnostics",
-      "status":"official_reference_only",
+      "name":"MediaTek device service tooling references",
+      "scope":"chipset_mediatek",
+      "category":"diagnostics",
+      "status":"reference_only",
       "official_source":"https://www.mediatek.com/",
       "download_url":null,
       "version":null,
       "size_bytes":null,
-      "license_review_required":true,
-      "capabilities":["identify supported USB interface where possible","link authorized OEM/service documentation"],
+      "sha256":null,
+      "license":"Check each tool's license and manufacturer authorization requirements",
+      "capabilities":["identify a USB interface where supported","link to authorized OEM service documentation"],
       "destructive_operations_allowed":false,
-      "notes":"Model and security configuration determine support. No SLA/DAA bypass, auth circumvention, or firmware payload included."
+      "notes":"Support varies by model and security configuration. No SLA/DAA bypass, auth circumvention, or firmware payload is included."
+    },
+    {
+      "id":"usb-inspector",
+      "name":"USB device inspector",
+      "scope":"universal_usb_host",
+      "category":"read_only_diagnostics",
+      "status":"app_native_capability_candidate",
+      "official_source":"https://developer.android.com/develop/connectivity/usb/host",
+      "download_url":null,
+      "version":null,
+      "size_bytes":0,
+      "sha256":null,
+      "license":"Application code; implementation and dependencies must be reviewed separately",
+      "capabilities":["enumerate USB descriptors after Android permission","show VID/PID/interface descriptors and connection state"],
+      "destructive_operations_allowed":false,
+      "notes":"USB descriptors can help identify a vendor/interface, but often do not uniquely identify the exact device model."
     },
     {
       "id":"official-oem-firmware-links",
       "name":"Official manufacturer firmware/support links",
+      "scope":"brand_and_exact_model",
       "category":"firmware_reference_not_bundled",
       "status":"manual_source_review_required",
       "official_source":null,
       "download_url":null,
       "version":null,
       "size_bytes":null,
-      "license_review_required":true,
-      "capabilities":["show official support page matched to user-confirmed exact model, variant and region"],
+      "sha256":null,
+      "license":"Manufacturer terms apply; public availability does not imply redistribution rights",
+      "capabilities":["show an official support page matched to user-confirmed exact model and region"],
       "destructive_operations_allowed":false,
-      "notes":"No ROM/firmware in the repo. Download is user-initiated and must show provenance, compatibility, size and published integrity checks; never auto-flash."
+      "notes":"Do not use third-party mirrors as a default. If an official package is offered, display model/variant/region, version, size, checksum/signature status and risks; the user initiates download. Never auto-flash."
     }
   ],
-  "by_brand": [],
+  "brand_specific_tools": [],
   "github_catalog_policy": {
-    "account_linking":"future optional official user-authorized OAuth with minimum scopes",
-    "never_store_personal_access_tokens_in_source_or_logs":true,
-    "show_repository_owner_license_release_and_source":true,
-    "unreviewed_repo_scripts_executable":false
+    "account_linking": "future_optional_user_authorized_oauth_with_minimum_scopes",
+    "never_store_personal_access_tokens_in_source_or_logs": true,
+    "show_repository_owner_license_release_and_source": true,
+    "unreviewed_repo_scripts_executable": false
   },
-  "search_result_policy": {
-    "rank_by_exact_model_board_revision_protocol_and_tool_compatibility":true,
-    "show_evidence_and_confidence":true,
-    "ambiguous_identity_requires_manual_confirmation":true,
-    "no_exact_match_means_manual_fallback":true,
-    "do_not_generate_commands_from_a_guess":true
-  }
+  "unavailable_or_ambiguous_device_fallback": [
+    "Show which identifiers were and were not detected.",
+    "Offer a manual exact-model/variant selection and official support links.",
+    "Offer read-only diagnostics only until identity and compatibility are sufficiently established.",
+    "Allow the technician to follow their own manual procedure; do not generate or run guessed commands."
+  ]
 }
