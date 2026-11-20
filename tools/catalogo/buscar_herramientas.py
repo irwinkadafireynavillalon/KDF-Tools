@@ -1,9 +1,8 @@
 #!/usr/bin/env python3
 """Busca herramientas compatibles con un perfil de dispositivo.
 
-Solo lee el catálogo y comprueba dependencias locales; no instala ni ejecuta
-herramientas o scripts. Ejemplo:
-  python3 -m tools.catalogo.buscar_herramientas --protocol fastboot --available
+Lee solo manifiestos locales y comprueba dependencias disponibles. No descarga,
+instala ni ejecuta herramientas o scripts.
 """
 from __future__ import annotations
 
@@ -15,6 +14,7 @@ from pathlib import Path
 from typing import Any
 
 CATALOG_PATH = Path(__file__).with_name("herramientas.json")
+EXPANSIONS_PATH = Path(__file__).with_name("expansiones_plataformas.json")
 
 
 def load_catalog(path: Path = CATALOG_PATH) -> dict[str, Any]:
@@ -22,6 +22,11 @@ def load_catalog(path: Path = CATALOG_PATH) -> dict[str, Any]:
         data = json.load(source)
     if not isinstance(data.get("tools"), list):
         raise ValueError("El catálogo debe contener una lista 'tools'.")
+    if EXPANSIONS_PATH.exists():
+        with EXPANSIONS_PATH.open(encoding="utf-8") as source:
+            expansion = json.load(source)
+        data["tools"].extend(expansion.get("tools", []))
+        data["device_categories"].extend(expansion.get("device_categories", []))
     return data
 
 
@@ -58,33 +63,39 @@ def search_tools(
     chipset: str | None = None,
     available_only: bool = False,
 ) -> list[dict[str, Any]]:
-    del model  # Se conserva como dato de búsqueda/UI, no asumir compatibilidad por texto libre.
     results = []
     for item in catalog["tools"]:
-        if not _contains(item.get("brands", []), brand):
+        categories = item.get("device_categories", [])
+        if device and categories and not _contains(categories, device):
+            continue
+        brands = item.get("brands", [])
+        if brand and brands and not (
+            _contains(brands, brand)
+            or any(value.casefold() in {"universal", "android compatible", "any"} for value in brands)
+        ):
             continue
         if not _contains(item.get("protocols", []), protocol):
             continue
         if not _contains(item.get("chipsets", []), chipset):
             continue
-        if device and device.casefold() not in {"universal", "other-usb"}:
-            # Las herramientas universales sirven como candidatos; el catálogo no
-            # afirma compatibilidad exacta con una marca/modelo no enumerados.
-            if "Universal" not in item.get("brands", []) and brand:
-                if brand.casefold() not in [b.casefold() for b in item.get("brands", [])]:
-                    continue
+        supported_models = item.get("supported_models", [])
+        if model and supported_models and not _contains(supported_models, model):
+            continue
         availability = check_availability(item)
         if available_only and availability["available"] is not True:
             continue
-        results.append({**item, "availability": availability})
+        result = {**item, "availability": availability}
+        if model and not supported_models:
+            result["model_match"] = "not_verified"
+        results.append(result)
     return results
 
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--device", help="Categoría (phones, tablets, wearables, computers, screens, automotive)")
+    parser.add_argument("--device", help="Categoría: phones, tablets, iphones, computers, screens, automotive, bootable-media, etc.")
     parser.add_argument("--brand")
-    parser.add_argument("--model", help="Se presenta como contexto; no prueba compatibilidad exacta")
+    parser.add_argument("--model", help="Contexto de búsqueda; no prueba compatibilidad exacta")
     parser.add_argument("--protocol")
     parser.add_argument("--chipset")
     parser.add_argument("--available", action="store_true", help="Mostrar solo dependencias detectadas localmente")
@@ -102,11 +113,16 @@ def main() -> int:
     else:
         for item in matches:
             availability = item["availability"]
-            state = "dependencias disponibles" if availability["available"] else "referencia/manual"
-            if availability["missing"]:
-                state += "; faltan: " + ", ".join(availability["missing"])
+            if availability["available"] is True:
+                state = "dependencias disponibles"
+            elif availability["available"] is False:
+                state = "faltan: " + ", ".join(availability["missing"])
+            else:
+                state = item.get("status", "revisión manual")
             if availability["suggested_nix_package"]:
                 state += "; paquete Nix sugerido: " + availability["suggested_nix_package"]
+            if item.get("model_match") == "not_verified":
+                state += "; modelo exacto no verificado"
             print(f"{item['name']} [{item['id']}] — {state}")
             print(f"  {item.get('notes', '')}")
     return 0
