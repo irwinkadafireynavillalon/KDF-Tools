@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "catalog_version": "0.2.0",
+  "catalog_version": "0.5.0",
   "policy": {
     "optional_tool_download_budget_bytes": 104857600,
     "download_mode": "visible_on_demand",
@@ -12,120 +12,114 @@
     "require_https": true,
     "require_hash_or_signature_when_published": true,
     "execute_downloaded_code_automatically": false,
-    "store_runtime_downloads_in_git": false
+    "store_runtime_downloads_in_git": false,
+    "local_ip_discovery_required": false
   },
   "runtime_storage": {
     "tools": "Android app-private storage/KDF-LuX/tools/",
     "firmware_user_selected": "app-private storage or a location explicitly selected by the user",
-    "orchestrator_generated_scripts": "Android app-private storage/KDF-LuX/generated/"
+    "orchestrator_generated_scripts": "Android app-private storage/KDF-LuX/generated/",
+    "case_data": "app-private storage; never commit customer data or photos"
   },
   "matching": {
     "prefer": ["usb_vendor_product_id", "usb_interface_class", "protocol", "manufacturer", "model", "variant", "soc"],
     "require_user_confirmation_for_ambiguous_model": true,
-    "never_infer_exact_model_from_brand_or_soc_alone": true
+    "never_infer_exact_model_from_brand_or_soc_alone": true,
+    "show_match_evidence_and_confidence": true,
+    "fallback_when_ambiguous": "manual_selection_and_read_only_diagnostics"
   },
   "device_categories": [
-    {"id":"phones","name":"Teléfonos","brands":["Samsung","Xiaomi","POCO","Google Pixel","Motorola","OnePlus","ASUS","Nothing","Realme","Sony","Other"],"tool_ids":["android-platform-tools","usb-inspector"]},
-    {"id":"tablets","name":"Tabletas","brands":["Samsung","Xiaomi","Lenovo","Google Pixel","OnePlus","Other"],"tool_ids":["android-platform-tools","usb-inspector"]},
-    {"id":"computers","name":"Laptops y computadoras","brands":["ASUS","HP","Lenovo","Microsoft Surface","Framework","Other"],"tool_ids":["android-platform-tools","usb-inspector"]},
-    {"id":"smart-tvs","name":"Smart TV y TV boxes","brands":["Sony","TCL","Hisense","NVIDIA Shield","Xiaomi","Other"],"tool_ids":["android-platform-tools","usb-inspector"]},
-    {"id":"wearables","name":"Smartwatch y wearables","brands":["Samsung","Google Pixel","OnePlus","Mobvoi TicWatch","Xiaomi","Other"],"tool_ids":["android-platform-tools","usb-inspector"]},
-    {"id":"automotive","name":"Pantallas y sistemas multimedia de automóvil","brands":["Volvo/Polestar","Renault","Pioneer","Sony","Other"],"tool_ids":["android-platform-tools","usb-inspector"]}
+    {"id":"phones","name":"Celulares","brands":["Samsung","Xiaomi","POCO","Google Pixel","Motorola","OnePlus","ASUS","Nothing","Realme","Sony","Apple","Other"],"tool_ids":["android-platform-tools","usb-inventory","usb-inspector","usb-meter-adapter","usb-measurement-adapter","usb-microscope","apple-device-support","qualcomm-edl-reference","mediatek-reference","mediatek-service-reference"]},
+    {"id":"tablets","name":"Tabletas","brands":["Samsung","Xiaomi","Lenovo","Google Pixel","OnePlus","Apple","Other"],"tool_ids":["android-platform-tools","usb-inventory","usb-inspector","usb-meter-adapter","apple-device-support"]},
+    {"id":"iphones","name":"iPhone","brands":["Apple"],"tool_ids":["apple-device-support","apple-devices-windows","apple-finder-device-support","apple-recovery-guides"]},
+    {"id":"ipads","name":"iPad","brands":["Apple"],"tool_ids":["apple-device-support","apple-devices-windows","apple-finder-device-support","apple-recovery-guides"]},
+    {"id":"macs","name":"Mac","brands":["Apple"],"tool_ids":["apple-finder-device-support","apple-recovery-guides","macos-bootable-installer"]},
+    {"id":"computers","name":"Computadoras y laptops","brands":["ASUS","HP","Lenovo","Microsoft Surface","Framework","Apple","Other"],"tool_ids":["usb-inventory","usb-inspector","bootable-media-reference","rufus-bootable-usb","ventoy-bootable-usb","windows-installation-media","macos-bootable-installer","linux-distribution-media"]},
+    {"id":"smart-tvs","name":"Smart TV y TV boxes","brands":["Sony","TCL","Hisense","NVIDIA Shield","Xiaomi","Other"],"tool_ids":["android-platform-tools","usb-inventory","usb-inspector","qualcomm-edl-reference","mediatek-reference"]},
+    {"id":"screens","name":"Pantallas, Smart TV y TV boxes","brands":["Sony","TCL","Hisense","NVIDIA Shield","Xiaomi","Other"],"tool_ids":["android-platform-tools","usb-inventory","usb-inspector"]},
+    {"id":"wearables","name":"Smartwatch y wearables","brands":["Samsung","Google Pixel","OnePlus","Mobvoi TicWatch","Xiaomi","Apple","Other"],"tool_ids":["android-platform-tools","usb-inventory","usb-inspector"]},
+    {"id":"automotive","name":"Pantallas y sistemas multimedia de automóvil","brands":["Volvo/Polestar","Renault","Pioneer","Sony","Other"],"tool_ids":["android-platform-tools","usb-inventory","usb-inspector"]},
+    {"id":"bootable-media","name":"USB de arranque para computadoras","brands":["Universal"],"tool_ids":["bootable-media-reference","rufus-bootable-usb","ventoy-bootable-usb","windows-installation-media","macos-bootable-installer","linux-distribution-media"]},
+    {"id":"operating-systems","name":"Instalación y actualización de sistemas operativos","brands":["Microsoft","Apple","Ubuntu","Debian","Fedora","Other"],"tool_ids":["windows-installation-media","macos-bootable-installer","linux-distribution-media"]},
+    {"id":"other-usb","name":"Otros dispositivos y accesorios conectados","brands":["Universal","Other"],"tool_ids":["usb-inventory","usb-inspector","usb-microscope","usb-meter-adapter","usb-measurement-adapter"]}
   ],
   "tools": [
     {
-      "id":"android-platform-tools",
-      "name":"Android SDK Platform-Tools (ADB/Fastboot)",
-      "scope":"universal_android_host",
-      "category":"diagnostics_and_authorized_device_maintenance",
-      "status":"reference_only",
-      "official_source":"https://developer.android.com/tools/releases/platform-tools",
-      "download_url":null,
-      "version":null,
-      "size_bytes":null,
-      "sha256":null,
-      "license":"Review terms at the official source before bundling or redistributing",
-      "android_app_binary_compatibility":"not_assumed; host binaries are not automatically runnable inside an Android app",
-      "capabilities":["list authorized ADB devices","read device properties where permitted","read Fastboot variables where the device exposes them"],
-      "destructive_operations_allowed":false,
-      "notes":"Use the official download page and verify the host OS/CPU build. This entry does not authorize unlocking or writing partitions."
+      "id":"android-platform-tools","name":"Android SDK Platform-Tools (ADB/Fastboot)","category":"android_diagnostics","status":"reference_only","brands":["Android compatible"],"device_categories":["phones","tablets","computers","smart-tvs","screens","wearables","automotive"],"protocols":["adb","fastboot","recovery"],"chipsets":["Qualcomm","MediaTek","Exynos","Tensor","Unisoc","Other"],"required_commands":["adb","fastboot"],"nix_package":"android-tools","official_source":"https://developer.android.com/tools/releases/platform-tools","download_url":null,"version":null,"size_bytes":null,"sha256":null,"operation_mode":"read_only_by_default","destructive_operations_allowed":false,"notes":"Detectar disponibilidad en PATH/Nix y validar host/ABI. Binarios host no se presumen ejecutables en Android. Sin desbloqueo ni escritura automatizada."
     },
     {
-      "id":"qualcomm-edl-reference",
-      "name":"Qualcomm Emergency Download Mode (EDL) support information",
-      "scope":"chipset_qualcomm",
-      "category":"diagnostics",
-      "status":"reference_only",
-      "official_source":"https://www.qualcomm.com/support",
-      "download_url":null,
-      "version":null,
-      "size_bytes":null,
-      "sha256":null,
-      "license":"Check each vendor tool's license and device authorization requirements",
-      "capabilities":["recognize a supported USB recovery interface where Android/host permissions allow","link to authorized manufacturer or service-provider documentation"],
-      "destructive_operations_allowed":false,
-      "notes":"EDL access and authorized programmers are device/OEM-specific. No authentication-bypass procedure or programmer/firmware payload is included."
+      "id":"usb-inventory","name":"Inventario de conexión USB","category":"usb_diagnostics","status":"host_api_or_optional_cli","brands":["Universal"],"device_categories":["phones","tablets","computers","smart-tvs","screens","wearables","automotive","other-usb"],"protocols":["usb-host","usb-otg","usb-serial","usb-mass-storage"],"required_commands":[],"optional_commands":["lsusb","termux-usb"],"nix_package":"usbutils","official_source":"https://developer.android.com/develop/connectivity/usb/host","operation_mode":"read_only","destructive_operations_allowed":false,"notes":"Android concede permisos por dispositivo. VID/PID e interfaces ayudan a clasificar, pero no garantizan modelo exacto."
     },
     {
-      "id":"mediatek-service-reference",
-      "name":"MediaTek device service tooling references",
-      "scope":"chipset_mediatek",
-      "category":"diagnostics",
-      "status":"reference_only",
-      "official_source":"https://www.mediatek.com/",
-      "download_url":null,
-      "version":null,
-      "size_bytes":null,
-      "sha256":null,
-      "license":"Check each tool's license and manufacturer authorization requirements",
-      "capabilities":["identify a USB interface where supported","link to authorized OEM service documentation"],
-      "destructive_operations_allowed":false,
-      "notes":"Support varies by model and security configuration. No SLA/DAA bypass, auth circumvention, or firmware payload is included."
+      "id":"usb-inspector","name":"Inspector nativo de dispositivos USB","category":"read_only_diagnostics","status":"integration_candidate","brands":["Universal"],"device_categories":["phones","tablets","computers","smart-tvs","screens","wearables","automotive","other-usb"],"protocols":["usb-host","usb-otg"],"required_commands":[],"official_source":"https://developer.android.com/develop/connectivity/usb/host","operation_mode":"read_only","destructive_operations_allowed":false,"notes":"Contrato candidato para enumerar descriptores con permiso Android; no implementa por sí mismo la capa Android."
     },
     {
-      "id":"usb-inspector",
-      "name":"USB device inspector",
-      "scope":"universal_usb_host",
-      "category":"read_only_diagnostics",
-      "status":"app_native_capability_candidate",
-      "official_source":"https://developer.android.com/develop/connectivity/usb/host",
-      "download_url":null,
-      "version":null,
-      "size_bytes":0,
-      "sha256":null,
-      "license":"Application code; implementation and dependencies must be reviewed separately",
-      "capabilities":["enumerate USB descriptors after Android permission","show VID/PID/interface descriptors and connection state"],
-      "destructive_operations_allowed":false,
-      "notes":"USB descriptors can help identify a vendor/interface, but often do not uniquely identify the exact device model."
+      "id":"python-usb-serial","name":"Bibliotecas USB y serie Python","category":"dependency","status":"detect_if_installed","brands":["Universal"],"device_categories":["phones","tablets","computers","other-usb"],"protocols":["usb","serial"],"python_modules":["usb","serial"],"nix_package":"python3Packages.pyserial","operation_mode":"dependency_only","destructive_operations_allowed":false,"notes":"Solo dependencia; no instala ni diagnostica por sí misma."
     },
     {
-      "id":"official-oem-firmware-links",
-      "name":"Official manufacturer firmware/support links",
-      "scope":"brand_and_exact_model",
-      "category":"firmware_reference_not_bundled",
-      "status":"manual_source_review_required",
-      "official_source":null,
-      "download_url":null,
-      "version":null,
-      "size_bytes":null,
-      "sha256":null,
-      "license":"Manufacturer terms apply; public availability does not imply redistribution rights",
-      "capabilities":["show an official support page matched to user-confirmed exact model and region"],
-      "destructive_operations_allowed":false,
-      "notes":"Do not use third-party mirrors as a default. If an official package is offered, display model/variant/region, version, size, checksum/signature status and risks; the user initiates download. Never auto-flash."
+      "id":"qualcomm-edl-reference","name":"Referencia de interfaz Qualcomm EDL","category":"chipset_diagnostics","status":"manual_review","brands":["Universal"],"device_categories":["phones","tablets","smart-tvs"],"protocols":["qualcomm-edl"],"chipsets":["Qualcomm"],"required_commands":[],"official_source":"https://www.qualcomm.com/support","operation_mode":"reference_only","destructive_operations_allowed":false,"notes":"Disponibilidad y autorización dependen del OEM/modelo. Sin métodos de bypass, loaders ni firmware."
+    },
+    {
+      "id":"mediatek-reference","name":"Referencia de diagnóstico MediaTek","category":"chipset_diagnostics","status":"manual_review","brands":["Universal"],"device_categories":["phones","tablets","smart-tvs"],"protocols":["mediatek-usb","mediatek-brom"],"chipsets":["MediaTek"],"required_commands":[],"official_source":"https://www.mediatek.com/","operation_mode":"reference_only","destructive_operations_allowed":false,"notes":"Soporte dependiente de modelo, modo y autorización. Sin bypass ni payloads."
+    },
+    {
+      "id":"mediatek-service-reference","name":"Referencia de herramientas de servicio MediaTek","category":"chipset_diagnostics","status":"manual_review","brands":["Universal"],"device_categories":["phones","tablets"],"protocols":["mediatek-usb","mediatek-brom"],"chipsets":["MediaTek"],"required_commands":[],"official_source":"https://www.mediatek.com/","operation_mode":"reference_only","destructive_operations_allowed":false,"notes":"Entrada compatible con nombre histórico del catálogo; no implementa una herramienta de servicio."
+    },
+    {
+      "id":"usb-meter-adapter","name":"Adaptador externo de medición USB","category":"electrical_triage_input","status":"integration_contract","brands":["Universal"],"device_categories":["phones","tablets","other-usb"],"protocols":["kdf-measurement-json-v1"],"required_commands":[],"measurement_contract":"tools/diagnostico_usb/formato_medicion.json","operation_mode":"consume_calibrated_samples","destructive_operations_allowed":false,"notes":"Compatible con ID histórico. Un cable OTG no mide resistencia ni localiza cortos; no inventar valores."
+    },
+    {
+      "id":"usb-measurement-adapter","name":"Contrato de adaptador USB de medición","category":"electrical_triage_input","status":"user_hardware_not_implemented","brands":["Universal"],"device_categories":["phones","tablets","other-usb"],"protocols":["kdf-measurement-json-v1"],"required_commands":[],"measurement_contract":"tools/diagnostico_usb/formato_medicion.json","operation_mode":"consume_calibrated_samples","destructive_operations_allowed":false,"notes":"Hardware externo del usuario, aún no integrado. La salida solo permite hipótesis aproximadas con evidencia."
+    },
+    {
+      "id":"usb-microscope","name":"Microscopio/cámara USB UVC","category":"camera_input","status":"integration_candidate","brands":["Universal"],"device_categories":["phones","other-usb"],"protocols":["uvc","usb-host"],"required_commands":[],"official_source":"https://developer.android.com/develop/connectivity/usb/host","operation_mode":"preview_after_explicit_permission","destructive_operations_allowed":false,"notes":"Compatibilidad depende de Android, host USB, energía, adaptador y formato UVC; comprobar antes de prometer soporte."
+    },
+    {
+      "id":"apple-device-support","name":"Soporte oficial para iPhone/iPad","category":"apple_diagnostics_reference","status":"official_reference_only","brands":["Apple"],"device_categories":["iphones","ipads"],"protocols":["usb","recovery","dfu"],"required_commands":[],"official_source":"https://support.apple.com/iphone/restore","operation_mode":"official_user_initiated","destructive_operations_allowed":false,"notes":"Funciones disponibles dependen del modelo y sistema anfitrión. Restaurar puede borrar datos. Sin elusión de Activation Lock."
+    },
+    {
+      "id":"apple-devices-windows","name":"Apple Devices para Windows","category":"apple_device_support","status":"official_reference_only","brands":["Apple"],"device_categories":["iphones","ipads"],"protocols":["usb","recovery","dfu"],"required_commands":[],"host_os":["Windows"],"official_source":"https://support.apple.com/guide/devices-windows/welcome/windows","operation_mode":"official_user_initiated","destructive_operations_allowed":false,"notes":"Referencia oficial; restauración puede borrar datos y requiere acción del usuario."
+    },
+    {
+      "id":"apple-finder-device-support","name":"Finder y soporte oficial para Apple","category":"apple_device_support","status":"official_reference_only","brands":["Apple"],"device_categories":["iphones","ipads","macs"],"protocols":["usb","recovery","dfu"],"required_commands":[],"host_os":["macOS"],"official_source":"https://support.apple.com/guide/mac-help/sync-your-iphone-ipad-or-ipod-touch-mchl2b1c8b9b/mac","operation_mode":"official_user_initiated","destructive_operations_allowed":false,"notes":"Disponibilidad según sistema anfitrión/modelo; no extraer datos protegidos ni eludir bloqueo de activación."
+    },
+    {
+      "id":"apple-recovery-guides","name":"Guías oficiales de recuperación de Apple","category":"apple_recovery_reference","status":"official_reference_only","brands":["Apple"],"device_categories":["iphones","ipads","macs"],"protocols":["recovery","dfu"],"required_commands":[],"official_source":"https://support.apple.com/iphone/restore","operation_mode":"guided_user_initiated","destructive_operations_allowed":false,"notes":"Verificar modelo; avisar de pérdida de datos antes de restaurar."
+    },
+    {
+      "id":"bootable-media-reference","name":"Referencias oficiales para USB de arranque","category":"bootable_media_creator","status":"official_reference_only","brands":["Universal"],"device_categories":["computers","bootable-media"],"protocols":["usb-mass-storage"],"required_commands":[],"official_source":"https://www.microsoft.com/software-download/","operation_mode":"manual_reference_only","destructive_operations_allowed":false,"notes":"La app Android no escribe el USB en esta fase. Medios booteables pueden borrar datos; elegir sistema/arquitectura correctos."
+    },
+    {
+      "id":"rufus-bootable-usb","name":"Rufus (USB booteable desde Windows)","category":"bootable_media_creator","status":"official_reference_only","brands":["Universal"],"device_categories":["computers","bootable-media"],"protocols":["usb-mass-storage"],"required_commands":[],"host_os":["Windows"],"official_source":"https://rufus.ie/","operation_mode":"manual_reference_only","destructive_operations_allowed":false,"notes":"Enlace de referencia, no incluido ni ejecutado por la app Android. Preparar USB suele borrar datos."
+    },
+    {
+      "id":"ventoy-bootable-usb","name":"Ventoy (USB multiarranque)","category":"bootable_media_creator","status":"official_reference_only","brands":["Universal"],"device_categories":["computers","bootable-media"],"protocols":["usb-mass-storage"],"required_commands":[],"host_os":["Windows","Linux"],"official_source":"https://www.ventoy.net/en/index.html","operation_mode":"manual_reference_only","destructive_operations_allowed":false,"notes":"Enlace de referencia; revisar licencia/instrucciones. Preparar USB puede modificar particiones o borrar datos."
+    },
+    {
+      "id":"windows-installation-media","name":"Medios oficiales Windows","category":"os_install_update","status":"official_reference_only","brands":["Microsoft","Universal"],"device_categories":["computers","bootable-media","operating-systems"],"protocols":["usb-mass-storage"],"required_commands":[],"host_os":["Windows"],"official_source":"https://www.microsoft.com/software-download/","operation_mode":"manual_reference_only","destructive_operations_allowed":false,"notes":"Verificar edición y arquitectura; copia de seguridad antes de instalar/reinstalar."
+    },
+    {
+      "id":"macos-bootable-installer","name":"Guía oficial de instalador macOS","category":"os_install_update","status":"official_reference_only","brands":["Apple"],"device_categories":["macs","computers","bootable-media","operating-systems"],"protocols":["usb-mass-storage"],"required_commands":[],"host_os":["macOS"],"official_source":"https://support.apple.com/en-us/101578","operation_mode":"manual_reference_only","destructive_operations_allowed":false,"notes":"Seguir guía oficial, comprobar compatibilidad del Mac y unidad de destino. Crear instalador puede borrar el USB."
+    },
+    {
+      "id":"linux-distribution-media","name":"Medios de instalación Linux","category":"os_install_update","status":"official_reference_only","brands":["Ubuntu","Debian","Fedora","Other"],"device_categories":["computers","bootable-media","operating-systems"],"protocols":["usb-mass-storage"],"required_commands":[],"host_os":["Windows","macOS","Linux"],"official_source":"https://ubuntu.com/download","operation_mode":"manual_reference_only","destructive_operations_allowed":false,"notes":"Agregar fuentes oficiales por distribución y verificar checksums/firma. Crear medios puede borrar USB."
+    },
+    {
+      "id":"android-oem-update-support","name":"Referencias oficiales de actualización Android","category":"android_os_update_reference","status":"manual_source_review_required","brands":["Samsung","Xiaomi","POCO","Google Pixel","Motorola","OnePlus","ASUS","Nothing","Realme","Sony","Lenovo","TCL","Hisense","Other"],"device_categories":["phones","tablets","wearables","smart-tvs","screens","automotive"],"protocols":["official-ota","usb"],"required_commands":[],"official_source":null,"operation_mode":"official_update_reference_only","destructive_operations_allowed":false,"notes":"Enlaces por fabricante/modelo pendientes de verificación. Preferir OTA/soporte oficial; no asumir compatibilidad entre variantes."
+    },
+    {
+      "id":"user-scripts","name":"Scripts del técnico","category":"reusable_scripts","status":"local_user_managed","brands":["Universal"],"device_categories":["phones","tablets","computers","smart-tvs","screens","wearables","automotive","other-usb"],"protocols":["varios"],"required_commands":[],"operation_mode":"index_and_preview","destructive_operations_allowed":false,"notes":"Indexar y mostrar origen/requisitos; no ejecutar scripts automáticamente ni eliminar originales."
     }
   ],
-  "brand_specific_tools": [],
+  "existing_modules": [
+    {"id":"gsm-chimera-diagnostics","path":"tools/gsm_modules/chimera_diag_engine.py","status":"manual_review_required","notes":"Módulo existente. Contiene consultas AT, incluida lectura de identidad; no invocar ni guardar identificadores sin necesidad/consentimiento."},
+    {"id":"gsm-hydra-edl-inspection","path":"tools/gsm_modules/hydra_edl_engine.py","status":"read_only_file_and_port_inspection","notes":"Módulo existente para detección básica de puertos y análisis XML; no es un flasher completo."},
+    {"id":"gsm-mitool-fastboot-info","path":"tools/gsm_modules/mitool_engine.py","status":"read_only_fastboot_queries","notes":"Módulo existente de consultas Fastboot; no implica compatibilidad exacta."}
+  ],
   "github_catalog_policy": {
-    "account_linking": "future_optional_user_authorized_oauth_with_minimum_scopes",
-    "never_store_personal_access_tokens_in_source_or_logs": true,
-    "show_repository_owner_license_release_and_source": true,
-    "unreviewed_repo_scripts_executable": false
-  },
-  "unavailable_or_ambiguous_device_fallback": [
-    "Show which identifiers were and were not detected.",
-    "Offer a manual exact-model/variant selection and official support links.",
-    "Offer read-only diagnostics only until identity and compatibility are sufficiently established.",
-    "Allow the technician to follow their own manual procedure; do not generate or run guessed commands."
-  ]
+    "account_linking":"future_optional_user_authorized_oauth_with_minimum_scopes",
+    "never_store_personal_access_tokens_in_source_or_logs":true,
+    "show_repository_owner_license_release_and_source":true,
+    "unreviewed_repo_scripts_executable":false
+  }
 }

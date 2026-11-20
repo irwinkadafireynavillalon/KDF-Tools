@@ -1,33 +1,36 @@
-# Alcance de `tools/`
+# Alcance y verificación de `tools/`
 
-Esta carpeta es el único ámbito de cambios para el trabajo de catálogo de herramientas. La aplicación Android puede consumir `catalogo/herramientas.json`; la UI y las integraciones fuera de `tools/` quedan fuera de este alcance salvo autorización futura explícita.
+Esta carpeta contiene los manifiestos y helpers portables para el módulo de reparación. Preserva los módulos existentes en `gsm_modules/`; este conjunto de cambios es aditivo y mantiene también las entradas de catálogos heredados.
 
-## Organización
+## Estructura
 
-- `catalogo/herramientas.json`: herramientas universales y matrices por tipo de dispositivo y fabricante.
-- `descargas/`: política y flujo para descargas visibles y a petición.
-- `generadas/`: contrato para scripts aportados por el usuario o generados por el orquestador.
-- `diagnostico_usb/`: límites de diagnóstico eléctrico y requisitos de hardware de medición.
-- `gsm_modules/`: módulos GSM ya existentes; se preservan.
+- `catalogo/`: capacidades por dispositivo/marca, búsqueda local y administración Android especificada.
+- `casos/`: registro JSONL local fuera del repositorio.
+- `diagnostico/`: formato común de resultados.
+- `diagnostico_usb/`: contrato/validador de telemetría y límites de inferencia eléctrica.
+- `flujo_reparacion/`: alta local de caso, referencias de fotos privadas, varios dispositivos, planes de lote, notificaciones locales y resumen.
+- `descargas/`: política de descargas opcionales y firmware elegido por el usuario.
+- `generadas/`: contrato para indexar/revisar scripts del usuario, sin ejecutar código generado.
+- `gsm_modules/`: herramientas GSM existentes, preservadas.
+- `tests/`: pruebas simuladas, sin hardware real.
 
-## Flujo previsto para el botón «Buscar herramienta»
+## Uso
 
-La aplicación obtiene un perfil de diagnóstico USB/ADB/Fastboot autorizado y busca primero por protocolo, identificadores USB, fabricante, modelo y chipset. Devuelve coincidencias con nivel de confianza, compatibilidad y fuente. Si el modelo no puede determinarse, debe pedir confirmación o permitir elegirlo manualmente, nunca adivinar. La app puede mostrar enlaces oficiales y comandos informativos; este catálogo no ejecuta scripts ni implementa UI.
+```sh
+python3 -m tools.catalogo.buscar_herramientas --validate
+python3 -m tools.catalogo.buscar_herramientas --protocol fastboot
+python3 -m tools.catalogo.buscar_herramientas --device iphones --brand Apple --json
+python3 -m unittest discover -s tools/tests -v
+```
 
-## Reglas acordadas
+El buscador y el catálogo no descargan, instalan ni ejecutan programas. La ausencia de una coincidencia exacta devuelve opciones informativas/manuales; no debe generar comandos por conjetura. Nix-on-Droid puede proporcionar una dependencia concreta si existe una build compatible con el host/ABI, sin descargar el paquete completo.
 
-- Descargas visibles, iniciadas por el usuario, con cancelación y estimación de tamaño; puede ofrecerse selección durante la instalación. La cuota inicial orientativa para herramientas opcionales es 100 MiB, separada del espacio que el usuario decida usar para un paquete de firmware.
-- No guardar herramientas ni paquetes descargados en Git. Usar almacenamiento privado de la aplicación o una ubicación elegida por el usuario.
-- Para firmware, enlazar solo la fuente oficial del fabricante cuando esté disponible, revisar modelo/variante/región, versión, requisitos y hashes/firma publicados. Descargarlo solo a petición, informar del tamaño y no flashearlo automáticamente. Un archivo público no necesariamente autoriza su redistribución.
-- Para proyectos GitHub, mostrar repositorio, licencia, versión/release, propietario y permisos solicitados. No tratar scripts sueltos, forks o código generado por IA como confiables por estar en GitHub.
-- Si el dispositivo o herramienta no son compatibles, indicarlo claramente y ofrecer diagnóstico de solo lectura, enlace oficial o instrucciones para trabajo manual. No intentar comandos alternativos a ciegas.
-- Operaciones que escriben, borran, desbloquean o flashean requieren identificación del modelo, revisión de impacto y aprobación explícita. No se implementan bypass de FRP/iCloud, MDM/financiamiento, protecciones de acceso ni cambios de IMEI.
-- No solicitar ni almacenar información privada innecesaria. Los logs deben poder revisarse y borrarse por el usuario.
+## Alcance y límites
 
-## Limitaciones importantes
+Los contratos de fotos, Android en segundo plano, cámara UVC, lotes y notificaciones no añaden permisos, UI ni servicios al APK. Los helpers de lote crean planes, no ejecutan chequeos. iPhone/iPad, EDL, MediaTek y medios booteables son referencias o candidatos sujetos a host/modelo; no se afirma integración universal. Los medios booteables y firmware no se escriben ni se flashean automáticamente.
 
-ADB/Fastboot/EDL/MediaTek no son protocolos universales: el soporte depende del modelo, chipset, controlador, permisos, modo de arranque y en algunos casos de credenciales oficiales del fabricante. No se deben incluir métodos para eludir controles de autenticación del fabricante.
+No se incluyen ROMs/firmware, acceso IP/WEP requerido, bypass de seguridad ni redistribución no autorizada. No registrar identificadores personales/credenciales. Valores de telemetría del Android anfitrión no son mediciones eléctricas del dispositivo reparado.
 
-El USB del teléfono no es un multímetro. La aplicación puede enumerar el dispositivo y, cuando el sistema lo permite, leer voltaje/corriente reportados por el controlador de carga; esas lecturas no identifican un componente en corto. Para mediciones de VBUS, CC, D+/D−, resistencia o continuidad se necesita un medidor/adaptador electrónico compatible y calibrado, con su propio protocolo documentado. Sin ese equipo, reportar «sin medición eléctrica» y no inventar valores.
+## Estado de pruebas
 
-El catálogo es una especificación: no instala ni ejecuta herramientas por sí solo.
+Las pruebas deben ejecutarse localmente con el comando anterior o en CI. No declarar que pasaron hasta tener una ejecución observada; deben cubrir JSON, referencias y unicidad del catálogo, compatibilidad del buscador, casos privados y datos simulados de lotes.
