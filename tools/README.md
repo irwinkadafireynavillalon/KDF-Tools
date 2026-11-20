@@ -1,27 +1,28 @@
-# Catálogo y almacenamiento de herramientas
+# Catálogo y flujo de herramientas KDF
 
-Esta carpeta contiene el catálogo, las reglas de descarga y la documentación de herramientas externas. **No se deben guardar aquí ROMs, firmware ni paquetes descargados.** Las descargas de la aplicación deben almacenarse en su directorio privado en el dispositivo y quedar fuera de Git.
+## Ejecutar búsqueda local
 
-## Estructura
+```sh
+python3 -m tools.catalogo.buscar_herramientas --protocol fastboot
+python3 -m tools.catalogo.buscar_herramientas --device smartphones --brand Apple --json
+python3 -m tools.catalogo.buscar_herramientas --device other-usb --json
+```
 
-- `catalogo/herramientas.json`: catálogo organizado por tipo de dispositivo, marca y herramientas universales.
-- `descargas/README.md`: contrato para descargas opcionales y almacenamiento privado.
-- `generadas/README.md`: reglas para scripts creados por el orquestador.
-- `gsm_modules/`: módulos GSM existentes; no se reemplazan en este cambio.
+El catálogo es una lista de referencias/capacidades, no instala ni ejecuta binarios. Nix-on-Droid puede proporcionar una dependencia individual cuando exista una build compatible; debe detectarse host/ABI. Las descargas opcionales se hacen visibles y a petición, nunca silenciosas.
 
-## Integración propuesta
+## Funciones modeladas
 
-La aplicación Android puede mostrar una opción de configuración para descargar herramientas compatibles. No recomiendo descargarlas sin avisar durante la instalación: ofrecer un selector inicial evita consumo inesperado de datos y almacenamiento. El catálogo fija un límite de **100 MiB en total** para herramientas externas opcionales; no es una promesa de que cualquier conjunto de herramientas quepa ni que cada herramienta funcione en todas las arquitecturas.
+- Categorías de celulares, tabletas, wearables, computadoras, pantallas/TV, automotriz y otros accesorios conectados.
+- Referencias ADB/Fastboot, Qualcomm EDL, MediaTek, soporte Apple, USB UVC/microscopio, USB inventory y medios de arranque.
+- Casos de reparación locales, referencia a fotos privadas, varios dispositivos por caso, planes de diagnóstico por lotes, notificaciones locales y reportes agregados.
+- Transportes locales sin descubrimiento por IP/WEP.
 
-Antes de implementar el descargador, debe verificar las limitaciones de Android/Termux, ABI, licencia, origen oficial, tamaño y SHA-256. Los elementos con `status: "planned"` no son descargables ni ejecutables todavía. El catálogo actual es una especificación, no un instalador.
+Las funciones de flujo Python solo crean registros y planes: no acceden a cámara/USB ni ejecutan diagnósticos. La aplicación Android todavía requiere su propia integración de permisos, UI y hardware.
 
-## Seguridad y alcance
+## Pruebas
 
-- Usar únicamente herramientas de diagnóstico y reparación autorizada, procedentes de fuentes oficiales.
-- No descargar ni distribuir ROMs, firmware, firehose/programadores, imágenes de partición o archivos de desbloqueo.
-- No ejecutar archivos de GitHub solo por estar alojados allí; revisar proyecto, licencia, versión, firma/hash y permisos requeridos.
-- No incluir bypass de FRP/iCloud, eliminación de MDM/financiamiento, modificación de IMEI, evasión de controles de seguridad ni flasheo automático.
-- Operaciones que escriben, borran o desbloquean requieren revisión del modelo exacto, copia de seguridad y confirmación explícita.
-- El diagnóstico eléctrico de cortocircuitos no puede inferirse con certeza usando solo el cable USB o software. Hace falta equipo de medición adecuado; presentar telemetría como indicio, no como medición de resistencia.
+```sh
+python3 -m unittest discover -s tools/tests -v
+```
 
-Consulta `catalogo/herramientas.json` para la matriz inicial.
+Las pruebas son simuladas y no conectan equipos. No se pudo ejecutar una compilación Android desde esta carpeta.

@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "catalog_version": "0.1.0",
+  "catalog_version": "0.4.0",
   "policy": {
     "max_optional_download_bytes": 104857600,
     "download_mode": "on_demand",
@@ -10,75 +10,48 @@
     "require_sha256_before_install": true,
     "allow_roms_or_firmware": false,
     "allow_unreviewed_github_assets": false,
-    "execute_downloaded_tools_automatically": false
+    "execute_downloaded_tools_automatically": false,
+    "runtime_downloads_in_repository": false,
+    "network_ip_discovery": false,
+    "local_notifications_only": true
   },
   "storage": {
     "runtime_location": "Android app-private files directory; never the Git checkout",
     "generated_scripts_location": "Android app-private files directory/KDF-LuX/generated",
     "downloaded_tools_location": "Android app-private files directory/KDF-LuX/tools",
-    "keep_downloads_out_of_repository": true
+    "photos_location": "Android app-private case attachments; store references/metadata in case record",
+    "keep_customer_data_out_of_repository": true
   },
   "device_categories": [
-    {
-      "id": "smartphones",
-      "name": "Teléfonos",
-      "brands": ["Samsung", "Xiaomi", "POCO", "Google Pixel", "Motorola", "OnePlus", "ASUS", "Nothing", "Realme", "Sony", "Other"],
-      "tools": ["android-platform-tools"]
-    },
-    {
-      "id": "tablets",
-      "name": "Tabletas",
-      "brands": ["Samsung", "Xiaomi", "Lenovo", "Google Pixel", "OnePlus", "Other"],
-      "tools": ["android-platform-tools"]
-    },
-    {
-      "id": "computers",
-      "name": "Laptops y computadoras",
-      "brands": ["ASUS", "HP", "Lenovo", "Microsoft Surface", "Framework", "Other"],
-      "tools": ["android-platform-tools"]
-    },
-    {
-      "id": "smart-tvs",
-      "name": "Smart TV y TV boxes",
-      "brands": ["Sony", "TCL", "Hisense", "NVIDIA Shield", "Xiaomi", "Other"],
-      "tools": ["android-platform-tools"]
-    },
-    {
-      "id": "wearables",
-      "name": "Smartwatch y wearables",
-      "brands": ["Samsung", "Google Pixel", "OnePlus", "Mobvoi TicWatch", "Xiaomi", "Other"],
-      "tools": ["android-platform-tools"]
-    },
-    {
-      "id": "automotive",
-      "name": "Pantallas y sistemas multimedia de automóvil",
-      "brands": ["Volvo/Polestar", "Renault", "Pioneer", "Sony", "Other"],
-      "tools": ["android-platform-tools"]
-    }
+    {"id":"smartphones","name":"Celulares","brands":["Samsung","Xiaomi","POCO","Google Pixel","Motorola","OnePlus","ASUS","Nothing","Realme","Sony","Apple","Other"],"tools":["android-platform-tools","apple-device-support","usb-inventory","usb-microscope"]},
+    {"id":"tablets","name":"Tabletas","brands":["Samsung","Xiaomi","Lenovo","Google Pixel","OnePlus","Apple","Other"],"tools":["android-platform-tools","apple-device-support","usb-inventory"]},
+    {"id":"wearables","name":"Smartwatch y wearables","brands":["Samsung","Google Pixel","OnePlus","Mobvoi","Xiaomi","Apple","Other"],"tools":["android-platform-tools","usb-inventory"]},
+    {"id":"computers","name":"Computadoras y laptops","brands":["ASUS","HP","Lenovo","Microsoft Surface","Framework","Apple","Other"],"tools":["bootable-media-reference","usb-inventory"]},
+    {"id":"screens","name":"Pantallas, Smart TV y TV boxes","brands":["Sony","TCL","Hisense","NVIDIA Shield","Xiaomi","Other"],"tools":["android-platform-tools","usb-inventory"]},
+    {"id":"automotive","name":"Pantallas y sistemas multimedia de automóvil","brands":["Volvo/Polestar","Renault","Pioneer","Sony","Other"],"tools":["android-platform-tools","usb-inventory"]},
+    {"id":"other-usb","name":"Otros dispositivos conectados","brands":["Universal","Other"],"tools":["usb-inventory","usb-microscope"]}
   ],
-  "universal_tools": [
-    {
-      "id": "android-platform-tools",
-      "name": "Android SDK Platform-Tools (ADB/Fastboot)",
-      "category": "diagnostics",
-      "status": "planned",
-      "official_source_page": "https://developer.android.com/tools/releases/platform-tools",
-      "source_owner": "Android Developers",
-      "supported_host_environments": ["Windows", "macOS", "Linux"],
-      "android_app_execution_supported": false,
-      "download_url": null,
-      "sha256": null,
-      "size_bytes": null,
-      "license_review_required": true,
-      "notes": "La página oficial es una referencia, no un enlace de descarga directa. La aplicación Android no debe asumir que ejecuta los binarios de escritorio; evaluar Android/Termux y la ABI por separado."
-    }
+  "tools": [
+    {"id":"android-platform-tools","name":"ADB y Fastboot","category":"android_diagnostics","status":"reference_only","brands":["Universal"],"protocols":["adb","fastboot","recovery"],"chipsets":["Qualcomm","MediaTek","Exynos","Tensor","Unisoc","Other"],"required_commands":["adb","fastboot"],"nix_package":"android-tools","official_source":"https://developer.android.com/tools/releases/platform-tools","operation_mode":"read_only_by_default","notes":"Detectar disponibilidad en PATH/Nix; validar host/ABI. No iniciar desbloqueos ni escrituras automáticamente."},
+    {"id":"usb-inventory","name":"Inventario USB/OTG","category":"read_only_connection","status":"host_api_or_optional_cli","brands":["Universal"],"protocols":["usb-host","usb-otg","usb-serial","usb-mass-storage","uvc"],"required_commands":[],"optional_commands":["lsusb","termux-usb"],"nix_package":"usbutils","official_source":"https://developer.android.com/develop/connectivity/usb/host","operation_mode":"read_only","notes":"El permiso Android USB se concede por dispositivo. Identificadores e interfaces no garantizan el modelo exacto."},
+    {"id":"usb-microscope","name":"Microscopio USB/UVC","category":"camera_input","status":"integration_candidate","brands":["Universal"],"protocols":["uvc","usb-host"],"required_commands":[],"official_source":"https://developer.android.com/develop/connectivity/usb/host","operation_mode":"camera_preview_after_explicit_permission","notes":"Compatible solo si Android, el host USB, el adaptador y el microscopio exponen una interfaz compatible; validar antes de prometer soporte."},
+    {"id":"apple-device-support","name":"Soporte oficial iPhone/iPad","category":"apple_diagnostics_reference","status":"official_reference_only","brands":["Apple"],"protocols":["usb","recovery","dfu"],"required_commands":[],"official_source":"https://support.apple.com/iphone/restore","operation_mode":"official_user_initiated_diagnostics_and_recovery","notes":"El acceso depende del modelo y sistema anfitrión. Restaurar puede borrar datos; no incluye evasión de Activation Lock ni acceso a datos protegidos."},
+    {"id":"qualcomm-edl-reference","name":"Referencia Qualcomm EDL","category":"chipset_diagnostics","status":"manual_review","brands":["Universal"],"protocols":["qualcomm-edl"],"chipsets":["Qualcomm"],"required_commands":[],"official_source":"https://www.qualcomm.com/support","operation_mode":"reference_only","notes":"La compatibilidad y autorización son específicas del fabricante/modelo; no se incluyen loaders, firmware ni bypass."},
+    {"id":"mediatek-reference","name":"Referencia MediaTek","category":"chipset_diagnostics","status":"manual_review","brands":["Universal"],"protocols":["mediatek-usb","mediatek-brom"],"chipsets":["MediaTek"],"required_commands":[],"official_source":"https://www.mediatek.com/","operation_mode":"reference_only","notes":"Compatibilidad dependiente de modelo, modo y autorizaciones del fabricante; no se incluyen métodos de bypass."},
+    {"id":"usb-meter-adapter","name":"Adaptador externo de medición USB","category":"electrical_triage_input","status":"integration_contract","brands":["Universal"],"protocols":["kdf-measurement-json-v1"],"measurement_contract":"tools/diagnostico_usb/formato_medicion.json","required_commands":[],"operation_mode":"consume_calibrated_samples","notes":"No se inventan mediciones ni umbrales universales; la salida es una hipótesis aproximada con evidencia."},
+    {"id":"bootable-media-reference","name":"Creación de USB booteable (referencias oficiales)","category":"computer_recovery_reference","status":"official_reference_only","brands":["Universal"],"protocols":["usb-mass-storage"],"required_commands":[],"official_source":"https://www.microsoft.com/software-download/","operation_mode":"manual_reference_only","notes":"Crear medios puede borrar la unidad. La app Android debe verificar host/compatibilidad y no escribir sin seleccionar y confirmar el destino."},
+    {"id":"user-scripts","name":"Scripts del técnico","category":"reusable_scripts","status":"local_user_managed","brands":["Universal"],"protocols":["varios"],"required_commands":[],"operation_mode":"index_and_preview","notes":"Se indexan por dispositivo, síntoma, requisitos y resultado. No ejecutar automáticamente."}
   ],
-  "brand_specific_tools": [],
+  "connection_transports": ["usb-host", "usb-otg", "usb-serial", "uvc", "adb-usb", "fastboot-usb", "bluetooth-usb-bridge", "other-local-accessory"],
+  "workflow_features": ["device_intake", "photo_attachments", "multi_device_inventory", "batch_diagnostic_plans", "local_notifications", "analysis_and_reports", "repair_case_history", "manual_and_automatic_modes", "microscope_camera_candidate"],
   "validation_rules": [
-    "No habilitar una descarga hasta verificar origen oficial, licencia, versión, tamaño y SHA-256.",
-    "Rechazar redirecciones a hosts no permitidos y archivos que excedan la cuota disponible.",
-    "Instalar en almacenamiento privado con nombre/versionado seguro; no sobrescribir una herramienta existente sin confirmación.",
-    "Mostrar marca/modelo, compatibilidad, permisos, riesgos y acciones previstas antes de ejecutar.",
-    "No deducir que una herramienta es compatible únicamente por el nombre comercial de la marca."
+    "No habilitar descargas sin revisar fuente, versión, licencia, tamaño, compatibilidad e integridad.",
+    "Permisos de cámara y USB se solicitan solo al usar esas funciones.",
+    "No hacer descubrimiento de dispositivos por IP ni requerir WEP/Wi-Fi para diagnóstico USB/local.",
+    "No almacenar fotos, reportes de clientes, firmware o binarios descargados en Git.",
+    "Notificaciones de esta fase son locales; no implementar portal remoto.",
+    "No afirmar modelo exacto si solo se conocen VID/PID o chipset.",
+    "Cada diagnóstico separa observaciones, hipótesis, no medido y no descartado.",
+    "Operaciones que escriben, borran o flashean requieren confirmación explícita."
   ]
 }

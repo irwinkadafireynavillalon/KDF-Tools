@@ -1,0 +1,12 @@
+{
+  "schema_version": 1,
+  "case_fields": ["case_id", "timestamps", "category", "brand", "model", "state", "symptoms", "observations", "device_connections", "photo_references", "diagnostics", "script_references", "approvals", "notes"],
+  "photo_storage": "app-private files; record relative references only; never commit customer images",
+  "multi_device": "A case may include several independently identified connected devices/accessories; do not assume one USB connection implies one target.",
+  "batch_diagnostics": "Create a reviewable plan per connected device; execute only supported read-only checks after permission/compatibility checks.",
+  "notifications": "Local app notifications for status, approval, completion, and reconnect events; no remote portal in this phase.",
+  "reports": "Aggregate counts and confirmed outcomes; keep hypotheses separate and do not expose customer identifiers by default.",
+  "camera": "Request camera permission only when user taps capture; USB UVC microscope support is conditional on host hardware, Android API, driver and device compatibility.",
+  "transports": ["USB Host/OTG", "ADB over USB", "Fastboot USB", "USB serial", "USB Video Class camera/microscope", "Bluetooth accessory", "other local accessory"],
+  "network_policy": "No IP scanning, WEP, or remote device discovery required for this local workflow."
+}
