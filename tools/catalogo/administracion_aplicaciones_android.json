@@ -1,0 +1,58 @@
+{
+  "schema_version": 1,
+  "module_id": "android-app-management",
+  "title": "Administración de aplicaciones Android por ADB",
+  "status": "specification_only",
+  "supported_operations": [
+    {
+      "id": "inspect_packages",
+      "label": "Listar e inspeccionar aplicaciones",
+      "mode": "read_only",
+      "requires": ["ADB disponible", "dispositivo conectado", "autorización ADB válida"]
+    },
+    {
+      "id": "uninstall_user_app",
+      "label": "Desinstalar aplicación instalada por el usuario",
+      "mode": "changes_device",
+      "requires": ["selección explícita del paquete", "revisión del nombre y origen", "confirmación individual"]
+    },
+    {
+      "id": "disable_user_app",
+      "label": "Inhabilitar aplicación seleccionada para el usuario Android",
+      "mode": "changes_device",
+      "reversible": true,
+      "recovery_action": "enable_package",
+      "requires": ["selección explícita del paquete", "revisión del impacto", "confirmación individual"]
+    },
+    {
+      "id": "restore_disabled_app",
+      "label": "Volver a habilitar una aplicación inhabilitada",
+      "mode": "changes_device",
+      "requires": ["selección explícita del paquete", "confirmación"]
+    }
+  ],
+  "package_classification": {
+    "user_installed": "Puede ofrecer desinstalación normal si ADB está autorizado.",
+    "preinstalled_noncritical": "Mostrar como posible candidata a inhabilitar para el usuario; no borrar el APK del sistema por defecto.",
+    "system_critical_or_unknown": "Bloquear acción automática; mostrar solo información y recomendar comprobar documentación/modelo.",
+    "device_owner_or_management_agent": "No desactivar ni eliminar; remitir al administrador o procedimiento autorizado del fabricante.",
+    "security_or_account_protection": "No intentar retirar, neutralizar o evadir controles de antirrobo, cuenta, gestión empresarial o financiación."
+  },
+  "safety": {
+    "dry_run_first": true,
+    "no_bulk_changes_by_default": true,
+    "never_force_remove_system_apk": true,
+    "never_use_root_or_exploit_to_bypass_restrictions": true,
+    "require_exact_package_and_device_confirmation": true,
+    "warn_about_bootloop_or_lost_functionality": true,
+    "record_before_after_result_without_personal_identifiers": true,
+    "stop_if_adb_authorization_or_device_identity_is_ambiguous": true
+  },
+  "limitations": [
+    "ADB cannot override every Android permission, device-owner policy, OEM restriction, or protected package state.",
+    "Some preinstalled packages cannot be removed without privileged access; do not escalate or bypass those restrictions.",
+    "Disabling a package may break calls, startup, updates, accessibility, payments, or device-specific features.",
+    "An app that returns after removal may be restored by an authorized management policy, installer, system update, or another app; diagnose the source instead of repeatedly forcing removal.",
+    "Exact package behavior varies by Android version and manufacturer; test model-specific behavior before offering an operation."
+  ]
+}
