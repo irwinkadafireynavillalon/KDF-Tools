@@ -1,17 +1,19 @@
-# Descargas opcionales
+# Descargas visibles y a petición
 
-Las herramientas descargadas deben permanecer en el almacenamiento privado de la aplicación Android, no en esta carpeta del repositorio. La app ya define un directorio de datos bajo `filesDir/KDF-LuX`; la implementación puede usar un subdirectorio `tools/` para paquetes validados.
+Este directorio contiene reglas y metadatos, no binarios. La app puede ofrecer una selección durante la instalación y permitir descargas posteriores bajo demanda. El presupuesto inicial sugerido para herramientas opcionales es 100 MiB. El firmware, si el usuario decide descargarlo desde una fuente oficial para un modelo exacto, muestra tamaño y confirmación aparte.
 
-## Flujo requerido
+## Herramientas
 
-1. El usuario elige categoría de dispositivo, marca y herramienta.
-2. La aplicación muestra tamaño, versión, compatibilidad de host/ABI, licencia, origen y permisos.
-3. Antes de descargar, comprueba el espacio disponible y la cuota de 100 MiB del catálogo. La cuota es configurable y no debe traducirse en una descarga silenciosa.
-4. Descarga por HTTPS desde un proveedor permitido; valida tamaño y SHA-256 contra un manifiesto de confianza.
-5. Mantiene el archivo en cuarentena hasta terminar todas las comprobaciones; solo entonces lo habilita.
-6. No ejecuta herramientas recién descargadas automáticamente. Solicita confirmación justo antes de una operación y registra el resultado sin secretos.
-7. Permite cancelar, eliminar y consultar versión/licencia de cada herramienta.
+Antes de ofrecer una herramienta: mostrar fuente, propietario, versión/release, licencia, compatibilidad de host/ABI/modelo, tamaño y requisitos. Descargar solo por HTTPS desde la fuente revisada; validar tamaño y SHA-256/firma cuando el proveedor publique un valor de confianza. Si no existe hash o firma verificable, marcarlo claramente como no verificado. Mantener el archivo temporal en almacenamiento privado y no ejecutarlo automáticamente. Permitir cancelar, actualizar y borrar herramientas sin tocar otros datos del usuario.
 
-No ofrecer un paquete universal de 100 MiB como garantía: el tamaño cambia según sistema operativo y arquitectura. En Android, muchas herramientas de escritorio no son ejecutables directamente. No empaquetar ni descargar firmware, ROMs o imágenes de partición mediante este catálogo.
+Android SDK Platform-Tools se distribuye para sistemas host; no asumir que sus binarios de escritorio se ejecutan dentro de Android. Verificar por separado Android/Termux, ABI, permisos y licencia.
 
-Por ahora este documento define requisitos; no hay descargador implementado ni herramientas habilitadas en `herramientas.json` (`status: planned`).
+## Firmware/ROM a petición
+
+No se guarda firmware, ROM, imagen de partición ni programador en Git. Solo mostrar una descarga del fabricante cuando la fuente y el modelo/variante/región exactos hayan sido revisados. Explicar versión, tamaño, hash/firma publicada y riesgos; la descarga la inicia el usuario y no se ejecuta flasheo automático. Disponibilidad pública no equivale automáticamente a permiso de redistribución o a compatibilidad.
+
+## GitHub y foros
+
+El enlace opcional de GitHub debe usar OAuth oficial, permisos mínimos y revocables; nunca guardar tokens en el catálogo, scripts o logs. Para proyectos, mostrar owner, URL, licencia, release/tag y compatibilidad. Foros, vídeos y repositorios comunitarios pueden aportar pistas para el diagnóstico y la IA, citando fuente y fecha; no son por sí solos prueba de compatibilidad ni autorización para redistribuir o ejecutar scripts.
+
+La revisión de licencia sirve para saber si se puede incluir, empaquetar o redistribuir una herramienta. Si no se conoce, enlazar la fuente para evaluación manual, sin copiar el software.

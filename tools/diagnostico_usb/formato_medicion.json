@@ -1,34 +1,50 @@
 {
   "schema_version": 1,
-  "protocol": "kdf-measurement-json-v1",
   "measurement": {
-    "captured_at": "ISO-8601",
     "device_timestamp_ns": null,
     "sampling_rate_hz": null,
     "calibration_id": null,
-    "adapter_id": null,
-    "usb_mode": "unknown",
-    "charger_state": "unknown",
+    "probe_hardware_id": null,
+    "usb_mode": null,
+    "charger_protocol": null,
     "device_model": null,
     "board_revision": null,
+    "battery_connected_state": "unknown",
+    "display_connected_state": "unknown",
     "samples": [
-      {"t_ns":0,"vbus_mv":null,"input_current_ma":null,"charger_state":"unknown","quality":"unknown"}
+      {
+        "t_ns": 0,
+        "vbus_mv": null,
+        "input_current_ma": null,
+        "power_mw": null,
+        "charger_state": "unknown",
+        "protection_event": null,
+        "measurement_quality": "unknown"
+      }
     ]
   },
-  "triage": {
-    "status":"insufficient_data",
-    "suspected_areas":[],
-    "confidence":"none",
-    "evidence":[],
-    "not_measured":[],
-    "not_ruled_out":[],
-    "recommended_next_step":"Sin datos calibrados suficientes; no afirmar corto ni ubicación."
+  "diagnosis": {
+    "classification": "insufficient_data",
+    "suspected_areas": [],
+    "confidence": "none",
+    "evidence": [],
+    "not_measured": [],
+    "not_ruled_out": [],
+    "recommended_next_step": "No se recibió una medición calibrada compatible; no afirmar corto ni ubicación.",
+    "requires_opening_for_confirmation": false
   },
-  "rules": [
-    "No existe un umbral universal; caracterizar por adaptador, fuente, protocolo y familia de placa.",
-    "La corriente de entrada representa varias cargas y protecciones; no localiza un componente por sí sola.",
-    "No marcar batería, pantalla ni placa como descartadas sin prueba que las aísle.",
-    "Una ausencia de alerta no demuestra que no exista una falla.",
-    "Este contrato no especifica circuito, cableado ni procedimiento para inyectar corriente."
+  "area_hypothesis_fields": {
+    "area_id_examples_only": ["usb_input_or_charge_board", "battery_path", "protection_or_power_management", "downstream_power_rail", "unknown"],
+    "required_evidence": ["board_model_and_revision_or_explicitly_unknown", "calibrated_time_series", "charger_or_source_state", "rule_or_reference_version"],
+    "confidence_values": ["low", "medium", "high"],
+    "confidence_note": "Confidence describes evidence support for an approximate board area, not certainty of a short or identification of a component."
+  },
+  "constraints": [
+    "No universal numeric cutoff: thresholds must be characterized for the exact adapter, calibration, source, protocol and tested model family.",
+    "Input-current onset timing is one feature only; it cannot spatially locate a fault by propagation delay alone.",
+    "Do not mark battery/display/charge-board areas excluded unless a valid test independently isolates that path.",
+    "A no-alarm result is not proof that no short exists.",
+    "The app does not directly probe USB data pins or apply power; the user's separately validated measurement hardware owns electrical safety and limits.",
+    "This contract does not define circuit construction, pin wiring, current-injection procedures, or service thresholds."
   ]
 }
