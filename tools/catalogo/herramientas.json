@@ -1,118 +1,84 @@
 {
   "schema_version": 1,
-  "catalog_version": "0.3.0",
+  "catalog_version": "0.1.0",
   "policy": {
-    "optional_tool_download_budget_bytes": 104857600,
-    "download_mode": "visible_on_demand",
-    "allow_setup_selection": true,
-    "download_without_user_confirmation": false,
-    "firmware_included_in_repository": false,
-    "automatic_flash": false,
-    "execute_downloaded_code_automatically": false,
-    "runtime_downloads_in_repository": false,
-    "github_oauth": "future_optional_minimum_scopes"
+    "max_optional_download_bytes": 104857600,
+    "download_mode": "on_demand",
+    "offer_optional_download_during_setup": true,
+    "download_without_user_consent": false,
+    "require_https": true,
+    "require_sha256_before_install": true,
+    "allow_roms_or_firmware": false,
+    "allow_unreviewed_github_assets": false,
+    "execute_downloaded_tools_automatically": false
+  },
+  "storage": {
+    "runtime_location": "Android app-private files directory; never the Git checkout",
+    "generated_scripts_location": "Android app-private files directory/KDF-LuX/generated",
+    "downloaded_tools_location": "Android app-private files directory/KDF-LuX/tools",
+    "keep_downloads_out_of_repository": true
   },
   "device_categories": [
-    {"id":"phones","name":"Celulares","brands":["Samsung","Xiaomi","POCO","Google Pixel","Motorola","OnePlus","ASUS","Nothing","Realme","Sony","Other"]},
-    {"id":"tablets","name":"Tabletas","brands":["Samsung","Xiaomi","Lenovo","Google Pixel","OnePlus","Other"]},
-    {"id":"wearables","name":"Smartwatch y wearables","brands":["Samsung","Google Pixel","OnePlus","Mobvoi","Xiaomi","Other"]},
-    {"id":"computers","name":"Computadoras y laptops","brands":["ASUS","HP","Lenovo","Microsoft Surface","Framework","Other"]},
-    {"id":"screens","name":"Pantallas y Smart TV","brands":["Sony","TCL","Hisense","NVIDIA Shield","Xiaomi","Other"]},
-    {"id":"automotive","name":"Pantallas y sistemas multimedia de automóvil","brands":["Volvo/Polestar","Renault","Pioneer","Sony","Other"]},
-    {"id":"other-usb","name":"Otros dispositivos USB","brands":["Other"]}
-  ],
-  "tools": [
     {
-      "id":"android-platform-tools",
-      "name":"ADB y Fastboot",
-      "category":"diagnostico_android",
-      "status":"detect_if_installed",
-      "brands":["Android compatible"],
-      "protocols":["adb","fastboot"],
-      "chipsets":["Qualcomm","MediaTek","Exynos","Tensor","Unisoc","Other"],
-      "required_commands":["adb","fastboot"],
-      "nix_package":"android-tools",
-      "official_source":"https://developer.android.com/tools/releases/platform-tools",
-      "operation_mode":"solo_lectura_por_defecto",
-      "notes":"Usar las herramientas ya presentes en PATH. Los binarios host no se presumen ejecutables en Android; Nix-on-Droid u otro entorno debe proporcionar una build compatible. No se incluyen operaciones de desbloqueo ni escritura automatizada."
+      "id": "smartphones",
+      "name": "Teléfonos",
+      "brands": ["Samsung", "Xiaomi", "POCO", "Google Pixel", "Motorola", "OnePlus", "ASUS", "Nothing", "Realme", "Sony", "Other"],
+      "tools": ["android-platform-tools"]
     },
     {
-      "id":"usb-inventory",
-      "name":"Inventario de conexión USB",
-      "category":"diagnostico_usb",
-      "status":"detect_if_installed",
-      "brands":["Universal"],
-      "protocols":["usb-host","usb-otg"],
-      "required_commands":["lsusb"],
-      "optional_commands":["termux-usb"],
-      "nix_package":"usbutils",
-      "official_source":"https://developer.android.com/develop/connectivity/usb/host",
-      "operation_mode":"solo_lectura",
-      "notes":"Enumera interfaces/identificadores cuando el host y los permisos lo permiten; no garantiza identificar el modelo exacto."
+      "id": "tablets",
+      "name": "Tabletas",
+      "brands": ["Samsung", "Xiaomi", "Lenovo", "Google Pixel", "OnePlus", "Other"],
+      "tools": ["android-platform-tools"]
     },
     {
-      "id":"python-usb-serial",
-      "name":"Bibliotecas USB y serie para módulos de diagnóstico",
-      "category":"dependencia",
-      "status":"detect_if_installed",
-      "brands":["Universal"],
-      "protocols":["usb","serial"],
-      "python_modules":["usb","serial"],
-      "nix_package":"python3Packages.pyserial",
-      "operation_mode":"dependencia_no_ejecutable_por_si_sola",
-      "notes":"Revisar el catálogo y permisos del entorno antes de instalar. No instala nada automáticamente."
+      "id": "computers",
+      "name": "Laptops y computadoras",
+      "brands": ["ASUS", "HP", "Lenovo", "Microsoft Surface", "Framework", "Other"],
+      "tools": ["android-platform-tools"]
     },
     {
-      "id":"qualcomm-edl-reference",
-      "name":"Referencia de interfaz Qualcomm EDL",
-      "category":"diagnostico_chipset",
-      "status":"manual_review",
-      "brands":["Universal"],
-      "protocols":["qualcomm-edl"],
-      "chipsets":["Qualcomm"],
-      "required_commands":[],
-      "official_source":"https://www.qualcomm.com/support",
-      "operation_mode":"referencia_sin_escritura",
-      "notes":"La disponibilidad y autorización dependen del fabricante y modelo. No se incluyen métodos para evadir autenticación, ni loaders o firmware."
+      "id": "smart-tvs",
+      "name": "Smart TV y TV boxes",
+      "brands": ["Sony", "TCL", "Hisense", "NVIDIA Shield", "Xiaomi", "Other"],
+      "tools": ["android-platform-tools"]
     },
     {
-      "id":"mediatek-reference",
-      "name":"Referencia de diagnóstico MediaTek",
-      "category":"diagnostico_chipset",
-      "status":"manual_review",
-      "brands":["Universal"],
-      "protocols":["mediatek-usb","mediatek-brom"],
-      "chipsets":["MediaTek"],
-      "required_commands":[],
-      "official_source":"https://www.mediatek.com/",
-      "operation_mode":"referencia_sin_escritura",
-      "notes":"Soporte dependiente de modelo, modo y autorizaciones del fabricante. No se incluyen métodos de bypass ni payloads."
+      "id": "wearables",
+      "name": "Smartwatch y wearables",
+      "brands": ["Samsung", "Google Pixel", "OnePlus", "Mobvoi TicWatch", "Xiaomi", "Other"],
+      "tools": ["android-platform-tools"]
     },
     {
-      "id":"usb-meter-adapter",
-      "name":"Adaptador externo de medición USB del usuario",
-      "category":"entrada_diagnostico_electrico",
-      "status":"integration_contract",
-      "brands":["Universal"],
-      "protocols":["kdf-measurement-json-v1"],
-      "measurement_contract":"tools/diagnostico_usb/formato_medicion.json",
-      "operation_mode":"datos_del_adaptador_sin_umbral_universal",
-      "notes":"El OTG/cable normal no es multímetro. El adaptador debe proporcionar lecturas calibradas; el catálogo solo valida y organiza los datos, no localiza componentes por sí solo."
-    },
-    {
-      "id":"user-scripts",
-      "name":"Scripts del técnico",
-      "category":"scripts_reutilizables",
-      "status":"local_user_managed",
-      "brands":["Universal"],
-      "protocols":["varios"],
-      "operation_mode":"mostrar_origen_y_revision_antes_de_uso",
-      "notes":"El índice permite encontrar scripts y sus requisitos. No ejecuta scripts automáticamente ni elimina los originales."
+      "id": "automotive",
+      "name": "Pantallas y sistemas multimedia de automóvil",
+      "brands": ["Volvo/Polestar", "Renault", "Pioneer", "Sony", "Other"],
+      "tools": ["android-platform-tools"]
     }
   ],
-  "existing_modules": [
-    {"id":"gsm-chimera-diagnostics","path":"tools/gsm_modules/chimera_diag_engine.py","status":"manual_review_required","notes":"Contiene consultas AT, incluida lectura de identidad del módem. No invocar automáticamente ni guardar identificadores sin necesidad y consentimiento."},
-    {"id":"gsm-hydra-edl-inspection","path":"tools/gsm_modules/hydra_edl_engine.py","status":"read_only_file_and_port_inspection","notes":"Detección básica de puertos y análisis XML; no es un flasher completo."},
-    {"id":"gsm-mitool-fastboot-info","path":"tools/gsm_modules/mitool_engine.py","status":"read_only_fastboot_queries","notes":"Consulta variables Fastboot disponibles; compatibilidad/modelo no garantizados."}
+  "universal_tools": [
+    {
+      "id": "android-platform-tools",
+      "name": "Android SDK Platform-Tools (ADB/Fastboot)",
+      "category": "diagnostics",
+      "status": "planned",
+      "official_source_page": "https://developer.android.com/tools/releases/platform-tools",
+      "source_owner": "Android Developers",
+      "supported_host_environments": ["Windows", "macOS", "Linux"],
+      "android_app_execution_supported": false,
+      "download_url": null,
+      "sha256": null,
+      "size_bytes": null,
+      "license_review_required": true,
+      "notes": "La página oficial es una referencia, no un enlace de descarga directa. La aplicación Android no debe asumir que ejecuta los binarios de escritorio; evaluar Android/Termux y la ABI por separado."
+    }
+  ],
+  "brand_specific_tools": [],
+  "validation_rules": [
+    "No habilitar una descarga hasta verificar origen oficial, licencia, versión, tamaño y SHA-256.",
+    "Rechazar redirecciones a hosts no permitidos y archivos que excedan la cuota disponible.",
+    "Instalar en almacenamiento privado con nombre/versionado seguro; no sobrescribir una herramienta existente sin confirmación.",
+    "Mostrar marca/modelo, compatibilidad, permisos, riesgos y acciones previstas antes de ejecutar.",
+    "No deducir que una herramienta es compatible únicamente por el nombre comercial de la marca."
   ]
 }

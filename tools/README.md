@@ -1,36 +1,27 @@
-# Módulo de herramientas
+# Catálogo y almacenamiento de herramientas
 
-Esta carpeta contiene módulos de diagnóstico GSM existentes y un catálogo nuevo de capacidades. El catálogo no afirma que todas las funciones sean implementaciones completas: `status` distingue comandos detectables, referencias manuales e interfaces pendientes.
+Esta carpeta contiene el catálogo, las reglas de descarga y la documentación de herramientas externas. **No se deben guardar aquí ROMs, firmware ni paquetes descargados.** Las descargas de la aplicación deben almacenarse en su directorio privado en el dispositivo y quedar fuera de Git.
 
-## Buscar capacidades localmente
+## Estructura
 
-Desde la raíz del repositorio:
+- `catalogo/herramientas.json`: catálogo organizado por tipo de dispositivo, marca y herramientas universales.
+- `descargas/README.md`: contrato para descargas opcionales y almacenamiento privado.
+- `generadas/README.md`: reglas para scripts creados por el orquestador.
+- `gsm_modules/`: módulos GSM existentes; no se reemplazan en este cambio.
 
-```sh
-python3 -m tools.catalogo.buscar_herramientas --protocol fastboot
-python3 -m tools.catalogo.buscar_herramientas --device phones --brand Xiaomi --available
-python3 -m tools.catalogo.buscar_herramientas --chipset MediaTek --json
-```
+## Integración propuesta
 
-La búsqueda lee `catalogo/herramientas.json` y revisa comandos/módulos presentes en PATH o Python. No descarga, instala ni ejecuta herramientas. Si falta un comando, muestra el paquete Nix sugerido; Nix-on-Droid u otro host puede resolverlo por separado. Esto evita descargar un conjunto completo, pero la herramienta individual debe existir en un build compatible con el host y sus permisos.
+La aplicación Android puede mostrar una opción de configuración para descargar herramientas compatibles. No recomiendo descargarlas sin avisar durante la instalación: ofrecer un selector inicial evita consumo inesperado de datos y almacenamiento. El catálogo fija un límite de **100 MiB en total** para herramientas externas opcionales; no es una promesa de que cualquier conjunto de herramientas quepa ni que cada herramienta funcione en todas las arquitecturas.
 
-## Pruebas
+Antes de implementar el descargador, debe verificar las limitaciones de Android/Termux, ABI, licencia, origen oficial, tamaño y SHA-256. Los elementos con `status: "planned"` no son descargables ni ejecutables todavía. El catálogo actual es una especificación, no un instalador.
 
-```sh
-python3 -m unittest discover -s tools/tests -v
-```
+## Seguridad y alcance
 
-Las pruebas usan datos simulados y directorios temporales; no requieren conectar dispositivos ni ejecutar comandos reales.
+- Usar únicamente herramientas de diagnóstico y reparación autorizada, procedentes de fuentes oficiales.
+- No descargar ni distribuir ROMs, firmware, firehose/programadores, imágenes de partición o archivos de desbloqueo.
+- No ejecutar archivos de GitHub solo por estar alojados allí; revisar proyecto, licencia, versión, firma/hash y permisos requeridos.
+- No incluir bypass de FRP/iCloud, eliminación de MDM/financiamiento, modificación de IMEI, evasión de controles de seguridad ni flasheo automático.
+- Operaciones que escriben, borran o desbloquean requieren revisión del modelo exacto, copia de seguridad y confirmación explícita.
+- El diagnóstico eléctrico de cortocircuitos no puede inferirse con certeza usando solo el cable USB o software. Hace falta equipo de medición adecuado; presentar telemetría como indicio, no como medición de resistencia.
 
-## Alcance actual y límites
-
-- Catálogo por celulares, tabletas, wearables, computadoras, pantallas/TV, sistemas automotrices y otros USB.
-- Detección local de dependencias y sugerencias de paquetes Nix, sin instalación automática.
-- Formatos de informe y muestras USB; la validación estructural no es diagnóstico eléctrico.
-- Registro local de casos opt-in, fuera del repositorio, y búsqueda por marca/modelo/síntoma.
-- Los módulos GSM existentes se preservan. Algunos necesitan revisión antes de automatizarlos; no se invocan desde el buscador.
-- Sin ROMs/firmware, descarga automática, flasheo, escritura de particiones o bypass de autenticación.
-- ADB/Fastboot/EDL/MediaTek dependen del modelo, modo y permisos. Sin identidad confirmada se ofrece una coincidencia aproximada o ruta manual.
-- El adaptador USB de medición es hardware externo del usuario. La corriente de entrada sola no localiza un componente; un resultado debe incluir evidencia, incertidumbre y pruebas que no se hicieron.
-
-Las descargas futuras deben ser visibles, bajo demanda, desde fuentes revisadas, con versión/licencia/tamaño/hash cuando se publique. Los archivos de runtime y scripts generados se guardan fuera del checkout, en almacenamiento privado o una ubicación elegida por el usuario.
+Consulta `catalogo/herramientas.json` para la matriz inicial.
